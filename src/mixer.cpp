@@ -23,7 +23,7 @@ void Mixer::run() {
             int n = in.readBytes(aux, sizeof(aux));
         }
         //mix aux into buf
-        pcmPlayer.write(buf, sizeof(buf));
+//        pcmPlayer.write(buf, sizeof(buf));
         oggEncoder.write(buf, sizeof(buf));
     }
 }

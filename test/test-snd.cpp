@@ -15,31 +15,46 @@ TEST (DecoderTest, DISABLED_Decoder0) {
     size_t n = swg.readPcm(buffer, sizeof(buffer));
     size_t n2 = swg2.readPcm(buffer2, sizeof(buffer2));
     ASSERT_GT(n, 0);
-    for (int i=0; i < 2; i++) {
-        player.copyFirst(buffer);
-        player.add(buffer2);
-        player.writeMix();
-//        player.write(buffer2, n2);
-    }
 }
 
 
-TEST (DecoderTest, Mp3) {
+TEST (DecoderTest, DISABLED_Mp3) {
     Mp3Decoder d("beep.mp3");
     PcmPlayer player;
     SinWave swg2(440.0);
-    char buffer[player.buf_size];
-    char buffer2[player.buf_size];
+}
 
-    for (int i=0; i < 200; i++) {
-        size_t n = d.readPcm(buffer, sizeof(buffer));
-        qDebug() << "readPcm said " << n;
-        swg2.readPcm(buffer2, sizeof(buffer2));
-        ASSERT_GT(n, 0);
-//        player.write(buffer, sizeof(buffer));
-        player.copyFirst(buffer);
-//        player.add(buffer2);
-        player.writeMix();
-//        player.write(buffer2, n2);
-    }
+
+TEST(PlayerThread, DISABLED_PlayerThread ){
+    PcmPlayer player;
+    std::shared_ptr<Decoder> sin = std::make_shared<SinWave>(440.0);
+    sin->setFadeIn(1000);
+    player.addStream(sin);
+    std::shared_ptr<Decoder> d = std::make_shared<Mp3Decoder>("test.mp3");
+    player.addStream(d);
+    sleep(3);
+    sin->stopFadeOut(1000);
+    sin->waitEnd();
+    sin = std::make_shared<SinWave>(2440.0);
+    sin->setFadeIn(500);
+    sleep(2);
+    d->stopFadeOut(1000);
+    d->waitEnd();
+    player.addStream(sin);
+    sleep(2);
+    sin->stopFadeOut(1000);
+    player.waitEnd();
+}
+
+
+TEST(PlayerThread, RecordPlayerThread ){
+    PcmPlayer player;
+    std::shared_ptr<Decoder> sin = std::make_shared<Arecord>();
+    sleep(3);
+//    sin->setFadeIn(1000);
+    player.addStream(sin);
+    std::shared_ptr<Decoder> d = std::make_shared<Mp3Decoder>("test.mp3");
+//    player.addStream(d);
+//    sleep(3);
+    player.waitEnd();
 }
