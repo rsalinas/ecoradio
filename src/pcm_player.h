@@ -20,17 +20,17 @@ class PcmPlayer : public QThread
 {
     Q_OBJECT
 public:
-    PcmPlayer();
+    PcmPlayer(int bufferMillis = 200);
     virtual ~PcmPlayer();
 
-    int addStream(std::shared_ptr<Decoder> s) {
-            m_sources.push_back(s);
-    }    
+    int addStream(std::shared_ptr<Decoder> s);
+
     void run() override;
 
     ao_sample_format format;
     size_t buf_size;
     void waitEnd();
+
 private:
     char * buffer = nullptr;
     ao_device *device = nullptr;    

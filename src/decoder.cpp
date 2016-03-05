@@ -73,3 +73,28 @@ int SinWave::readPcm(char * buffer, const size_t length) {
     return length/4*4;
 }
 
+
+
+
+
+ThreadingDecoder::ThreadingDecoder(std::unique_ptr<Decoder> base, size_t buffers) :
+       Decoder("threaded "+ base->name()), m_base(std::move(base)), buffers(buffers) {
+
+}
+
+
+ThreadingDecoder::~ThreadingDecoder() {
+    mutex.lock();
+    abort = true;
+    condition.wakeAll();
+    mutex.unlock();
+    wait();
+}
+
+
+
+int ThreadingDecoder::readPcm(char * buffer, const size_t length) {
+    if (m_closed)
+        return -1;
+    return m_base->readPcm(buffer, length);
+}

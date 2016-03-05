@@ -22,21 +22,23 @@ TEST (PlayTest, DISABLED_PlayFile) {
     s.play();
 }
 
-static const QDir repositoryDir("/home/rsalinas/Sync/");
+static const QDir repositoryDir("/home/rsalinas/Sync/enconstruccio");
 static const QString vistosFile = "/tmp/vistos.txt";
 static const QString indexFile = "/tmp/all";
 
 TEST(MixerTest, SimplePlayer) {
     Traverse t(repositoryDir.absolutePath() , vistosFile , indexFile);
+    t.rescan();
     PcmPlayer player;
 
     while (true) {
         std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));
-        mp3->skip(2000);
+//        mp3->skip(2000);
         mp3->setFadeIn(2000);
         player.addStream(mp3);
-        sleep(2);
-        mp3->stopFadeOut(2000);
+
+//        mp3->stopFadeOut(2000);
+        mp3->waitEnd();
 
     }
 }

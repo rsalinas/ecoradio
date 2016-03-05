@@ -9,6 +9,8 @@
 void PcmPlayer::run() {
     char buffer[buf_size];
     char newBuffer[buf_size];
+    memset(buffer, 0, sizeof(buffer));
+    memset(newBuffer, 0, sizeof(buffer));
     qDebug() << __FUNCTION__;
     while (!abort) {
         decltype(m_sources) sourcesNow;
@@ -59,6 +61,10 @@ void PcmPlayer::waitEnd() {
     }
 }
 
+int PcmPlayer::addStream(std::shared_ptr<Decoder> s) {
+        m_sources.push_back(s);
+}
+
 PcmPlayer::~PcmPlayer() {
     mutex.lock();
     abort = true;
@@ -77,7 +83,7 @@ PcmPlayer::~PcmPlayer() {
 }
 
 
-PcmPlayer::PcmPlayer() {
+PcmPlayer::PcmPlayer(int bufferMillis) {
     ao_initialize();
     /* -- Setup for default driver -- */
 
@@ -88,7 +94,7 @@ PcmPlayer::PcmPlayer() {
     format.rate = 44100;
     format.byte_format = AO_FMT_LITTLE;
 
-    buf_size = format.bits/8 * format.channels * format.rate / 10 ;
+    buf_size = format.bits/8 * format.channels * format.rate * bufferMillis/ 1000;
     qDebug() << buf_size << "buffer;";
     buffer = static_cast<char*>(calloc(buf_size, sizeof(char)));
 

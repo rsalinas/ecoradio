@@ -1,23 +1,26 @@
 #pragma once
 
+#include <cassert>
+#include  <algorithm>
+
+
 #include <QString>
 #include <QProcess>
 #include <QDebug>
-#include <cassert>
-#include  <algorithm>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QMutexLocker>
-//
+#include <QThread>
+#include <memory>
+
+
 class Decoder
 {
 public:
     Decoder(const QString &name);
     virtual ~Decoder();
     int readFading(char * buf, const size_t length);
-protected:
     virtual int readPcm(char * buf, const size_t length) = 0;
-public:
     virtual int skip(int millis) {
         char buffer[65536];
         size_t bytesToSkip = 44100 * 2 * 2 * millis / 1000;
@@ -75,6 +78,21 @@ private:
     QString m_name;
     QMutex m_mutex;
     QWaitCondition m_cv;
+};
+
+class ThreadingDecoder: public QThread, public Decoder{
+public:
+    ThreadingDecoder(std::unique_ptr<Decoder> base, size_t buffers);
+    virtual ~ThreadingDecoder();
+    int readPcm(char * buffer, const size_t length);
+
+private:
+    std::unique_ptr<Decoder> m_base;
+    QMutex mutex;
+    QWaitCondition condition;
+    std::vector<char*> buffers;
+    bool abort = false;
+
 };
 
 class ProcessDecoder : public Decoder {
@@ -139,7 +157,7 @@ class SinWave : public Decoder
 {
 public:
     SinWave(float freq = 440 , int rate=44100);
-        virtual int readPcm(char * buffer, const size_t length);
+    virtual int readPcm(char * buffer, const size_t length);
 
 private:
     int m_rate;

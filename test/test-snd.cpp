@@ -2,7 +2,7 @@
 
 #include "decoder.h"
 #include "pcm_player.h"
-
+#include "alsarec.h"
 #include <QBitArray>
 
 TEST (DecoderTest, DISABLED_Decoder0) {
@@ -47,14 +47,31 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
 }
 
 
-TEST(PlayerThread, RecordPlayerThread ){
+TEST(PlayerThread, DISABLED_RecordPlayerThread ){
     PcmPlayer player;
-    std::shared_ptr<Decoder> sin = std::make_shared<Arecord>();
-    sleep(3);
-//    sin->setFadeIn(1000);
-    player.addStream(sin);
-    std::shared_ptr<Decoder> d = std::make_shared<Mp3Decoder>("test.mp3");
-//    player.addStream(d);
-//    sleep(3);
-    player.waitEnd();
+    std::shared_ptr<Decoder> line= std::make_shared<AlsaRec>("default");
+    line->setFadeIn(1000);   //empezará con un fundido
+    player.addStream(line);
+    std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
+    sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
+    line->stopFadeOut(1000);   //hará un fundido de bajada y parará
+    mp3->setFadeIn(1000);
+    player.addStream(mp3);
+    player.waitEnd();         //espera a que terminen todos los flujos
+}
+
+TEST(PlayerThread, ArecordPlayerThread ){
+    PcmPlayer player;
+    std::shared_ptr<Decoder> line= std::make_shared<ThreadingDecoder>(
+                std::unique_ptr<Decoder>(new Arecord()), 10);
+//    line->setFadeIn(1000);   //empezará con un fundido
+    player.addStream(line);
+    sleep(5);
+    line->stopFadeOut(1000);
+//    std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
+//    sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
+//    line->stopFadeOut(1000);   //hará un fundido de bajada y parará
+//    mp3->setFadeIn(1000);
+//    player.addStream(mp3);
+    player.waitEnd();         //espera a que terminen todos los flujos
 }
