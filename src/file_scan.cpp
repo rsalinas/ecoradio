@@ -1,5 +1,7 @@
 #include "file_scan.h"
 
+#include <cassert>
+
 class Rescan {
 public:
     Rescan(const QDir &d, const QString &catalog) : m_d(d), all(catalog) {
@@ -13,17 +15,20 @@ public:
         if (depth > maxdepth)
             maxdepth = depth;
 
-        for (auto e : d.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries | QDir::Hidden )) {
-            if( e.isDir()) {
-                process(e.absoluteFilePath(), depth + 1);
-            } else {
-                auto f = e.absoluteFilePath();
-                f.remove(0, m_d.absolutePath().length());
-                f="."+f;
-                *s << f << endl;
-                files.append(f);
-                n++;
-            }
+        for (auto e : d.entryInfoList(QStringList() << "*.mp3",
+                                      QDir::NoDotAndDotDot | QDir::Files)) {
+            assert( e.isFile());
+            auto f = e.absoluteFilePath();
+            f.remove(0, m_d.absolutePath().length());
+            f="."+f;
+            *s << f << endl;
+            files.append(f);
+            n++;
+        }
+
+        for (auto e : d.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs| QDir::Hidden )) {
+            assert( e.isDir());
+            process(e.absoluteFilePath(), depth + 1);
         }
     }
     QStringList run() {
@@ -96,4 +101,25 @@ QString Traverse::getRandom()
     }
     seen.setBit(pos);
     return files[pos];
+}
+
+
+void Traverse::saveVistos() {
+    if (!m_seenIndex.open(QIODevice::WriteOnly)) {
+        qFatal("cannot open");
+    }
+    QTextStream s(&m_seenIndex);
+    int n=0;
+    for (int i=0; i < seen.size(); i++) {
+        if (seen.testBit(i)) {
+            s << i << endl;
+            n++;
+        }
+    }
+    m_seenIndex.close();
+
+}
+
+Traverse::~Traverse() {
+    saveVistos();
 }

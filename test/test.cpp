@@ -4,6 +4,7 @@
 #include "scheduler.h"
 #include "soundsource.h"
 #include "file_scan.h"
+#include "decoder.h"
 
 #include <QMap>
 #include <QTextStream>
@@ -11,26 +12,42 @@
 #include <QDebug>
 #include <QBitArray>
 
-TEST (SchedulerTest, Scheduler0) {
+TEST (SchedulerTest, DISABLED_Scheduler0) {
     Scheduler s;
 }
 
 
-TEST (PlayTest, PlayFile) {
+TEST (PlayTest, DISABLED_PlayFile) {
     FileSoundSource s("test.mp3");
     s.play();
 }
 
+static const QDir repositoryDir("/home/rsalinas/Sync/");
+static const QString vistosFile = "/tmp/vistos.txt";
+static const QString indexFile = "/tmp/all";
 
-TEST(MixerTest, BasicMixerTest) {
+TEST(MixerTest, SimplePlayer) {
+    Traverse t(repositoryDir.absolutePath() , vistosFile , indexFile);
+    PcmPlayer player;
+
+    while (true) {
+        std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));
+        mp3->skip(2000);
+        mp3->setFadeIn(2000);
+        player.addStream(mp3);
+        sleep(2);
+        mp3->stopFadeOut(2000);
+
+    }
+}
+
+
+TEST(MixerTest, DISABLED_BasicMixerTest) {
     std::unique_ptr<Traverse> t;
-    const QString dir = "/home/rsalinas/Sync/";
-    //= "/tmp/t";
-    const QString vistos = "/tmp/vistos.txt";
-    const QString index = "/tmp/all";
-    qDebug() << QFile(index).remove();
-    qDebug() << QFile(vistos).remove();
-    t.reset(new Traverse(dir , vistos , index));
+
+    qDebug() << QFile(indexFile).remove();
+    qDebug() << QFile(vistosFile).remove();
+    t.reset(new Traverse(repositoryDir.absolutePath() , vistosFile , indexFile));
     auto n= t->size();
     QMap<QString, int> map;
     const int reps=3;
@@ -38,7 +55,7 @@ TEST(MixerTest, BasicMixerTest) {
         for (int i=0; i < n ; i++) {
             if (i==1) {
                 t.reset();
-                t.reset(new Traverse(dir , vistos , index));
+                t.reset(new Traverse(repositoryDir.absolutePath() , vistosFile , indexFile));
             }
             auto f = t->getRandom();
             map[f]++;
