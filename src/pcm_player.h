@@ -12,7 +12,7 @@
 #include <QThread>
 #include <QObject>
 
-class Decoder;
+class SoundSource;
 class PlayingThread;
 class ao_device;
 
@@ -23,7 +23,7 @@ public:
     PcmPlayer(int bufferMillis = 200);
     virtual ~PcmPlayer();
 
-    int addStream(std::shared_ptr<Decoder> s);
+    int addStream(std::shared_ptr<SoundSource> s);
 
     void run() override;
 
@@ -37,7 +37,7 @@ private:
     QMutex mutex;
     QWaitCondition condition;
     bool abort = false;
-    std::list<std::shared_ptr<Decoder>> m_sources;
+    std::list<std::shared_ptr<SoundSource>> m_sources;
 
 signals:
 public slots:

@@ -1,25 +1,19 @@
 #include "alsarec.h"
 
-
-#include "pcm_player.h"
-
-AlsaRec::AlsaRec(const QString &deviceName) : Decoder(__FUNCTION__)
+AlsaRec::AlsaRec(const QString &deviceName) : SoundSource(__FUNCTION__)
 {
     unsigned int rate = 44100;
 
     int err;
     if ((err = snd_pcm_open (&capture_handle, deviceName.toStdString().c_str(), SND_PCM_STREAM_CAPTURE, 0)) < 0) {
-        qFatal("cannot open audio device %s (%s)", deviceName.toStdString().c_str(), snd_strerror (err));
-        throw new PcmPlayerException;
+        throw new AlsaException("cannot open audio device  "+deviceName , err);
     }
 
     fprintf(stdout, "audio interface opened\n");
     snd_pcm_hw_params_t *hw_params;
 
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
-        fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
-                 snd_strerror (err));
-        exit (1);
+        throw new AlsaException("cannot allocate hardware parameter structure", err);
     }
 
     fprintf(stdout, "hw_params allocated\n");
@@ -96,8 +90,9 @@ int AlsaRec::readPcm(char * buf, const size_t length)
     int buffer_frames = length/(snd_pcm_format_width(format) / 8 * 2);
     int err;
     if ((err = snd_pcm_readi (capture_handle, buf, buffer_frames)) != buffer_frames) {
-        qFatal("read from audio interface failed (%s)\n",
+        qDebug("read from audio interface failed (%s)\n",
                snd_strerror (err));
+        return -1;
     }
     return length;
 }

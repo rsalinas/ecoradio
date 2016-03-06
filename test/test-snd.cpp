@@ -1,9 +1,12 @@
 #include "gtest/gtest.h"
 
-#include "decoder.h"
+#include "soundsource.h"
 #include "pcm_player.h"
 #include "alsarec.h"
 #include <QBitArray>
+
+#include "oggfwd.h"
+#include "mpg123wrap.h"
 
 TEST (DecoderTest, DISABLED_Decoder0) {
     Mp3Decoder d("test.mp3");
@@ -27,10 +30,10 @@ TEST (DecoderTest, DISABLED_Mp3) {
 
 TEST(PlayerThread, DISABLED_PlayerThread ){
     PcmPlayer player;
-    std::shared_ptr<Decoder> sin = std::make_shared<SinWave>(440.0);
+    std::shared_ptr<SoundSource> sin = std::make_shared<SinWave>(440.0);
     sin->setFadeIn(1000);
     player.addStream(sin);
-    std::shared_ptr<Decoder> d = std::make_shared<Mp3Decoder>("test.mp3");
+    std::shared_ptr<SoundSource> d = std::make_shared<Mp3Decoder>("test.mp3");
     player.addStream(d);
     sleep(3);
     sin->stopFadeOut(1000);
@@ -49,10 +52,10 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
 
 TEST(PlayerThread, DISABLED_RecordPlayerThread ){
     PcmPlayer player;
-    std::shared_ptr<Decoder> line= std::make_shared<AlsaRec>("default");
+    std::shared_ptr<SoundSource> line= std::make_shared<AlsaRec>("default");
     line->setFadeIn(1000);   //empezará con un fundido
     player.addStream(line);
-    std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
+    std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
     sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
     line->stopFadeOut(1000);   //hará un fundido de bajada y parará
     mp3->setFadeIn(1000);
@@ -62,16 +65,24 @@ TEST(PlayerThread, DISABLED_RecordPlayerThread ){
 
 TEST(PlayerThread, ArecordPlayerThread ){
     PcmPlayer player;
-    std::shared_ptr<Decoder> line= std::make_shared<ThreadingDecoder>(
-                std::unique_ptr<Decoder>(new Arecord()), 10);
-//    line->setFadeIn(1000);   //empezará con un fundido
+
+    std::shared_ptr<SoundSource> line;
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+//    std::shared_ptr<Decoder> mp3 = std::make_shared<Mpg123>("beep.mp3");
+    player.addStream(mp3);
+
+    if (true)
+        line= std::make_shared<ThreadingDecoder>(
+                    std::unique_ptr<SoundSource>(new Arecord()), 10);
+    else
+        line= std::make_shared<AlsaRec>("default");
+    line->setFadeIn(1000);   //empezará con un fundido
     player.addStream(line);
     sleep(5);
     line->stopFadeOut(1000);
-//    std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
-//    sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
-//    line->stopFadeOut(1000);   //hará un fundido de bajada y parará
-//    mp3->setFadeIn(1000);
-//    player.addStream(mp3);
+    sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
+    line->stopFadeOut(1000);   //hará un fundido de bajada y parará
+    //    mp3->setFadeIn(1000);
+
     player.waitEnd();         //espera a que terminen todos los flujos
 }

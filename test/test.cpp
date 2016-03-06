@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
 
-#include "mixer.h"
 #include "scheduler.h"
 #include "soundsource.h"
 #include "file_scan.h"
-#include "decoder.h"
+#include "soundsource.h"
+#include "pcm_player.h"
 
 #include <QMap>
 #include <QTextStream>
@@ -14,12 +14,6 @@
 
 TEST (SchedulerTest, DISABLED_Scheduler0) {
     Scheduler s;
-}
-
-
-TEST (PlayTest, DISABLED_PlayFile) {
-    FileSoundSource s("test.mp3");
-    s.play();
 }
 
 static const QDir repositoryDir("/home/rsalinas/Sync/enconstruccio");
@@ -32,7 +26,7 @@ TEST(MixerTest, SimplePlayer) {
     PcmPlayer player;
 
     while (true) {
-        std::shared_ptr<Decoder> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));
 //        mp3->skip(2000);
         mp3->setFadeIn(2000);
         player.addStream(mp3);
@@ -68,33 +62,6 @@ TEST(MixerTest, DISABLED_BasicMixerTest) {
         ASSERT_EQ(reps, map.value(e));
 
     }
-}
-
-
-
-TEST(Mixing, Mixing) {
-    Mixer m;
-    FileSoundSource s0("test.mp3");
-    FileSoundSource s1("test.mp3");
-//    m.play(s0);
-//    m.play(s1);
-}
-
-
-TEST(Mixing, DISABLED_SwitchLine) {
-    Mixer m;
-    FileSoundSource s0("test.mp3");
-    LiveSoundSource s1;
-
-    s0.play();
-    sleep(3);
-    s1.play();
-    sleep(3);
-    s0.play();
-    sleep(3);
-
-//    m.play(s0);
-//    m.play(s1);
 }
 
 TEST(DbTest, DbTest) {

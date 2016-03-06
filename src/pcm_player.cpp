@@ -4,7 +4,7 @@
 #include <climits>
 #include <QThread>
 #include <list>
-#include "decoder.h"
+#include "soundsource.h"
 
 void PcmPlayer::run() {
     char buffer[buf_size];
@@ -46,8 +46,11 @@ void PcmPlayer::run() {
                 m_sources.remove(source);
                 condition.wakeAll();
             }
+            if (sizeof(buffer) != n)
+                memset(buffer+n, 0, sizeof(buffer)-n);
 
        }
+
         ao_play(device, buffer, sizeof(buffer));
     }
     qDebug() << __FUNCTION__ << "finished";
@@ -61,7 +64,7 @@ void PcmPlayer::waitEnd() {
     }
 }
 
-int PcmPlayer::addStream(std::shared_ptr<Decoder> s) {
+int PcmPlayer::addStream(std::shared_ptr<SoundSource> s) {
         m_sources.push_back(s);
 }
 

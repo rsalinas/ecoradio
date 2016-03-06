@@ -1,10 +1,27 @@
 #pragma once
 
-#include "decoder.h"
+#include "soundsource.h"
 
 #include <alsa/asoundlib.h>
+#include <string>
 
-class AlsaRec : public Decoder {
+class AlsaException : public std::exception{
+public:
+    AlsaException(const QString &cause) : m_cause(cause) {
+    }
+
+    AlsaException(const QString &cause, int err) : AlsaException(cause+ " - "+snd_strerror (err)) {
+    }
+
+    virtual const char* what() const _GLIBCXX_USE_NOEXCEPT {
+        return m_cause.toStdString().c_str();
+    }
+
+private:
+    QString m_cause;
+};
+
+class AlsaRec : public SoundSource {
 public:
     AlsaRec(const QString &deviceName);
     virtual ~AlsaRec();
