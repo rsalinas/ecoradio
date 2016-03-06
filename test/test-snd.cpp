@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "aosink.h"
 #include "soundsource.h"
 #include "pcm_player.h"
 #include "alsarec.h"
@@ -35,9 +36,9 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
     PcmPlayer player;
     std::shared_ptr<SoundSource> sin = std::make_shared<SinWave>(440.0);
     sin->setFadeIn(1000);
-    player.addStream(sin);
+    player.addSource(sin);
     std::shared_ptr<SoundSource> d = std::make_shared<Mp3Decoder>("test.mp3");
-    player.addStream(d);
+    player.addSource(d);
     sleep(3);
     sin->stopFadeOut(1000);
     sin->waitEnd();
@@ -46,7 +47,7 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
     sleep(2);
     d->stopFadeOut(1000);
     d->waitEnd();
-    player.addStream(sin);
+    player.addSource(sin);
     sleep(2);
     sin->stopFadeOut(1000);
     player.waitEnd();
@@ -58,12 +59,12 @@ TEST(PlayerThread, DISABLED_RecordPlayerThread ){
     PcmPlayer player;
     std::shared_ptr<SoundSource> line= std::make_shared<AlsaRec>("default");
     line->setFadeIn(1000);   //empezará con un fundido
-    player.addStream(line);
+    player.addSource(line);
     std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
     sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
     line->stopFadeOut(1000);   //hará un fundido de bajada y parará
     mp3->setFadeIn(1000);
-    player.addStream(mp3);
+    player.addSource(mp3);
 
     player.waitEnd();         //espera a que terminen todos los flujos
 }
@@ -97,20 +98,22 @@ void silenceFinished() {
 
 TEST_F(PlayerFixture, ArecordPlayerThread ){
     try {
-        PcmPlayer player;
+        SndSink::Format format;
+        std::shared_ptr<AoSink> ao = std::make_shared<AoSink>(format);
+        PcmPlayer player(format);
+        player.addSink(ao);
         QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
         QObject::connect(&player, SIGNAL(silenceFinished()), &sl, SLOT(silenceFinished()));
         QObject::connect(&player, (&PcmPlayer::silenceStarted), silenceStarted);
         QObject::connect(&player, (&PcmPlayer::silenceFinished), silenceFinished);
 
         std::shared_ptr<SoundSource> line;
-        //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+                std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
-        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
-        player.addStream(mp3);
+//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+        player.addSource(mp3);
         player.waitEnd();
-        return;
         sleep(1);
         //    player.addStream(mp3b);
         //    player.addStream(tone);
@@ -122,7 +125,7 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         else
             line= std::make_shared<AlsaRec>("default");
         line->setFadeIn(1000);   //empezará con un fundido
-        player.addStream(line);
+        player.addSource(line);
         sleep(5);
         //    tone->stopFadeOut(2000);
         line->stopFadeOut(1000);

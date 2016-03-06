@@ -29,7 +29,7 @@ TEST(MixerTest, SimplePlayer) {
         std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));
 //        mp3->skip(2000);
         mp3->setFadeIn(2000);
-        player.addStream(mp3);
+        player.addSource(mp3);
 
 //        mp3->stopFadeOut(2000);
         mp3->waitEnd();

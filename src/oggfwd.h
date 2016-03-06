@@ -1,3 +1,6 @@
+#pragma once
+
+#include <sink.h>
 
 #include <QProcess>
 
@@ -11,7 +14,7 @@ public:
 };
 
 
-class ProcessOggFwd : public OggFwd
+class ProcessOggFwd : public SndSink
 {
 public:
     ProcessOggFwd();

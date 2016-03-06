@@ -7,6 +7,13 @@
 #include "util.h"
 #include "soundsource.h"
 
+
+PcmPlayer::PcmPlayer(const SndSink::Format &format) :
+    m_format(format), buf_size(format.bufferSize)
+{
+    start();
+}
+
 void PcmPlayer::run() {
     char zeros[buf_size];
     char buffer[buf_size];
@@ -33,7 +40,6 @@ void PcmPlayer::run() {
                 continue;
             case -1:
             {
-
                 QMutexLocker lock(&mutex);
                 qDebug() << source->name() << n;
                 m_sources.remove(source);
@@ -47,7 +53,7 @@ void PcmPlayer::run() {
                 if (i >= 1) {
                     auto b = reinterpret_cast<signed short int *>(buffer);
                     auto b1 = reinterpret_cast<signed short int *>(newBuffer);
-                    for (int i=0; i < sizeof(buffer)/ (format.bits/8 ); i++) {
+                    for (int i=0; i < sizeof(buffer)/ (m_format.sampleSizeBits/8 ); i++) {
                         int sample = b[i] + b1[i];
                         if (sample > SHRT_MAX)
                             sample=SHRT_MAX;
@@ -63,9 +69,8 @@ void PcmPlayer::run() {
         }
         auto ellapsed = tm.ellapsed();
         if (i) {
-
-            if (1 != ao_play(device, buffer, sizeof(buffer))) {
-                qDebug() << "ao_play error";
+            for (auto sink : m_sinks) {
+                sink->writePcm(buffer, sizeof(buffer));
             }
             if (silence)  {
                 silence = false;
@@ -73,14 +78,13 @@ void PcmPlayer::run() {
             }
 
         } else {
-            if (1 != ao_play(device, zeros, sizeof(zeros))) {
-                qDebug() << "ao_play error";
+            for (auto sink : m_sinks) {
+                sink->writePcm(zeros, sizeof(zeros));
             }
             if (!silence) {
                 silence = true;
                 emit silenceStarted();
             }
-
         }
 
         if (ellapsed > 100)
@@ -97,9 +101,14 @@ void PcmPlayer::waitEnd() {
     }
 }
 
-int PcmPlayer::addStream(std::shared_ptr<SoundSource> s) {
+int PcmPlayer::addSource(std::shared_ptr<SoundSource> source) {
     QMutexLocker lock(&mutex);
-    m_sources.push_back(s);
+    m_sources.push_back(source);
+}
+
+int PcmPlayer::addSink(std::shared_ptr<SndSink> sink) {
+    QMutexLocker lock(&mutex);
+    m_sinks.push_back(sink);
 }
 
 PcmPlayer::~PcmPlayer() {
@@ -108,38 +117,6 @@ PcmPlayer::~PcmPlayer() {
     condition.wakeAll();
     mutex.unlock();
     wait();
-
-
-
-    if (buffer)
-        free(buffer);
-    /* -- Close and shutdown -- */
-    ao_close(device);
-
-    ao_shutdown();
 }
 
 
-PcmPlayer::PcmPlayer(int bufferMillis) {
-    ao_initialize();
-    /* -- Setup for default driver -- */
-
-    int default_driver = ao_default_driver_id();
-    memset(&format, 0, sizeof(format));
-    format.bits = 16;
-    format.channels = 2;
-    format.rate = 44100;
-    format.byte_format = AO_FMT_LITTLE;
-
-    buf_size = format.bits/8 * format.channels * format.rate * bufferMillis/ 1000;
-    qDebug() << buf_size << "buffer;";
-    buffer = static_cast<char*>(calloc(buf_size, sizeof(char)));
-
-    /* -- Open driver -- */
-    device = ao_open_live(default_driver, &format, NULL /* no options */);
-    if (device == NULL) {
-        fprintf(stderr, "Error opening device.\n");
-        throw PcmPlayerException();
-    }
-    start();
-}

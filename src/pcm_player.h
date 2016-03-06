@@ -11,33 +11,40 @@
 #include <memory>
 #include <QThread>
 #include <QObject>
+#include "sink.h"
 
 class SoundSource;
 class PlayingThread;
-class ao_device;
 
 class PcmPlayer : public QThread
 {
     Q_OBJECT
 public:
-    PcmPlayer(int bufferMillis = 200);
+    class PcmPlayerException : public std::exception
+    {
+
+    };
+
+    PcmPlayer(const SndSink::Format &format = SndSink::Format() /*FIXME*/);
     virtual ~PcmPlayer();
 
-    int addStream(std::shared_ptr<SoundSource> s);
+    int addSource(std::shared_ptr<SoundSource> s);
+    int addSink(std::shared_ptr<SndSink> s);
 
     void run() override;
 
-    ao_sample_format format;
-    size_t buf_size;
     void waitEnd();
 
+    const int buf_size;
+
 private:
-    char * buffer = nullptr;
-    ao_device *device = nullptr;    
+    const SndSink::Format m_format;
+    std::list<std::shared_ptr<SndSink>> m_sinks;
+    std::list<std::shared_ptr<SoundSource>> m_sources;
+
     QMutex mutex;
     QWaitCondition condition;
     bool abort = false;
-    std::list<std::shared_ptr<SoundSource>> m_sources;
 
 signals:
     void silenceFinished();
@@ -48,7 +55,4 @@ public slots:
 };
 
 
-class PcmPlayerException : public std::exception
-{
 
-};
