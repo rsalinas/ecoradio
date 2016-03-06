@@ -40,6 +40,9 @@ private:
     std::list<std::shared_ptr<SoundSource>> m_sources;
 
 signals:
+    void silenceFinished();
+    void silenceStarted();
+
 public slots:
 
 };

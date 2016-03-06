@@ -5,18 +5,6 @@
 
 #include <mpg123.h>
 
-void usage()
-{
-    printf("Usage: mpg123_to_wav <input> <output> [s16|f32 [ <buffersize>]]\n");
-    exit(99);
-}
-
-Mpg123::~Mpg123() {
-    /* It's really to late for error checks here;-) */
-    mpg123_close(mh);
-    mpg123_delete(mh);
-    mpg123_exit();
-}
 
 Mpg123::Mpg123(const QString &file) : SoundSource(file)
 {
@@ -28,7 +16,7 @@ Mpg123::Mpg123(const QString &file) : SoundSource(file)
     if(err != MPG123_OK || (mh = mpg123_new(NULL, &err)) == NULL)
     {
         fprintf(stderr, "Basic setup goes wrong: %s", mpg123_plain_strerror(err));
-        throw new Mpg123Exception;
+        throw Mpg123Exception();
     }
 
     /* Simple hack to enable floating point output. */
@@ -57,7 +45,7 @@ Mpg123::Mpg123(const QString &file) : SoundSource(file)
            || mpg123_getformat(mh, &rate, &channels, &encoding) != MPG123_OK )
     {
         fprintf( stderr, "Trouble with mpg123: %s\n", mpg123_strerror(mh) );
-        throw new Mpg123Exception;
+        throw Mpg123Exception();
     }
     qDebug() << rate << channels << encoding << " in file";
     rate = 44100;
@@ -67,7 +55,7 @@ Mpg123::Mpg123(const QString &file) : SoundSource(file)
     { /* Signed 16 is the default output format anyways; it would actually by only different if we forced it.
          So this check is here just for this explanation. */
         fprintf(stderr, "Bad encoding: 0x%x!\n", encoding);
-        throw new Mpg123Exception;
+        throw Mpg123Exception();
     }
     /* Ensure that this output format will not change (it could, when we allow it). */
     qDebug() << "format";
@@ -76,14 +64,7 @@ Mpg123::Mpg123(const QString &file) : SoundSource(file)
         qFatal("Cannot set format %d", err);
     }
 
-    printf("Creating WAV with %i channels and %liHz.\n", channels, rate);
-
     qDebug() << "mpg123_outblock(mh)" << mpg123_outblock(mh);
-
-    /* Buffer could be almost any size here, mpg123_outblock() is just some recommendation.
-       Important, especially for sndfile writing, is that the size is a multiple of sample size. */
-    //    buffer_size = mpg123_outblock(mh);
-    //    buffer = static_cast<unsigned char*>(malloc( buffer_size ));
 }
 
 int Mpg123::readPcm(char *buf, const size_t length)
@@ -114,4 +95,11 @@ int Mpg123::readPcm(char *buf, const size_t length)
     default:
         return -1;
     }
+}
+
+
+Mpg123::~Mpg123() {
+    mpg123_close(mh);
+    mpg123_delete(mh);
+    mpg123_exit();
 }

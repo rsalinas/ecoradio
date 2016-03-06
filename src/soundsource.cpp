@@ -1,5 +1,8 @@
 #include "soundsource.h"
 
+
+#include "util.h"
+
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {
     qDebug() << __FUNCTION__;
@@ -13,6 +16,7 @@ SoundSource::~SoundSource()
 
 
 int SoundSource::readFading(char * buf, const size_t length)  {
+    AutoTimeMeter atm("readFading");
     int n = readPcm(buf, length);
     if (n <= 0 || m_fading == 0)
         return n;
@@ -46,7 +50,7 @@ int SoundSource::readFading(char * buf, const size_t length)  {
 
         b[i] = volume*b[i];
     }
-    qDebug() << m_bytes << "volume " << volume << fadingEndBytes;
+//    qDebug() << m_bytes << "volume " << volume << fadingEndBytes;
     m_bytes += n;
     return n;
 }

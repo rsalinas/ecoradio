@@ -4,6 +4,9 @@
 #include "pcm_player.h"
 #include "alsarec.h"
 #include <QBitArray>
+#include <QCoreApplication>
+#include <QTimer>
+#include <QObject>
 
 #include "oggfwd.h"
 #include "mpg123wrap.h"
@@ -50,6 +53,7 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
 }
 
 
+
 TEST(PlayerThread, DISABLED_RecordPlayerThread ){
     PcmPlayer player;
     std::shared_ptr<SoundSource> line= std::make_shared<AlsaRec>("default");
@@ -60,29 +64,84 @@ TEST(PlayerThread, DISABLED_RecordPlayerThread ){
     line->stopFadeOut(1000);   //hará un fundido de bajada y parará
     mp3->setFadeIn(1000);
     player.addStream(mp3);
-    player.waitEnd();         //espera a que terminen todos los flujos
-}
-
-TEST(PlayerThread, ArecordPlayerThread ){
-    PcmPlayer player;
-
-    std::shared_ptr<SoundSource> line;
-        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
-//    std::shared_ptr<Decoder> mp3 = std::make_shared<Mpg123>("beep.mp3");
-    player.addStream(mp3);
-
-    if (true)
-        line= std::make_shared<ThreadingDecoder>(
-                    std::unique_ptr<SoundSource>(new Arecord()), 10);
-    else
-        line= std::make_shared<AlsaRec>("default");
-    line->setFadeIn(1000);   //empezará con un fundido
-    player.addStream(line);
-    sleep(5);
-    line->stopFadeOut(1000);
-    sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
-    line->stopFadeOut(1000);   //hará un fundido de bajada y parará
-    //    mp3->setFadeIn(1000);
 
     player.waitEnd();         //espera a que terminen todos los flujos
 }
+
+class SilenceListener : public QObject {
+
+    Q_OBJECT
+public slots:
+    void silenceStarted() {
+        qDebug() << __FUNCTION__ << "class";
+    }
+    void silenceFinished() {
+        qDebug() << __FUNCTION__ << "class";
+    }
+};
+
+
+class PlayerFixture :  public ::testing::Test::Test {
+public:
+
+protected:
+    SilenceListener sl;
+};
+
+void silenceStarted() {
+    qDebug() << __FUNCTION__;
+}
+void silenceFinished() {
+    qDebug() << __FUNCTION__;
+}
+
+TEST_F(PlayerFixture, ArecordPlayerThread ){
+    try {
+        PcmPlayer player;
+        QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
+        QObject::connect(&player, SIGNAL(silenceFinished()), &sl, SLOT(silenceFinished()));
+        QObject::connect(&player, (&PcmPlayer::silenceStarted), silenceStarted);
+        QObject::connect(&player, (&PcmPlayer::silenceFinished), silenceFinished);
+
+        std::shared_ptr<SoundSource> line;
+        //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+        std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+        //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+        player.addStream(mp3);
+        player.waitEnd();
+        return;
+        sleep(1);
+        //    player.addStream(mp3b);
+        //    player.addStream(tone);
+
+
+        if (false)
+            line= std::make_shared<ThreadingDecoder>(
+                        std::unique_ptr<SoundSource>(new Arecord()), 10);
+        else
+            line= std::make_shared<AlsaRec>("default");
+        line->setFadeIn(1000);   //empezará con un fundido
+        player.addStream(line);
+        sleep(5);
+        //    tone->stopFadeOut(2000);
+        line->stopFadeOut(1000);
+        sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
+        line->stopFadeOut(1000);   //hará un fundido de bajada y parará
+        //    mp3->setFadeIn(1000);
+        line->waitEnd();
+        line.reset();
+        mp3->stopFadeOut(2000);
+        mp3b->stopFadeOut(5000);
+
+        player.waitEnd();         //espera a que terminen todos los flujos
+        sleep(2);
+    } catch (const std::exception &e) {
+        qFatal("Exception: %s", e.what());
+    } catch (...) {
+        qFatal("Exception");
+    }
+}
+
+
+#include "test-snd.moc"

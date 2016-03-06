@@ -5,7 +5,7 @@
 #include <alsa/asoundlib.h>
 #include <string>
 
-class AlsaException : public std::exception{
+class AlsaException : public std::exception {
 public:
     AlsaException(const QString &cause) : m_cause(cause) {
     }

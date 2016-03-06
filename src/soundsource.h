@@ -22,6 +22,10 @@ public:
     virtual ~SoundSource();
     int readFading(char * buf, const size_t length);
     virtual int readPcm(char * buf, const size_t length) = 0;
+    virtual int goTo(int millis) {
+        return -1;
+    }
+
     virtual int skip(int millis) {
         char buffer[65536];
         size_t bytesToSkip = 44100 * 2 * 2 * millis / 1000;
@@ -64,6 +68,7 @@ public:
     size_t m_bytes = 0;
     size_t fadingEndBytes;
     int m_fading = 0;
+
     void waitEnd() {
         QMutexLocker lock(&m_mutex);
         while (!m_closed) {
