@@ -8,9 +8,45 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include <QObject>
+#include "oggfwd.h"
+#include <QFile>
+
+#include "ogg_encoder.h"
 
 #include "oggfwd.h"
 #include "mpg123wrap.h"
+
+//https://www.xiph.org/vorbis/doc/v-comment.html
+
+TEST(OggFwdTest, OggFwdTest)
+{
+    OggFwd::Config fwdConfig;
+    fwdConfig.hostName = "vps66370.ovh.net";
+    fwdConfig.port = 8000;
+    fwdConfig.mount = "/tests.ogg";
+    fwdConfig.passwd = "ecoradio";
+
+    OggFwd fwd(fwdConfig);
+    OggFwd::Metadata metadata;
+    metadata.add("ARTIST", "Artist");
+    metadata.add("TITLE", "Title");
+    fwd.setMetadata(metadata);
+    sleep (5);
+
+    QFile file("test.ogg");
+    ASSERT_TRUE(file.open(QFile::ReadOnly));
+    char buffer[65536];
+    while (file.seek(0)) {
+
+        qint64 n;
+        while (n = file.read(buffer, sizeof(buffer)), n > 0) {
+            ASSERT_EQ(n, fwd.write(buffer, n));
+        }
+    }
+
+
+    qDebug() << "all right";
+}
 
 TEST (DecoderTest, DISABLED_Decoder0) {
     Mp3Decoder d("test.mp3");
@@ -96,22 +132,28 @@ void silenceFinished() {
     qDebug() << __FUNCTION__;
 }
 
-TEST_F(PlayerFixture, ArecordPlayerThread ){
+TEST_F(PlayerFixture, DISABLED_ArecordPlayerThread ){
     try {
         SndSink::Format format;
-        std::shared_ptr<AoSink> ao = std::make_shared<AoSink>(format);
         PcmPlayer player(format);
-        player.addSink(ao);
+        player.addSink(std::make_shared<AoSink>(format));
+        OggFwd::Config fwdConfig;
+        fwdConfig.hostName = "vps66370.ovh.net";
+        fwdConfig.port = 8000;
+        fwdConfig.mount = "/tests.ogg";
+        fwdConfig.passwd = "ecoradio";
+        player.addSink(std::make_shared<OggEncoder>(std::unique_ptr<OggFwd>(new OggFwd(fwdConfig))));
+
         QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
         QObject::connect(&player, SIGNAL(silenceFinished()), &sl, SLOT(silenceFinished()));
         QObject::connect(&player, (&PcmPlayer::silenceStarted), silenceStarted);
         QObject::connect(&player, (&PcmPlayer::silenceFinished), silenceFinished);
 
         std::shared_ptr<SoundSource> line;
-                std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
-//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+        //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
         player.addSource(mp3);
         player.waitEnd();
         sleep(1);

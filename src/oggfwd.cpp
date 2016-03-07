@@ -1,263 +1,129 @@
 #include "oggfwd.h"
 
+#include <QDebug>
 
-///*
-// * oggfwd    -- Forward an Ogg stream from stdin to an Icecast server
-// *		A useful demonstration of the libshout API
-// *
-// * This program is distributed under the GNU General Public License, version 2.
-// * A copy of this license is included with this source.
-// *
-// * This program is provided "as-is", with no explicit or implied warranties of
-// * any kind.
-// *
-// * Copyright (C) 2003-2006,	J <j@v2v.cc>,
-// *				rafael2k <rafael(at)riseup(dot)net>,
-// *				Moritz Grimm <gtgbr@gmx.net>
-// */
-///* thanx to rhatto <rhatto (AT) riseup (DOT) net> and others at submidialogia :-P */
+#include <shout/shout.h>
 
-//#include <sys/types.h>
-//#include <sys/param.h>
-//#include <errno.h>
-//#include <signal.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
+OggFwd::OggFwd(const Config &cfg) {
+    shout_init();
+    if ((shout = shout_new()) == NULL) {
+        throw OggFwdException("Could not allocate shout_t");
+    }
 
-//#ifndef NO_UNISTD_H
-//#  include <unistd.h>
-//#endif /* no-NO_UNISTD_H */
+    if (shout_set_host(shout, cfg.hostName.toStdString().c_str()) != SHOUTERR_SUCCESS) {
+        throw OggFwdException("Error setting hostname: "+cfg.hostName+ " " +shout_get_error(shout));
+    }
 
-//#include <shout/shout.h>
+    if (shout_set_port(shout, cfg.port) != SHOUTERR_SUCCESS) {
+        throw OggFwdException("Error setting port: "+QString::number(cfg.port)+ " " +shout_get_error(shout));
+    }
 
-//extern char    *__progname;
-//extern char    *optarg;
-//extern int	optind;
-//extern int	errno;
+    if (shout_set_password(shout, cfg.passwd.toStdString().c_str()) != SHOUTERR_SUCCESS) {
+        throw OggFwdException(QString("Error setting password: ")+shout_get_error(shout));
+    }
 
-//volatile sig_atomic_t	print_total = 0;
-//volatile sig_atomic_t	quit = 0;
+    if (shout_set_mount(shout, cfg.mount.toStdString().c_str()) != SHOUTERR_SUCCESS) {
+        throw OggFwdException(QString("Error setting mount:") + shout_get_error(shout));
+    }
 
-//#define BUFFERSIZE	4096
-
-//#if defined(__dead)
-//__dead void
-//#else
-//void
-//#endif /* __dead */
-//usage(void)
-//{
-//    printf("usage: %s "
-//           "[-hp] "
-//           "[-d description] "
-//           "[-g genre] "
-//           "[-n name] "
-//           "[-u URL]\n"
-//           "              address port password mountpoint\n",
-//           __progname);
-//    exit(1);
-//}
-
-//void
-//sig_handler(int sig)
-//{
-//    switch (sig) {
-//    case SIGHUP:
-//        print_total = 1;
-//        break;
-//    case SIGTERM:
-//    case SIGINT:
-//        quit = 1;
-//        break;
-//    default:
-//        /* ignore */
-//        break;
-//    }
-//}
-
-//void
-//set_argument_string(char **param, char *opt, char optname)
-//{
-//    size_t siz;
-
-//    if (*param) {
-//        fprintf(stderr, "%s: Parameter -%c given multiple times\n",
-//            __progname, optname);
-//        usage();
-//    }
-
-//    siz = strlen(opt) + 1;
-//    if (siz >= MAXPATHLEN) {
-//        fprintf(stderr, "%s: Argument for parameter -%c too long\n",
-//            __progname, optname);
-//        exit(1);
-//    }
-
-//    if ((*param = static_cast<char*>(malloc(siz))) == NULL) {
-//        fprintf(stderr, "%s: %s\n", __progname, strerror(errno));
-//        exit(1);
-//    }
-
-//    snprintf(*param, siz, "%s", opt);
-//}
-
-//int
-//main_(int argc, char **argv)
-//{
-//    shout_t        *shout;
-//    unsigned char	buff[BUFFERSIZE];
-//    int		ret, ch;
-//    unsigned int	pFlag;
-//    char	       *description, *genre, *name, *url;
-//    size_t		bytes_read;
-//    unsigned short	port;
-//    unsigned long long total;
-
-//    pFlag = 0;
-//    description = genre = name = url = NULL;
-//    while ((ch = getopt(argc, argv, "d:g:hn:pu:")) != -1) {
-//        switch (ch) {
-//        case 'd':
-//            set_argument_string(&description, optarg, 'D');
-//            break;
-//        case 'g':
-//            set_argument_string(&genre, optarg, 'g');
-//            break;
-//        case 'n':
-//            set_argument_string(&name, optarg, 'n');
-//            break;
-//        case 'p':
-//            pFlag = 1;
-//            break;
-//        case 'u':
-//            set_argument_string(&url, optarg, 'u');
-//            break;
-//        case 'h':
-//        default:
-//            usage();
-//        }
-//    }
-//    argc -= optind;
-//    argv += optind;
-
-//    if (argc != 4) {
-//        fprintf(stderr, "%s: Wrong number of arguments\n", __progname);
-//        usage();
-//    }
-
-//    if ((shout = shout_new()) == NULL) {
-//        fprintf(stderr, "%s: Could not allocate shout_t\n",
-//            __progname);
-//        return (1);
-//    }
-
-//    if (shout_set_host(shout, argv[0]) != SHOUTERR_SUCCESS) {
-//        fprintf(stderr, "%s: Error setting hostname: %s\n", __progname,
-//            shout_get_error(shout));
-//        return (1);
-//    }
-
-//    if (sscanf(argv[1], "%hu", &port) != 1) {
-//        fprintf(stderr, "Invalid port `%s'\n", argv[1]);
-//        usage();
-//    }
-//    if (shout_set_port(shout, port) != SHOUTERR_SUCCESS) {
-//        fprintf(stderr, "%s: Error setting port: %s\n", __progname,
-//            shout_get_error(shout));
-//        return (1);
-//    }
-
-//    if (shout_set_password(shout, argv[2]) != SHOUTERR_SUCCESS) {
-//        fprintf(stderr, "%s: Error setting password: %s\n", __progname,
-//            shout_get_error(shout));
-//        return (1);
-//    }
-
-//    if (shout_set_mount(shout, argv[3]) != SHOUTERR_SUCCESS) {
-//        fprintf(stderr, "%s: Error setting mount: %s\n", __progname,
-//            shout_get_error(shout));
-//        return 1;
-//    }
-
-//    shout_set_format(shout, SHOUT_FORMAT_VORBIS);
-
-//    shout_set_public(shout, pFlag);
-
-//    if (description)
-//        shout_set_description(shout, description);
-
-//    if (genre)
-//        shout_set_genre(shout, genre);
-
-//    if (name)
-//        shout_set_name(shout, name);
-
-//    if (url)
-//        shout_set_url(shout, url);
-
-//    if (shout_open(shout) == SHOUTERR_SUCCESS) {
-//        printf("%s: Connected to server\n", __progname);
-//        total = 0;
-
-//        signal(SIGHUP, sig_handler);
-//        signal(SIGTERM, sig_handler);
-//        signal(SIGINT, sig_handler);
-
-//        while (quit == 0) {
-//            bytes_read = fread(buff, 1, sizeof(buff), stdin);
-//            total += bytes_read;
-
-//            if (bytes_read > 0) {
-//                ret = shout_send(shout, buff, bytes_read);
-//                if (ret != SHOUTERR_SUCCESS) {
-//                    printf("%s: Send error: %s\n",
-//                           __progname,
-//                           shout_get_error(shout));
-//                    quit = 1;
-//                }
-//            } else
-//                quit = 1;
-
-//            if (quit) {
-//                printf("%s: Quitting ...\n", __progname);
-//                print_total = 1;
-//            }
-
-//            if (print_total) {
-//                printf("%s: Total bytes read: %llu\n",
-//                       __progname, total);
-//                print_total = 0;
-//            }
-
-//            shout_sync(shout);
-//        }
-//    } else {
-//        fprintf(stderr, "%s: Error connecting: %s\n", __progname,
-//               shout_get_error(shout));
-//        return 1;
-//    }
-
-//    shout_close(shout);
-
-//    return (0);
-//}
+    shout_set_format(shout, SHOUT_FORMAT_VORBIS);
+    unsigned int pFlag = 1;
+    shout_set_public(shout, pFlag);
 
 
+    if (cfg.description.size())
+        shout_set_description(shout, cfg.description.toStdString().c_str());
 
-OggFwd::OggFwd() {
+    if (cfg.genre.size())
+        shout_set_genre(shout, cfg.genre.toStdString().c_str());
 
+    if (cfg.name.size())
+        shout_set_name(shout, cfg.name.toStdString().c_str());
+
+    if (cfg.url.size())
+        shout_set_url(shout, cfg.url.toStdString().c_str());
+
+    if (cfg.user.size() && !shout_set_user(shout, cfg.user.toStdString().c_str()) != SHOUTERR_SUCCESS) {
+        throw OggFwdException("Error setting user: "+cfg.user+ " " +shout_get_error(shout));
+    }
+
+    int err = shout_open(shout);
+    if (err == SHOUTERR_SUCCESS) {
+        qDebug() << "Connected to server";
+    } else {
+        throw OggFwdException(QString("Cannot connect ")+shout_get_error(shout) + " " +QString::number(err));
+    }
+
+    int major, minor, patch;
+    const char * s = shout_version(&major, &minor, &patch);
+    qDebug() << "Connected to icecast " << s;
+    open(WriteOnly);
 }
 
-int OggFwd::writeBytes(const char * buf, int length) {
-
-}
 
 ProcessOggFwd::ProcessOggFwd() {
-
 }
 
 
-int ProcessOggFwd::writeBytes(const char * buf, int length) {
+qint64 OggFwd::readData(char *data, qint64 maxlen)  {
+    return -1;
+}
 
+
+qint64 OggFwd::writeData(const char *data, qint64 len) {
+    m_total += len;
+    int ret = shout_send(shout, reinterpret_cast<const unsigned char*>(data), len);
+    if (ret != SHOUTERR_SUCCESS) {
+        qDebug() << "Send error" << shout_get_error(shout);
+        //        quit = 1;
+    }
+
+    auto sync = false;
+    if (sync)
+        shout_sync(shout);
+    return len;
+}
+
+OggFwd::~OggFwd() {
+    shout_close(shout);
+    shout_free(shout);
+}
+
+
+
+OggFwd::OggFwdException::OggFwdException(const QString &msg) : m_msg(msg.toStdString()){
+}
+
+
+void OggFwd::setMetadata(const Metadata &metadata) {
+
+    /* Sets MP3 metadata.
+ * Returns:
+ *   SHOUTERR_SUCCESS
+ *   SHOUTERR_UNSUPPORTED if format isn't MP3
+ *   SHOUTERR_MALLOC
+ *   SHOUTERR_INSANE
+ *   SHOUTERR_NOCONNECT
+ *   SHOUTERR_SOCKET
+ */
+    int ret = shout_set_metadata(shout, metadata.self);
+    if (ret != SHOUTERR_SUCCESS)
+        qDebug() << "error setting metadata";
+
+}
+
+OggFwd::Metadata::Metadata() : self(shout_metadata_new()) {
+}
+
+OggFwd::Metadata::~Metadata() {
+    shout_metadata_free(self);
+}
+
+
+
+void OggFwd::Metadata::add(const QString &key, const QString &value) {
+    if (shout_metadata_add(self, key.toStdString().c_str(),
+                       value.toStdString().c_str()) != SHOUTERR_SUCCESS) {
+        qWarning() << "error in shout_metadata_add";
+    }
 }
