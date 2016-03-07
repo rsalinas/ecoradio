@@ -22,7 +22,7 @@ public:
         Q_DISABLE_COPY(Metadata)
         friend class OggFwd;
     private:
-        struct _util_dict * const self;
+        struct _util_dict * const self = nullptr;
     };
 
     struct Config

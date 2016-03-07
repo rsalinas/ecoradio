@@ -18,12 +18,13 @@
 
 //https://www.xiph.org/vorbis/doc/v-comment.html
 
-TEST(OggEncTest, OggEncTest)
+TEST(OggEncTest, DISABLED_OggEncTest)
 {
     std::unique_ptr<QFile> file(new QFile("salida.ogg"));
     ASSERT_TRUE(file->open(QFile::WriteOnly));
     OggEncoder encoder(std::move(file));
-    Mpg123 decoder("beep.mp3");
+    Mpg123 decoder("test.mp3");
+
     while (true) {
         char buffer[4096];
         int n = decoder.readPcm(buffer, sizeof(buffer));
@@ -34,6 +35,38 @@ TEST(OggEncTest, OggEncTest)
 
     qDebug() << "Finished writing";
 }
+
+TEST(OggEncTest, DISABLED_OggEncSendTest)
+{
+    OggFwd::Config fwdConfig;
+    fwdConfig.hostName = "vps66370.ovh.net";
+    fwdConfig.port = 8000;
+    fwdConfig.mount = "/tests.ogg";
+    fwdConfig.passwd = "ecoradio";
+
+    std::unique_ptr<OggFwd> output(new OggFwd(fwdConfig));
+    ASSERT_TRUE(output->open(QFile::WriteOnly));
+    OggFwd::Metadata metadata;
+    metadata.add("ARTIST", "Artist");
+    metadata.add("TITLE", "Title");
+    output->setMetadata(metadata);
+    OggEncoder encoder(std::move(output));
+    Mpg123 decoder("test.mp3");
+
+
+
+    while (true) {
+        char buffer[4096];
+        int n = decoder.readPcm(buffer, sizeof(buffer));
+        if (n <= 0)
+            break;
+        encoder.writePcm(buffer, n);
+    }
+
+
+    qDebug() << "Finished writing";
+}
+
 
 
 TEST(OggFwdTest, DISABLED_OggFwdTest)
@@ -150,7 +183,7 @@ void silenceFinished() {
     qDebug() << __FUNCTION__;
 }
 
-TEST_F(PlayerFixture, DISABLED_ArecordPlayerThread ){
+TEST_F(PlayerFixture, ArecordPlayerThread ){
     try {
         SndSink::Format format;
         PcmPlayer player(format);
@@ -160,7 +193,18 @@ TEST_F(PlayerFixture, DISABLED_ArecordPlayerThread ){
         fwdConfig.port = 8000;
         fwdConfig.mount = "/tests.ogg";
         fwdConfig.passwd = "ecoradio";
-        player.addSink(std::make_shared<OggEncoder>(std::unique_ptr<OggFwd>(new OggFwd(fwdConfig))));
+
+        std::unique_ptr<OggFwd> output(new OggFwd(fwdConfig));
+        OggFwd::Metadata metadata;
+        metadata.add("ARTIST", "Artist");
+        metadata.add("TITLE", "Title");
+        output->setMetadata(metadata);
+        qDebug() << "casi";
+        auto encoder = std::make_shared<OggEncoder>(std::move(output));
+
+
+        player.addSink(encoder);
+
 
         QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
         QObject::connect(&player, SIGNAL(silenceFinished()), &sl, SLOT(silenceFinished()));

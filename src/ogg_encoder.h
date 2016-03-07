@@ -15,7 +15,8 @@ public:
     ~OggEncoder();
 
     bool writePcm(char * buffer, int length) override;
-
+    class OggEncoderException : public std::exception {
+    };
 private:
     int commit();
 

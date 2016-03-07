@@ -1,17 +1,18 @@
 #include "ogg_encoder.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string.h>
 #include <time.h>
 #include <math.h>
-
-
-
-
+#include <QDebug>
 
 OggEncoder::OggEncoder(std::unique_ptr<QIODevice> output) :
     m_output(std::move(output)) {
+    if (!m_output) {
+        qWarning() << "null output given";
+        throw OggEncoderException();
+    }
     vorbis_info_init(&vi);
 
     /* choose an encoding mode.  A few possibilities commented out, one
@@ -151,11 +152,8 @@ bool OggEncoder::writePcm(char * readbuffer, int length) {
 }
 
 OggEncoder::~OggEncoder() {
-
     vorbis_analysis_wrote(&vd,0);
     commit();
-
-
 
     ogg_stream_clear(&os);
     vorbis_block_clear(&vb);
