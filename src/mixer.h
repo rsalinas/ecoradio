@@ -16,7 +16,7 @@
 class SoundSource;
 class PlayingThread;
 
-class PcmPlayer : public QThread
+class Mixer : public QThread
 {
     Q_OBJECT
 public:
@@ -25,8 +25,8 @@ public:
 
     };
 
-    PcmPlayer(const SndSink::Format &format = SndSink::Format() /*FIXME*/);
-    virtual ~PcmPlayer();
+    Mixer(const SndSink::Format &format = SndSink::Format() /*FIXME*/);
+    virtual ~Mixer();
 
     int addSource(std::shared_ptr<SoundSource> s);
     int addSink(std::shared_ptr<SndSink> s);

@@ -4,7 +4,7 @@
 #include "soundsource.h"
 #include "file_scan.h"
 #include "soundsource.h"
-#include "pcm_player.h"
+#include "mixer.h"
 
 #include <QMap>
 #include <QTextStream>
@@ -23,7 +23,7 @@ static const QString indexFile = "/tmp/all";
 TEST(MixerTest, SimplePlayer) {
     Traverse t(repositoryDir.absolutePath() , vistosFile , indexFile);
     t.rescan();
-    PcmPlayer player;
+    Mixer player;
 
     while (true) {
         std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));

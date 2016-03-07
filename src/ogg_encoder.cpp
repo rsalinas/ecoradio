@@ -1,11 +1,7 @@
 #include "ogg_encoder.h"
 
-#include <cstdio>
-#include <cstdlib>
-#include <string.h>
-#include <time.h>
-#include <math.h>
 #include <QDebug>
+#include <QIODevice>
 
 OggEncoder::OggEncoder(std::unique_ptr<QIODevice> output) :
     m_output(std::move(output)) {
@@ -44,7 +40,7 @@ OggEncoder::OggEncoder(std::unique_ptr<QIODevice> output) :
 
      *********************************************************************/
 
-    ret=vorbis_encode_init_vbr(&vi,2,44100,0.1);
+    auto ret = vorbis_encode_init_vbr(&vi,2,44100,0.1);
 
     /* do not continue if setup failed; this can happen if we ask for a
        mode that libVorbis does not support (eg, too low a bitrate, etc,
@@ -55,6 +51,8 @@ OggEncoder::OggEncoder(std::unique_ptr<QIODevice> output) :
     /* add a comment */
     vorbis_comment_init(&vc);
     vorbis_comment_add_tag(&vc,"ENCODER","encoder_example.c");
+    vorbis_comment_add_tag(&vc, "ARTIST", "Artist"); //FIXME
+
 
     /* set up the analysis state and auxiliary encoding storage */
     vorbis_analysis_init(&vd,&vi);
@@ -137,6 +135,7 @@ bool OggEncoder::writePcm(char * readbuffer, int length) {
     float **buffer=vorbis_analysis_buffer(&vd,length);
 
     /* uninterleave samples */
+    int i;
     for(i=0;i<length/4;i++){
         buffer[0][i]=((readbuffer[i*4+1]<<8)|
                 (0x00ff&(int)readbuffer[i*4]))/32768.f;

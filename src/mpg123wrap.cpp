@@ -40,7 +40,7 @@ Mpg123::Mpg123(const QString &file) : SoundSource(file)
     qDebug() << "open";
     long rate = 0;
 
-    if(    mpg123_open(mh, file.toStdString().c_str()) != MPG123_OK
+    if (mpg123_open(mh, file.toStdString().c_str()) != MPG123_OK
            /* Peek into track and get first output format. */
            || mpg123_getformat(mh, &rate, &channels, &encoding) != MPG123_OK )
     {
@@ -73,24 +73,16 @@ int Mpg123::readPcm(char *buf, const size_t length)
         return -1;
     }
     size_t done = 0;
-    int  err = mpg123_read( mh, reinterpret_cast<unsigned char*>(buf), length, &done );
-    /* We are not in feeder mode, so MPG123_OK, MPG123_ERR and MPG123_NEW_FORMAT are the only possibilities.
-           We do not handle a new format, MPG123_DONE is the end... so abort on anything not MPG123_OK. */
-    /*} */
-    //    while (err==MPG123_OK);
-
-    //    if(err != MPG123_DONE)
-    //        fprintf( stderr, "Warning: Decoding ended prematurely because: %s\n",
-    //                 err == MPG123_ERR ? mpg123_strerror(mh) : mpg123_plain_strerror(err) );
+    int  err = mpg123_read( mh, reinterpret_cast<unsigned char*>(buf), length, &done);
     switch (err) {
     case MPG123_OK:
         return done;
     case MPG123_DONE:
-        qDebug() << "MPG123_DONE" << done;
+        qDebug() << "MPG123_DONE" << done << mpg123_plain_strerror(err);
         close();
         return done;
     case MPG123_ERR:
-        qDebug() << "MPG123_ERR" << done;
+        qDebug() << "MPG123_ERR" << done <<  mpg123_strerror(mh)  ;
         close();
     default:
         return -1;

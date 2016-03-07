@@ -2,7 +2,7 @@
 
 #include "aosink.h"
 #include "soundsource.h"
-#include "pcm_player.h"
+#include "mixer.h"
 #include "alsarec.h"
 #include <QBitArray>
 #include <QCoreApplication>
@@ -103,7 +103,7 @@ TEST (DecoderTest, DISABLED_Decoder0) {
     Mp3Decoder d("test.mp3");
     SinWave swg(440.0);
     SinWave swg2(340.0);
-    PcmPlayer player;
+    Mixer player;
     char buffer[player.buf_size];
     char buffer2[player.buf_size];
     size_t n = swg.readPcm(buffer, sizeof(buffer));
@@ -114,13 +114,13 @@ TEST (DecoderTest, DISABLED_Decoder0) {
 
 TEST (DecoderTest, DISABLED_Mp3) {
     Mp3Decoder d("beep.mp3");
-    PcmPlayer player;
+    Mixer player;
     SinWave swg2(440.0);
 }
 
 
 TEST(PlayerThread, DISABLED_PlayerThread ){
-    PcmPlayer player;
+    Mixer player;
     std::shared_ptr<SoundSource> sin = std::make_shared<SinWave>(440.0);
     sin->setFadeIn(1000);
     player.addSource(sin);
@@ -143,7 +143,7 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
 
 
 TEST(PlayerThread, DISABLED_RecordPlayerThread ){
-    PcmPlayer player;
+    Mixer player;
     std::shared_ptr<SoundSource> line= std::make_shared<AlsaRec>("default");
     line->setFadeIn(1000);   //empezará con un fundido
     player.addSource(line);
@@ -186,7 +186,7 @@ void silenceFinished() {
 TEST_F(PlayerFixture, ArecordPlayerThread ){
     try {
         SndSink::Format format;
-        PcmPlayer player(format);
+        Mixer player(format);
         player.addSink(std::make_shared<AoSink>(format));
         OggFwd::Config fwdConfig;
         fwdConfig.hostName = "vps66370.ovh.net";
@@ -208,11 +208,13 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
 
         QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
         QObject::connect(&player, SIGNAL(silenceFinished()), &sl, SLOT(silenceFinished()));
-        QObject::connect(&player, (&PcmPlayer::silenceStarted), silenceStarted);
-        QObject::connect(&player, (&PcmPlayer::silenceFinished), silenceFinished);
+        QObject::connect(&player, (&Mixer::silenceStarted), silenceStarted);
+        QObject::connect(&player, (&Mixer::silenceFinished), silenceFinished);
 
         std::shared_ptr<SoundSource> line;
-        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+//        auto srcMetadata = mp3->getMetadata();
         std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
         //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");

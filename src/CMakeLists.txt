@@ -5,7 +5,7 @@ find_package(Qt5Widgets REQUIRED)
 #add_subdirectory(sources)
 
 add_library(ecoradio SHARED scheduler.cpp soundsource.cpp ogg_encoder.cpp
-    pcm_player.cpp file_scan.cpp alsarec.cpp oggfwd.cpp mpg123wrap.cpp util.cpp sink.h aosink.cpp)
+    mixer.cpp file_scan.cpp alsarec.cpp oggfwd.cpp mpg123wrap.cpp util.cpp sink.h aosink.cpp)
 
 add_executable(main main.cpp)
 

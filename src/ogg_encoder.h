@@ -1,11 +1,12 @@
 #pragma once
 
-
 #include <sink.h>
 #include <memory>
-#include <QIODevice>
+
 
 #include <vorbis/vorbisenc.h>
+
+class QIODevice;
 
 
 class OggEncoder : public SndSink
@@ -32,8 +33,7 @@ private:
     vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
     vorbis_block     vb; /* local working space for packet->PCM decode */
 
-    int eos=0,ret;
-    int i, founddata;
+    int eos=0;
 
     std::unique_ptr<QIODevice> m_output;
 };

@@ -1,4 +1,6 @@
-#include "pcm_player.h"
+#include "mixer.h"
+
+
 #include <cstring>
 #include <QDebug>
 #include <climits>
@@ -8,13 +10,13 @@
 #include "soundsource.h"
 
 
-PcmPlayer::PcmPlayer(const SndSink::Format &format) :
+Mixer::Mixer(const SndSink::Format &format) :
     m_format(format), buf_size(format.bufferSize)
 {
     start();
 }
 
-void PcmPlayer::run() {
+void Mixer::run() {
     char zeros[buf_size];
     char buffer[buf_size];
     char newBuffer[buf_size];
@@ -93,7 +95,7 @@ void PcmPlayer::run() {
     qDebug() << __FUNCTION__ << "finished";
 }
 
-void PcmPlayer::waitEnd() {
+void Mixer::waitEnd() {
     QMutexLocker lock(&mutex);
     while (m_sources.size()) {
         qDebug() << "Waiting for finish. Sources: " << m_sources.size();
@@ -101,17 +103,17 @@ void PcmPlayer::waitEnd() {
     }
 }
 
-int PcmPlayer::addSource(std::shared_ptr<SoundSource> source) {
+int Mixer::addSource(std::shared_ptr<SoundSource> source) {
     QMutexLocker lock(&mutex);
     m_sources.push_back(source);
 }
 
-int PcmPlayer::addSink(std::shared_ptr<SndSink> sink) {
+int Mixer::addSink(std::shared_ptr<SndSink> sink) {
     QMutexLocker lock(&mutex);
     m_sinks.push_back(sink);
 }
 
-PcmPlayer::~PcmPlayer() {
+Mixer::~Mixer() {
     mutex.lock();
     abort = true;
     condition.wakeAll();
