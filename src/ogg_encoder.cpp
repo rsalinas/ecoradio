@@ -89,8 +89,9 @@ OggEncoder::OggEncoder(std::unique_ptr<QIODevice> output) :
         while(!eos){
             int result=ogg_stream_flush(&os,&og);
             if(result==0)break;
-            fwrite(og.header,1,og.header_len,stdout);
-            fwrite(og.body,1,og.body_len,stdout);
+            m_output->write(reinterpret_cast<const char*>(og.header), og.header_len);
+            m_output->write(reinterpret_cast<const char*>(og.body), og.body_len);
+
         }
 
     }
@@ -117,8 +118,8 @@ int OggEncoder::commit()
             while(!eos){
                 int result=ogg_stream_pageout(&os,&og);
                 if(result==0)break;
-                fwrite(og.header,1,og.header_len,stdout);
-                fwrite(og.body,1,og.body_len,stdout);
+                m_output->write(reinterpret_cast<const char*>(og.header), og.header_len);
+                m_output->write(reinterpret_cast<const char*>(og.body), og.body_len);
 
                 /* this could be set above, but for illustrative purposes, I do
              it here (to show that vorbis does know where the stream ends) */
@@ -131,27 +132,28 @@ int OggEncoder::commit()
 }
 
 bool OggEncoder::writePcm(char * readbuffer, int length) {
-        /* expose the buffer to submit data */
-        float **buffer=vorbis_analysis_buffer(&vd,length);
+    /* expose the buffer to submit data */
+    float **buffer=vorbis_analysis_buffer(&vd,length);
 
-        /* uninterleave samples */
-        for(i=0;i<length/4;i++){
-            buffer[0][i]=((readbuffer[i*4+1]<<8)|
-                    (0x00ff&(int)readbuffer[i*4]))/32768.f;
-            buffer[1][i]=((readbuffer[i*4+3]<<8)|
-                    (0x00ff&(int)readbuffer[i*4+2]))/32768.f;
-        }
+    /* uninterleave samples */
+    for(i=0;i<length/4;i++){
+        buffer[0][i]=((readbuffer[i*4+1]<<8)|
+                (0x00ff&(int)readbuffer[i*4]))/32768.f;
+        buffer[1][i]=((readbuffer[i*4+3]<<8)|
+                (0x00ff&(int)readbuffer[i*4+2]))/32768.f;
+    }
 
-        /* tell the library how much we actually submitted */
-        vorbis_analysis_wrote(&vd,i);
+    /* tell the library how much we actually submitted */
+    vorbis_analysis_wrote(&vd,i);
 
-commit();
+    commit();
+    return true;
 }
 
 OggEncoder::~OggEncoder() {
 
-            vorbis_analysis_wrote(&vd,0);
-            commit();
+    vorbis_analysis_wrote(&vd,0);
+    commit();
 
 
 

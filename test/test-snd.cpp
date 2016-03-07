@@ -18,7 +18,25 @@
 
 //https://www.xiph.org/vorbis/doc/v-comment.html
 
-TEST(OggFwdTest, OggFwdTest)
+TEST(OggEncTest, OggEncTest)
+{
+    std::unique_ptr<QFile> file(new QFile("salida.ogg"));
+    ASSERT_TRUE(file->open(QFile::WriteOnly));
+    OggEncoder encoder(std::move(file));
+    Mpg123 decoder("beep.mp3");
+    while (true) {
+        char buffer[4096];
+        int n = decoder.readPcm(buffer, sizeof(buffer));
+        if (n <= 0)
+            break;
+        encoder.writePcm(buffer, n);
+    }
+
+    qDebug() << "Finished writing";
+}
+
+
+TEST(OggFwdTest, DISABLED_OggFwdTest)
 {
     OggFwd::Config fwdConfig;
     fwdConfig.hostName = "vps66370.ovh.net";
