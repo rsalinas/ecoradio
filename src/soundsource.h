@@ -58,11 +58,7 @@ public:
         return m_name;
     }
 
-    void close() {
-        QMutexLocker lock(&m_mutex);
-        m_closed = true;
-        m_cv.wakeAll();
-    }
+    void close();
 
     unsigned char m_mastervolume = 255;
     size_t m_bytes = 0;

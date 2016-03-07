@@ -2,14 +2,14 @@
 #include <QtSql/QtSql>
 #include <QObject>
 #include "scheduler.h"
-#include "pcm_player.h"
+#include "mixer.h"
 
 class Ecoradio : public QObject
 {
 public:
     Ecoradio();
     ~Ecoradio();
-    PcmPlayer m_mixer;
+    Mixer m_mixer;
     Scheduler m_sched;
 };
 

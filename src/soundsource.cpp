@@ -5,13 +5,11 @@
 
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {
-    qDebug() << __FUNCTION__;
 }
 
 
 SoundSource::~SoundSource()
 {
-    qDebug() << __FUNCTION__;
 }
 
 
@@ -27,11 +25,9 @@ int SoundSource::readFading(char * buf, const size_t length)  {
         size_t here = m_bytes + i*2;
         if (here >= fadingEndBytes) {
             if (m_fading == 1 ){
-                qDebug() << "Finished fading";
                 m_fading = 0;
                 volume = 1;
             } else if (m_fading == -1 ){
-                qDebug() << "finishing fading down";
                 m_fading = 0;
                 volume = 0;
                 close();
@@ -50,7 +46,7 @@ int SoundSource::readFading(char * buf, const size_t length)  {
 
         b[i] = volume*b[i];
     }
-//    qDebug() << m_bytes << "volume " << volume << fadingEndBytes;
+    //    qDebug() << m_bytes << "volume " << volume << fadingEndBytes;
     m_bytes += n;
     return n;
 }
@@ -82,7 +78,7 @@ int SinWave::readPcm(char * buffer, const size_t length) {
 
 
 ThreadingDecoder::ThreadingDecoder(std::unique_ptr<SoundSource> base, size_t buffers) :
-       SoundSource("threaded "+ base->name()), m_base(std::move(base)), buffers(buffers) {
+    SoundSource("threaded "+ base->name()), m_base(std::move(base)), buffers(buffers) {
 
 }
 
@@ -101,4 +97,17 @@ int ThreadingDecoder::readPcm(char * buffer, const size_t length) {
     if (m_closed)
         return -1;
     return m_base->readPcm(buffer, length);
+}
+
+
+void SoundSource::close() {
+    bool wasClosed;
+    {
+        QMutexLocker lock(&m_mutex);
+        wasClosed = m_closed;
+        m_closed = true;
+        m_cv.wakeAll();
+    }
+    if (!wasClosed)
+        emit finished();
 }
