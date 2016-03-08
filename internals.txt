@@ -1,0 +1,165 @@
+
+
+class Main {
+public:
+    Main() {
+        currentProgram = scheduler.getCurrent();
+        nextProgram = scheduler.getNext();
+        play(current);
+        
+    }
+        void run() {
+        }
+    Mixer mixer;
+    Program *currentProgram;
+    Program *nextProgram;
+
+    Program * getCurrentProgram(int &);
+    int goLive();
+    int takeControl();
+    
+
+
+signals:
+public slots:
+    void songEnding()  {
+        currentProgram = scheduler.getCurrent();
+        nextProgram = scheduler.getNext();
+
+    }
+};
+
+
+class Program
+ {
+ public playOne() {
+ }
+
+ public playAll() {
+ }
+};
+
+
+Las cuñas sólo se intercalan entre canciones. No interrumpen programas.
+Si un programa termina tarde, el programa siguiente empieza desde el principio.
+Cuando se hace un directo, el programa actual se actualiza y se guarda. Al terminar se inicia el programa actual.
+Problema, si terminas pronto empezaría tu programa de la semana pasada.
+
+
+Consola:
+
+ - Botón "Empezar a su hora" (con cuentra atrás)
+ - Botón "Empezar ahora"
+
+Poner cuña: la pone el servidor. ?
+
+Usar speaker PC (con altavoz externo?). 
+
+
+
+ Canciones baja prioridad: siempre hay algo para sonar, a todas horas.
+
+ python o javascript para controlar la programación?
+
+
+class ConsoleCtx {
+    getlistofprograms()
+    
+slot:
+    next
+    pause
+    resume
+    startLive
+    endLive
+    startProgram(program_id)
+
+
+signal:
+        songfinished
+        programfinished
+        
+
+    list of next programs
+    
+};
+
+client->server
+
+play
+stop
+pause
+resume
+startLive
+endLive
+startProgram id
+
+server->client
+
+playing
+stopped
+paused
+resumed
+live 1|0
+programlist jsonList
+
+ var jsonObject = JSON.parse(xhr.responseText); @
+
+
+console states:
+disconnected, auto, live
+
+
+
+Alarms:
+
+- low disk. alive. 
+- icecast down. alive. 
+- program too old. 
+- error playing podcast
+- disk error reading mp3
+- repository missing
+
+
+
+python scheduler
+
+vector<source> active. //reset when scheduler disconnects
+
+> open file.mp3
+< 0
+> open file2.mp3
+< 1
+> play 1
+< OK
+> stopfade 1 1000
+< OK
+< almostfinished 1
+< finished 1
+> close 1
+> open http://x/x.mp3
+> 
+
+class Program {
+public:
+    list of weeklytime : replays;
+};
+
+class LiveProgram : public Program {
+public:
+    weeklytime live ;    
+}
+
+Program: live, podcast, streaming, song folder
+
+ecoradio --add-program Radiociencia --add-time 1.15:00,2.15:00
+ecoradio -l
+ecoradio -r Radiociencia
+
+ecoradio --add-podcast "Mujeres por el mundo" --url x.xml --add-time 3.15:00,4.15:00
+ecoradio --add-stream  "Valencianos por el mundo" --url http://xxx.mp3 --add-time 3.15:00,4.15:00
+
+create table program(id int, type id, name string, path string);
+create table program_time(id int, program_id int, dow int, ts timestamp, live bool);
+create table program_instance(id int, program_id int, ts datetime, int program_number);
+
+ 

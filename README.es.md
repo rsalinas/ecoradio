@@ -9,7 +9,8 @@ ecoradio
  * Gestión automática en la grabación de programas y sus reposiciones. 
  * La mesa de mezclas está apagada mientras no se hacen programas en directo. 
     * En el momento de pasar el control a la mesa y de retomarlo, el PC hace un fundido. 
-    * Una simple aplicación de escritorio permite hacer este cambio.  
+    * Una simple aplicación de escritorio permite hacer este cambio.
+ * Generación automática de la parrilla en HTML
 
 
 = Módulos =
@@ -26,3 +27,16 @@ Reproductor para el transmisor
 Aplicación Android para la reproducción
 
 
+
+
+= Configuración =
+
+* Instalar el paquete .deb en el servidor.
+    Configurar:
+     * Configuración del icecast para la subida del sonido
+     * Configuración de los repositorios de música
+     
+* Instalar el paquete de la consola en el ordenador de los directos.
+   * Indicar la IP del servidor (mejor tenerla fija o usar el hostname)
+   
+  
