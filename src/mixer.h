@@ -25,7 +25,7 @@ public:
 
     };
 
-    Mixer(const SndSink::Format &format = SndSink::Format() /*FIXME*/);
+    Mixer(const SndFormat &format = SndFormat() /*FIXME*/);
     virtual ~Mixer();
 
     int addSource(std::shared_ptr<SoundSource> s);
@@ -38,7 +38,7 @@ public:
     const int buf_size;
 
 private:
-    const SndSink::Format m_format;
+    const SndFormat m_format;
     std::list<std::shared_ptr<SndSink>> m_sinks;
     std::list<std::shared_ptr<SoundSource>> m_sources;
 

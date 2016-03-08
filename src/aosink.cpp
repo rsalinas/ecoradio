@@ -4,7 +4,7 @@
 
 #include <QDebug>
 
-AoSink::AoSink(const Format &format)
+AoSink::AoSink(const SndFormat &format)
 {
     ao_initialize();
     /* -- Setup for default driver -- */

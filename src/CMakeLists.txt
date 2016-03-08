@@ -19,6 +19,7 @@ add_library(ecoradio SHARED scheduler.cpp
     alarm.cpp
     websockserver.cpp
     ecoradio.cpp
+    format.h
      )
 
 add_executable(main main.cpp)

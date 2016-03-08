@@ -185,7 +185,7 @@ void silenceFinished() {
 
 TEST_F(PlayerFixture, ArecordPlayerThread ){
     try {
-        SndSink::Format format;
+        SndFormat format;
         Mixer player(format);
         player.addSink(std::make_shared<AoSink>(format));
         OggFwd::Config fwdConfig;

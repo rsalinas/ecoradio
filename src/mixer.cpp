@@ -10,7 +10,7 @@
 #include "soundsource.h"
 
 
-Mixer::Mixer(const SndSink::Format &format) :
+Mixer::Mixer(const SndFormat &format) :
     m_format(format), buf_size(format.bufferSize)
 {
     start();

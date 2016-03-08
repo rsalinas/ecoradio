@@ -11,7 +11,7 @@ public:
     class AoSinkException : public std::exception
     {
     };
-    AoSink(const Format &m_format);
+    AoSink(const SndFormat &m_format);
     ~AoSink();
     bool writePcm(char *buffer, int length) override;
 

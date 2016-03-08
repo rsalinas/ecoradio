@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include "util.h"
 
+
 AlsaRec::AlsaRec(const QString &deviceName) : SoundSource(__FUNCTION__)
 {
     unsigned int rate = 44100;
