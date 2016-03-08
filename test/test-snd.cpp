@@ -212,8 +212,8 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         QObject::connect(&player, (&Mixer::silenceFinished), silenceFinished);
 
         std::shared_ptr<SoundSource> line;
-//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
-        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
 //        auto srcMetadata = mp3->getMetadata();
         std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);

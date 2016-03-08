@@ -1,9 +1,8 @@
 #include "mpg123wrap.h"
 
-#include <cstdio>
 #include <QDebug>
 
-#include <mpg123.h>
+#include <cstdio>
 
 
 Mpg123::Mpg123(const QString &file) : SoundSource(file)
@@ -94,4 +93,20 @@ Mpg123::~Mpg123() {
     mpg123_close(mh);
     mpg123_delete(mh);
     mpg123_exit();
+}
+
+int lengthMillis();
+int currentMillis();
+
+int Mpg123::currentMillis() {
+    return mpg123_tell(mh) * 1000 / 44100.0; //FIXME
+}
+
+int Mpg123::lengthMillis() {
+    return mpg123_length(mh) *1000 / 44100; //FIXME
+}
+
+
+int Mpg123::goTo(int millis) {
+    mpg123_seek(mh, 44100*millis / 1000, 0);
 }

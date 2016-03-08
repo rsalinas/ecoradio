@@ -1,24 +1,18 @@
 #include <QCoreApplication>
-#include <QtSql/QtSql>
-#include <QObject>
-#include "scheduler.h"
-#include "mixer.h"
-
-class Ecoradio : public QObject
-{
-public:
-    Ecoradio();
-    ~Ecoradio();
-    Mixer m_mixer;
-    Scheduler m_sched;
-};
-
+#include "ecoradio.h"
+#include <QTimer>
 
 int main(int argc, char *argv[])
-{
-    qDebug() << "ecoradio";
-    QCoreApplication a(argc, argv);
+{    
+    QCoreApplication app(argc, argv);
+    Ecoradio * ecoradio = new Ecoradio(&app);
 
-    return a.exec();
+    // This will cause the application to exit when
+    // the task signals finished.
+    QObject::connect(ecoradio, SIGNAL(finished()), &app, SLOT(quit()));
+
+    // This will run the task from the application event loop.
+    QTimer::singleShot(0, ecoradio, SLOT(run()));
+
+    return app.exec();
 }
-

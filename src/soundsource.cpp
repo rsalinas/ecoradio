@@ -111,3 +111,34 @@ void SoundSource::close() {
     if (!wasClosed)
         emit finished();
 }
+
+
+
+int SoundSource::skip(int millis) {
+    char buffer[65536];
+    size_t bytesToSkip = 44100 * 2 * 2 * millis / 1000;
+    while (bytesToSkip) {
+        int ret = readPcm(buffer, std::min(sizeof(buffer), bytesToSkip));
+        if (ret <= 0)
+            return ret;
+    }
+    return 0;
+}
+int SoundSource::setFadeIn(int millis) {
+    if (millis <= 0) {
+        m_fading =0;
+        return 0;
+    }
+    fadingEndBytes = m_bytes + (44100 * 2 * 2 * millis / 1000);
+    m_bytes = 0;
+    m_fading = 1;
+    qDebug() << "Fading up " << m_fading << fadingEndBytes;
+    return 1;
+}
+
+int SoundSource::stopFadeOut(int millis) {
+    fadingEndBytes = m_bytes + (44100 * 2 * 2 * millis / 1000);
+    m_bytes = 0;
+    m_fading = -1;
+    qDebug() << "fading " << m_fading << fadingEndBytes;
+}
