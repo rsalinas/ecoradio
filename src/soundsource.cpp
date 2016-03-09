@@ -5,11 +5,18 @@
 
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {
+        start();
 }
 
 
 SoundSource::~SoundSource()
 {
+        m_mutex.lock();
+        m_abort = true;
+        m_cv.wakeAll();
+        m_mutex.unlock();
+        wait();
+
 }
 
 
@@ -72,33 +79,6 @@ int SinWave::readPcm(char * buffer, const size_t length) {
     m_base+=length/4;
     return length/4*4;
 }
-
-
-
-
-
-ThreadingDecoder::ThreadingDecoder(std::unique_ptr<SoundSource> base, size_t buffers) :
-    SoundSource("threaded "+ base->name()), m_base(std::move(base)), buffers(buffers) {
-
-}
-
-
-ThreadingDecoder::~ThreadingDecoder() {
-    mutex.lock();
-    abort = true;
-    condition.wakeAll();
-    mutex.unlock();
-    wait();
-}
-
-
-
-int ThreadingDecoder::readPcm(char * buffer, const size_t length) {
-    if (m_closed)
-        return -1;
-    return m_base->readPcm(buffer, length);
-}
-
 
 void SoundSource::close() {
     bool wasClosed;

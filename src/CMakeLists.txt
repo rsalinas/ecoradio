@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
+find_package(Qt5Network REQUIRED)
 #add_subdirectory(sources)
 
 add_library(ecoradio SHARED scheduler.cpp
@@ -24,12 +25,13 @@ add_library(ecoradio SHARED scheduler.cpp
     icecast_monitor.cpp
     rssparser.cpp
     streamsrc.cpp
+    fifo.cpp
      )
 
 add_executable(main main.cpp)
 
 target_link_libraries(ecoradio Qt5::Widgets Qt5::Core Qt5Sql ao asound shout
-    mpg123 vorbisenc Qt5::WebSockets Qt5Xml)
+    mpg123 vorbisenc Qt5::WebSockets Qt5Xml Qt5::Network)
 target_link_libraries(main ecoradio)
 
 

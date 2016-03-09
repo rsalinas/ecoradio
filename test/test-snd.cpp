@@ -18,6 +18,7 @@
 
 //https://www.xiph.org/vorbis/doc/v-comment.html
 
+
 TEST(OggEncTest, DISABLED_OggEncTest)
 {
     std::unique_ptr<QFile> file(new QFile("salida.ogg"));
@@ -183,6 +184,20 @@ void silenceFinished() {
     qDebug() << __FUNCTION__;
 }
 
+auto longMp3 = "/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3";
+
+TEST(Mp3, Mp3Qfile) {
+
+    auto f = "beep.mp3";
+//    QFile qfile(f);
+//    ASSERT_TRUE(qfile.open(QFile::ReadOnly));
+//    std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(&qfile);
+    std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(f);
+    char buf[4096];
+    qDebug() << mp3->readPcm(buf, sizeof(buf));
+    qDebug()<< "finished test1";
+}
+
 TEST_F(PlayerFixture, ArecordPlayerThread ){
     try {
         SndFormat format;
@@ -204,6 +219,7 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
 
 
         player.addSink(encoder);
+        player.start();
 
 
         QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
@@ -212,22 +228,28 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         QObject::connect(&player, (&Mixer::silenceFinished), silenceFinished);
 
         std::shared_ptr<SoundSource> line;
-        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+
+        QFile qfile(longMp3);
+        ASSERT_TRUE(qfile.open(QFile::ReadOnly));
+        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(&qfile);
+//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(longMp3);
 //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
 //        auto srcMetadata = mp3->getMetadata();
         std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
         //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
         //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
         player.addSource(mp3);
+        sleep(2);
+        mp3->stopFadeOut(1000);
         player.waitEnd();
-        sleep(1);
+
+        return;
         //    player.addStream(mp3b);
         //    player.addStream(tone);
 
 
         if (false)
-            line= std::make_shared<ThreadingDecoder>(
-                        std::unique_ptr<SoundSource>(new Arecord()), 10);
+            line= std::make_shared<Arecord>();
         else
             line= std::make_shared<AlsaRec>("default");
         line->setFadeIn(1000);   //empezará con un fundido
@@ -251,6 +273,10 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         FAIL() << "Exception";
     }
 }
+TEST(Mp3, DISABLED_Mp3) {
+    Mpg123 m("test.mp3");
+}
+
 
 
 #include "test-snd.moc"

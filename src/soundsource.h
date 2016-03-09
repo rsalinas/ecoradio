@@ -14,7 +14,7 @@
 #include <memory>
 
 
-class SoundSource : public QObject
+class SoundSource : public QThread
 {
     Q_OBJECT
 public:
@@ -31,6 +31,12 @@ public:
 
     virtual int currentMillis() {
         return -1;
+    }
+    virtual void run() {
+        qDebug() << __FUNCTION__ << "source";
+//        while (!m_abort) {
+
+//        }
     }
 
     virtual int skip(int millis);
@@ -64,25 +70,14 @@ private:
     QMutex m_mutex;
     QWaitCondition m_cv;
 
+    //    std::vector<char*> buffers;
+    bool m_abort = false;
+
+
 signals:
     void finished();
 };
 
-
-class ThreadingDecoder: public QThread, public SoundSource{
-public:
-    ThreadingDecoder(std::unique_ptr<SoundSource> base, size_t buffers);
-    virtual ~ThreadingDecoder();
-    int readPcm(char * buffer, const size_t length);
-
-private:
-    std::unique_ptr<SoundSource> m_base;
-    QMutex mutex;
-    QWaitCondition condition;
-    std::vector<char*> buffers;
-    bool abort = false;
-
-};
 
 class ProcessDecoder : public SoundSource {
 public:

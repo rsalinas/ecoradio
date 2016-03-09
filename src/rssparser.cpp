@@ -14,14 +14,13 @@ class MyXmlContentHandler :public QXmlDefaultHandler
 {
     int indent = 0;
     QStack<QString> stack;
-
+    RssParser &m_parent;
 public:
     QString printIndent() {
         return QString::fromStdString(std::string(indent*4, ' '));
     }
-    MyXmlContentHandler():QXmlDefaultHandler()
+    MyXmlContentHandler(RssParser &parent) : m_parent(parent)
     {
-
     };
     ~MyXmlContentHandler()
     {
@@ -51,8 +50,9 @@ public:
 
         }
         if (url.size()) {
-            qDebug() << "MP3: " << url << size;
-//            m_stream
+//            qDebug() << "MP3: " << url << size;
+            //            m_stream
+            m_parent.m_streams.push_back(url);
         }
 
         //        qDebug() <<printIndent()<< "------------------------" ;
@@ -70,20 +70,15 @@ public:
 RssParser::RssParser(const QString &filename)
 {
 
-    QXmlSimpleReader* parser 		= new QXmlSimpleReader();
-    MyXmlContentHandler* handler 	= new MyXmlContentHandler();
+    QXmlSimpleReader parser;
+    MyXmlContentHandler handler(*this);
     
-    parser->setContentHandler(handler);
-    
-    
+    parser.setContentHandler(&handler);
     QFile f(filename);
-    if (parser->parse(new QXmlInputSource(&f)))
-    {
-        qDebug() <<"Parsed Successfully!";
-    }
-    else
-    {
-        qDebug() <<"Parsing Failed...";
+    QXmlInputSource source(&f);
+    if (parser.parse(&source))     {
+    }     else     {
+        qDebug() <<"Parsing Failed..."; //FIXME
     }
 }
 
