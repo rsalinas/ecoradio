@@ -21,6 +21,7 @@ add_library(ecoradio SHARED scheduler.cpp
     soundsource.cpp
     util.cpp
     websockserver.cpp
+    icecast_monitor.cpp
      )
 
 add_executable(main main.cpp)
