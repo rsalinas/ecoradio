@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Democracy Now! en espa&#241;ol</title>
+        <atom:link rel="self" href="http://www.democracynow.org/podcast-es.xml" title="Democracy Now! en espa&#241;ol" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        <link>http://www.democracynow.org/es</link>
+        <description>Servicio diario de noticias de radio y TV presentado por Amy Goodman y Juan Gonzalez y transmitido en mas de 1,000 emisoras, conformando as&#237; la red m&#225;s amplia de medios comunitarios de los Estados Unidos.</description>
+        <language>es</language>
+        <webMaster>mail@democracynow.org (Democracy Now!)</webMaster>
+        <image>
+            <url>http://www.democracynow.org/images/dn-logo-for-podcast.png?201603031350</url>
+            <link>http://www.democracynow.org/es</link>
+            <width>144</width>
+            <height>144</height>
+            <title>Democracy Now! en espa&#241;ol</title>
+        </image>
+        <itunes:author>Democracy Now!</itunes:author>
+        <itunes:category text="News &amp; Politics"/>
+        <itunes:category text="Government &amp; Organizations">
+            <itunes:category text="Non-Profit"/>
+        </itunes:category>
+        <itunes:owner>
+            <itunes:email>webdev@democracynow.org</itunes:email>
+            <itunes:name>David Prude</itunes:name>
+            <!-- Note: this email address is for iTunes use only; other contacts here will be ignored. -->
+        </itunes:owner>
+        <itunes:explicit>clean</itunes:explicit>
+        <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+        <docs>http://www.rssboard.org/rss-specification</docs>
+        <item>
+            <title>Democracy Now! 2016-03-07 lunes en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/3/7</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 7 de Marzo de 2016</description>
+            <pubDate>Mon, 07 Mar 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-03-07:media/mp3download/5afca6</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0307-es.mp3" type="audio/mpeg" length="6205811"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/78/30178/medium/ClintonSanders-Flint.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0307-es.mp3" fileSize="6205811" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-03-07 lunes en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 7 de Marzo de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 7 de Marzo de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 7 de Marzo de 2016</h1>
+<ul>
+    <li>Sanders gana en tres de cuatro estados en elecciones del fin de semana; Clinton aún tiene más delegados
+</li>
+    <li>Ted Cruz gana en Kansas y Maine; Trump en Louisiana y Kentucky
+</li>
+    <li>Trump promete ampliar leyes de tortura
+
+</li>
+    <li>Autoridades turcas toman Zaman, el mayor periódico del país
+
+</li>
+    <li>Mujeres turcas desafían la prohibición y se enfrentan a balas de goma para manifestarse a favor de la igualdad de género
+
+</li>
+    <li>Turquía se reúne con líderes de la UE por crisis de refugiados; 25 personas se ahogaron
+
+</li>
+    <li>Eslovaquia: Partido con vínculos neonazis obtiene catorce escaños en el Parlamento
+</li>
+    <li>Irak: Al menos 60 personas murieron en atentado suicida al sur de Bagdad
+</li>
+    <li>Yemen: Aumentan las víctimas civiles en medio de bombardeos apoyados por Estados Unidos
+</li>
+    <li>Temperatura promedio aumenta más de dos grados Celsius durante breve lapso, superando nueva marca en el cambio climático
+</li>
+    <li>Corte Suprema bloquea ley contraria al aborto de Louisiana y salva clínicas por el momento
+</li>
+    <li>Virginia Occidental aprueba ley que permite portar armas ocultas sin permiso
+</li>
+    <li>Ex primera dama Nancy Reagan falleció a los 94 años de edad
+</li>
+    <li>Honduras: Miles de personas se reúnen para el funeral de Berta Cáceres</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0307-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-03-04 viernes en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/3/4</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 4 de Marzo de 2016</description>
+            <pubDate>Fri, 04 Mar 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-03-04:media/mp3download/82ceaf</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0304-es.mp3" type="audio/mpeg" length="6521455"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/59/30159/medium/RepDebate.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0304-es.mp3" fileSize="6521455" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-03-04 viernes en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 4 de Marzo de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 4 de Marzo de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 4 de Marzo de 2016</h1>
+<ul>
+    <li>Detroit: Centenares de personas protestan contra el undécimo debate presidencial del Partido Republicano
+</li>
+    <li>FBI arresta a partidario de Trump por enfrentamiento de 2014 en la hacienda de Bundy
+</li>
+    <li>Japón: Primer Ministro Abe detendrá construcción de base militar de Estados Unidos en Okinawa
+</li>
+    <li>Demócratas aumentan la presión al presidente del Comité Judicial, Chuck Grassley
+</li>
+    <li>FBI evaluará investigación penal sobre Exxon Mobil
+</li>
+    <li>Debido a las elevadas temperaturas, un tren debe acarrear nieve a Anchorage para la carrera de trineos con perros de Iditarod 
+</li>
+    <li>Nasa divulga fotos de montañas nevadas en Plutón
+</li>
+    <li>Esposo de mujer baleada en San Bernardino apoya a Apple en su alejamiento del FBI
+</li>
+    <li>Sudáfrica: Tribunal rechaza apelación de condena por asesinato presentada por Pistorius
+</li>
+    <li>Texas: Destituyen oficialmente al agente de policía del estado Brian Encinia 
+</li>
+    <li>Argentina paga 2.400 millones de dólares al “fondo buitre&quot; de Paul Singer
+</li>
+    <li>Coalición de Trabajadores de Immokalee lanza boicot nacional de Wendy’s
+</li>
+    <li>Fallece abogado, autor y editor radical William Schaap 
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0304-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-03-03 jueves en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/3/3</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 3 de Marzo de 2016</description>
+            <pubDate>Thu, 03 Mar 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-03-03:media/mp3download/43d287</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0303-es.mp3" type="audio/mpeg" length="5105200"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/41/30141/medium/supreme-court-protest_1.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0303-es.mp3" fileSize="5105200" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-03-03 jueves en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 3 de Marzo de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 3 de Marzo de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 3 de Marzo de 2016</h1>
+<ul>
+    <li>Clase dirigente republicana intenta evitar nominación de Donald Trump
+</li>
+    <li>Ben Carson no se presentará al debate republicano de esta noche en Detroit
+</li>
+    <li>Empleado de Clinton obtiene inmunidad en investigación sobre posible mal manejo de servidor de correo electrónico
+</li>
+    <li>Flint: Préstamo estatal impidió a la ciudad volver al agua de Detroit
+</li>
+    <li>Unión Europea propone ayuda de 700 millones de dólares para responder a necesidades de refugiados
+</li>
+    <li>Francia: Refugiados inician huelga de hambre en protesta por desalojos en Calais
+</li>
+    <li>Ciudad de Nueva York: Haitianos pretenden que Naciones Unidas rinda cuentas por epidemia de cólera
+</li>
+    <li>Londres: Nigerianos demandan a Shell por derrames en el Delta del Níger
+</li>
+    <li>Casa Blanca evalúa designación de la magistrada Jane Kelly a la Corte Suprema
+</li>
+    <li>Alabama: Agente blanco acusado formalmente de asesinato de hombre afroestadounidense desarmado
+</li>
+    <li>Muere multimillonario de Oklahoma vinculado al fracking al otro día de imputársele cargos
+</li>
+    <li>India: Conceden libertad condicional a dirigente estudiantil encarcelado por sedición 
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0303-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-03-02 mi&#233;rcoles en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/3/2</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 2 de Marzo de 2016</description>
+            <pubDate>Wed, 02 Mar 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-03-02:media/mp3download/710f4a</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0302-es.mp3" type="audio/mpeg" length="6775156"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/24/30124/medium/latino-millenial-voters_1.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0302-es.mp3" fileSize="6775156" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-03-02 mi&#233;rcoles en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 2 de Marzo de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 2 de Marzo de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 2 de Marzo de 2016</h1>
+<ul>
+    <li>Hillary Clinton y Donald Trump victoriosos en siete estados cada uno en el &quot;supermartes&quot;
+
+</li>
+    <li>Tribunal de Nueva York determina que demanda contra Universidad Trump puede seguir adelante
+</li>
+    <li>Clinton confrontada nuevamente por comentarios de “superdepredadores” realizados en 1996
+</li>
+    <li>Bill O’Reilly de Fox News pierde custodia de sus hijos en medio de acusaciones de abuso doméstico
+
+</li>
+    <li>Corte Suprema de Estados Unidos atenderá el caso de aborto más importante en veinte años
+</li>
+    <li>Director del FBI admite que desbloquear el iPhone del sospechoso de San Bernardino sentaría un precedente
+
+</li>
+    <li>Gobernador de Dakota del Sur veta proyecto de ley que discrimina a personas transgénero
+</li>
+    <li>Guatemala: Tribunal declara culpables a ex oficiales por forzar a mujeres a la esclavitud sexual
+</li>
+    <li>Irak: Autoridades advierten que represa de Mosul corre riesgo de derrumbe “catastrófico” 
+</li>
+    <li>Dos personas se declaran culpables de fraude contra el gobierno de Estados Unidos en contratos relativos a Irak
+</li>
+    <li>Afganistán: General John Nicholson reemplaza a John Campell
+</li>
+    <li>Yemen: Miles de personas se manifiestan contra ataques aéreos de la coalición liderada por Arabia Saudí con apoyo estadounidense
+</li>
+    <li>Último veterano sobreviviente de la Brigada Abraham Lincoln fallece a los 100 años de edad
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0302-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-03-01 martes en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/3/1</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 1 de Marzo de 2016</description>
+            <pubDate>Tue, 01 Mar 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-03-01:media/mp3download/a5ddb5</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0301-es.mp3" type="audio/mpeg" length="6775156"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/10/30110/medium/donaldtrump_1.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0301-es.mp3" fileSize="6775156" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-03-01 martes en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 1 de Marzo de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 1 de Marzo de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 1 de Marzo de 2016</h1>
+<ul>
+    <li>Los votantes estadounidenses acuden a las urnas en las elecciones primarias y caucus clave del “supermartes” 
+</li>
+    <li>Rubio: Trump es “inelegible” tras negarse a repudiar al KKK
+</li>
+    <li>Georgia: Estudiantes afroestadounidenses expulsados de acto de campaña de Trump afirman que solo querían mirar
+</li>
+    <li>Trump a manifestante: “¿Eres de México?”
+</li>
+    <li>Campañas de Sanders y Clinton de cara a la elección del “supermartes” 
+</li>
+    <li>Pentágono: Estados Unidos libra ataques cibernéticos y de comando contra el ISIS
+</li>
+    <li>Funcionario saudí: Coalición liderada por Estados Unidos consideró incursión terrestre en Siria
+</li>
+    <li>Lanzan gases lacrimógenos contra refugiados tras abalanzarse sobre cerca en la frontera entre Grecia y Macedonia 
+</li>
+    <li>Francia: Refugiados realizan sentada en protesta por desalojo de campamento de Calais 
+</li>
+    <li>Indiana: Jueza bloquea orden del gobernador contra reubicación de refugiados
+</li>
+    <li>Argentina acuerda pagar a los “fondos buitre” que pretendían sacar provecho de su deuda
+</li>
+    <li>Juez rechaza solicitud del FBI de ordenar a Apple que desbloquee iPhone de traficante de drogas
+</li>
+    <li>Magistrado de la Corte Suprema Clarence Thomas rompe diez años de silencio previo a caso clave relativo al aborto
+</li>
+    <li>Alabama impide que Birmingham aumente salario mínimo a 10,10 dólares
+</li>
+    <li>Utah: Cientos de personas se manifiestan por disparos de la policía contra refugiado somalí de diecisiete años 
+</li>
+    <li>Carolina del Norte: Testigo afirma que agente disparó a hombre afroestadounidense mientras huía
+</li>
+    <li>Virginia: Sargento del Ejército mata a su esposa y a una agente de policía
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0301-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-02-29 lunes en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/2/29</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 29 de Febrero de 2016</description>
+            <pubDate>Mon, 29 Feb 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-02-29:media/mp3download/38d13f</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0229-es.mp3" type="audio/mpeg" length="6690311"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/91/30091/medium/Af-AmericanVoters.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0229-es.mp3" fileSize="6690311" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-02-29 lunes en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 29 de Febrero de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 29 de Febrero de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 29 de Febrero de 2016</h1>
+<ul>
+    <li>Clinton vence a Sanders en primarias demócratas de Carolina del Sur
+</li>
+    <li>Partidarias de Sanders marchan en Nueva York y dicen que “no están ahí por los muchachos” </li>
+    <li>Vicepresidenta del DNC renuncia para respaldar a Sanders; secretario de Trabajo de Bill Clinton apoya a Sanders</li>
+    <li>Gobernador de Nueva Jersey Chris Christie y senador de Alabama Jeff Sessions respaldan a Trump 
+</li>
+    <li>Trump se niega a condenar apoyo de ex líder del KKK
+</li>
+    <li>Alabama: Veteranos interrumpen evento de Trump en protesta por declaraciones anti-musulmanas
+</li>
+    <li>Irak: Doble atentado suicida deja al menos 70 muertos en Bagdad
+</li>
+    <li>Siria: Ambas partes acusadas de violar frágil alto el fuego
+
+</li>
+    <li>Yemen: Coalición apoyada por Estados Unidos bombardea mercado y mata a 40 personas
+</li>
+    <li>Japón: Se presentan cargos contra tres ejecutivos por desastre nuclear de Fukushima 
+</li>
+    <li>Londres: Decenas de miles de personas se manifiestan contra programa nuclear británico
+</li>
+    <li>Elecciones en Irán: Reformistas ganan en Teherán en una victoria para el acuerdo nuclear
+</li>
+    <li>California: Cuatro personas apuñaladas en enfrentamiento entre el Ku Klux Klan y contramanifestantes 
+</li>
+    <li>Michigan: Correos electrónicos revelan que asesores del gobernador Snyder advirtieron acerca del agua de Flint un año antes de que se cambiara nuevamente la fuente de suministro
+</li>
+    <li>Estrellas afroestadounidenses asisten a evento a beneficio de Flint en lugar de a los Oscar
+</li>
+    <li>Presentador Chris Rock critica los Oscar blancos; director de &quot;The Big Short&quot; condena el dinero en la política
+</li>
+    <li>Washington: Hombre mata a su esposa y a los hijos de ésta en el más reciente tiroteo masivo acaecido en Estados Unidos
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0229-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-02-26 viernes en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/2/26</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 26 de Febrero de 2016</description>
+            <pubDate>Fri, 26 Feb 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-02-26:media/mp3download/d4790a</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0226-es.mp3" type="audio/mpeg" length="5939865"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/72/30072/medium/Republicans.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0226-es.mp3" fileSize="5939865" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-02-26 viernes en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 26 de Febrero de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 26 de Febrero de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 26 de Febrero de 2016</h1>
+<ul>
+    <li>Kansas: Hombre mata a tres personas en tiroteo en fábrica
+</li>
+    <li>Ex presidente mexicano: “No voy a pagar el maldito muro”
+
+</li>
+    <li>Ex “gran mago” del Ku Klux Klan David Duke insta a personas a apoyar a Trump</li>
+    <li>Ted Cruz sostiene que perdonaría a activista contra el aborto David Daleiden
+</li>
+    <li>Louisiana: Ley contra el aborto amenaza con cerrar casi todas las clínicas
+
+</li>
+    <li>Soldados de operaciones especiales estadounidenses asesorarán a Nigeria en lucha contra Boko Haram
+</li>
+    <li>Siria: Intensos ataques horas antes del comienzo establecido del alto el fuego
+</li>
+    <li>Francia: Juez autoriza continuar con desalojos en campamento de refugiados de Calais
+</li>
+    <li>Estados Unidos: Violaciones a la atención médica influyeron en ocho muertes en centros de detención de inmigrantes
+</li>
+    <li>SeaWorld admite que envió a uno de sus trabajadores a espiar a PETA 
+</li>
+    <li>Pacientes de cáncer que protestaron contra el TPP son procesadas en Washington DC
+</li>
+    <li>InsideClimate News, Jamie Kalven y Brandon Smith ganan premio Izzy
+</li>
+    <li>Amy Goodman será incluida en el Salón de la Fama I.F. Stone
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0226-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-02-25 jueves en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/2/25</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 25 de Febrero de 2016</description>
+            <pubDate>Thu, 25 Feb 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-02-25:media/mp3download/1837ef</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0225-es.mp3" type="audio/mpeg" length="4720260"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/51/30051/medium/trump_report.png?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0225-es.mp3" fileSize="4720260" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-02-25 jueves en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 25 de Febrero de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 25 de Febrero de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 25 de Febrero de 2016</h1>
+<ul>
+    <li>Mueren siete personas en tornados en Estados Unidos, mientras cambio climático provoca climas extremos
+</li>
+    <li>Número de contratistas del Pentágono en Irak se ha octuplicado en el último año
+</li>
+    <li>Informe concluye que agencia de seguridad israelí está maltratando a prisioneros palestinos
+</li>
+    <li>Activistas instan a nominados al Oscar a que rechacen viaje gratis a Israel
+</li>
+    <li>Los cinco candidatos republicanos que siguen en carrera debatirán esta noche en Houston
+</li>
+    <li>Activista de #BlackLivesMatter interrumpe a Clinton en evento privado de recaudación de fondos 
+</li>
+    <li>Obama considera al gobernador de Nevada, Brian Sandoval, para la Corte Suprema
+</li>
+    <li>Turquía: Manifestaciones detienen construcción de mina de cobre
+</li>
+    <li>ONU afirma que todas las partes en Libia podrían ser culpables de crímenes de guerra
+</li>
+    <li>Bolivia: Morales acepta derrota en referéndum para extender el mandato
+</li>
+    <li>Presidente mexicano visita Iguala por primera vez desde la desaparición de 43 estudiantes
+</li>
+    <li>Corea del Sur: “Manifestación fantasma” en protesta por restricciones al derecho de reunión
+
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0225-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-02-24 mi&#233;rcoles en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/2/24</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 24 de Febrero de 2016</description>
+            <pubDate>Wed, 24 Feb 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-02-24:media/mp3download/70090c</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0224-es.mp3" type="audio/mpeg" length="7923290"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/31/30031/medium/Obama3.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0224-es.mp3" fileSize="7923290" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-02-24 mi&#233;rcoles en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 24 de Febrero de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 24 de Febrero de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 24 de Febrero de 2016</h1>
+<ul>
+    <li>Obama presenta plan al Congreso para cerrar Guantánamo
+</li>
+    <li>Trump gana asamblea electoral de Nevada y promete “llenar” Guantánamo de “chicos malos”
+</li>
+    <li>Senadores republicanos prometen rechazar a cualquier candidato que proponga Obama a la Corte Suprema
+</li>
+    <li>ACNUR expresa preocupación acerca de “control selectivo de refugiados en las fronteras”
+</li>
+    <li>Rhode Island: manifestantes abuchean evento contra refugiados en Cámara de Representantes del estado
+</li>
+    <li>Se realizan manifestaciones en Estados Unidos en apoyo a negativa de Apple de permitir acceso del gobierno a iPhones
+</li>
+    <li>Petroperú reconoce que se derramaron al menos 3.000 barriles de petróleo en la Amazonía
+</li>
+    <li>Panamá envía a migrantes cubanos varados a frontera de Estados Unidos y México
+</li>
+    <li>Italia cita a declarar a embajador de Estados Unidos por información de que NSA espió a primer ministro
+</li>
+    <li>Palestino ingresa a “territorio desconocido” tras huelga de hambre de tres meses 
+</li>
+    <li>México: cargos contra el zapatista subcomandante Marcos declarados nulos 20 años después
+
+</li>
+    <li>Bernie Sanders: el papa Francisco es un socialista
+</li>
+    <li>Trabajadores del depósito de B&amp;H votan a favor de unirse a sindicato 
+</li>
+    <li>Centro que envió paramédicos para atender a Eric Garner tras estrangulamiento fatal de la policía de Nueva York pagará a la familia un millón de dólares
+</li>
+    <li>Arrestan nuevamente a hombre que denunció represalias por parte de la policía luego de filmar llave de estrangulamiento contra Eric Garner
+</li>
+    <li>Hermano de Kalief Browder se une a manifestación para exigir cierre de la correccional de Rikers Island </li>
+    <li>Mujer transgénero negra asesinada a menos de dos días de que otra fuera encontrada sin vida
+</li>
+    <li>Ava DuVernay, Ryan Coogler, Janelle Monae y otros organizan evento en Flint en la noche de los premios Oscar
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0224-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+        <item>
+            <title>Democracy Now! 2016-02-23 martes en espa&#241;ol</title>
+            <link>http://www.democracynow.org/es/programas/2016/2/23</link>
+            <description>Democracy Now! titulares en espa&#241;ol de 23 de Febrero de 2016</description>
+            <pubDate>Tue, 23 Feb 2016 12:00:00 -0500</pubDate>
+            <guid isPermaLink="false">tag:democracynow.org,2016-02-23:media/mp3download/973a7e</guid>
+            <enclosure url="http://traffic.libsyn.com/democracynow/dn2016-0223-es.mp3" type="audio/mpeg" length="5653772"/>
+            <media:thumbnail url="http://www.democracynow.org/images/story/09/30009/medium/ninaturner_1.jpg?201603031350"/>
+            <media:content url="http://traffic.libsyn.com/democracynow/dn2016-0223-es.mp3" fileSize="5653772" expression="full" type="audio/mpeg" duration="3540" lang="es" medium="audio">
+                <media:title type="plain">Democracy Now! 2016-02-23 martes en espa&#241;ol</media:title>
+                <media:description>Democracy Now! titulares en espa&#241;ol de 23 de Febrero de 2016</media:description>
+                <media:rating scheme="urn:simple">nonadult</media:rating>
+                <media:rating scheme="urn:v-chip">tv-g</media:rating>
+                <media:credit role="production company">Democracy Now!</media:credit>
+                <media:category>News</media:category>
+            </media:content>
+            <itunes:author>Democracy Now!</itunes:author>
+            <itunes:explicit>clean</itunes:explicit>
+            <itunes:summary>
+                <![CDATA[Democracy Now! titulares en español de 23 de Febrero de 2016]]>
+            </itunes:summary>
+            <itunes:image href="http://www.democracynow.org/images/dn-logo-for-itunes-1400.jpg?201603031350"/>
+            <content:encoded>
+                <![CDATA[<h1>Democracy Now! 23 de Febrero de 2016</h1>
+<ul>
+    <li>Afganos varados en el norte de Grecia realizan protesta: “¿Por qué este racismo?”
+</li>
+    <li>Informe: muerte de civiles afganos en ataque aéreos de Estados Unidos alcanzó cifra récord desde 2008
+</li>
+    <li>Francia: miles de personas podrían ser desalojadas de campamento de refugiados de Calais
+</li>
+    <li>Turba alemana bloquea autobús de refugiados; multitud festeja incendio de refugio 
+</li>
+    <li>India: mueren 19 personas y se corta el agua en Delhi como consecuencia de protestas de una casta
+</li>
+    <li>Cruz despide a portavoz principal por circular video falso de Rubio
+</li>
+    <li>Donald Trump dijo que quería golpear a manifestante 
+</li>
+    <li>Kasich se disculpa por decir que las mujeres “salieron de la cocina” para apoyarlo
+</li>
+    <li>WikiLeaks: documentos ultrasecretos demuestran espionaje de la NSA a líderes extranjeros
+</li>
+    <li>Estudio: nivel de los océanos aumenta más rápido en comparación con los últimos 28 siglos debido a los combustibles fósiles
+
+
+</li>
+    <li>La Casa Blanca presenta al Congreso planes para cerrar Guantánamo 
+</li>
+    <li>Bolivia: Morales afirma que los resultados del referéndum para la reelección aún no son definitivos
+</li>
+    <li>Familiares de los 43 estudiantes desaparecidos inician caravana a través de México
+</li>
+    <li>México: periodista que había sido amenazado fue apuñalado hasta la muerte en Tabasco
+</li>
+    <li>Periodista sirio asesinado en Daraya
+</li>
+    <li>Informe: Estados Unidos continúa a la cabeza de las exportaciones de armas a nivel mundial
+</li>
+    <li>Concejo de la ciudad de Charlotte, Carolina del Norte, aprueba protecciones para personas LGTB
+</li>
+</ul>
+<p><a href="http://traffic.libsyn.com/democracynow/dn2016-0223-es.mp3">Baje el archivo audio</a></p>]]>
+            </content:encoded>
+        </item>
+    </channel>
+</rss>
