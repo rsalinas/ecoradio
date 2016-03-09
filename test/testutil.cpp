@@ -2,7 +2,7 @@
 #include <QCoreApplication>
 #include <gtest/gtest.h>
 #include <QTimer>
-
+#include <QDebug>
 
 class Wrapper : public QObject
 {
@@ -16,7 +16,8 @@ public:
 private slots:
     void runTests() {
         int ret = RUN_ALL_TESTS();
-        QCoreApplication::instance()->exit(ret);
+//        QCoreApplication::instance()->exit(ret);
+//        QCoreApplication::instance()->exit(app.exec());
     }
 
 private:
@@ -26,6 +27,7 @@ private:
 
 int main(int argc, char *argv[])
 {
+    qDebug() << "main test";
     Wrapper wrapper(argc, argv);
     return QCoreApplication::instance()->exec();
 }

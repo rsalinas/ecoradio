@@ -16,6 +16,8 @@
 class SoundSource;
 class PlayingThread;
 
+Q_DECLARE_METATYPE(std::shared_ptr<SoundSource>)
+
 class Mixer : public QThread
 {
     Q_OBJECT
@@ -49,6 +51,8 @@ private:
 signals:
     void silenceFinished();
     void silenceStarted();
+    void songFinished(std::shared_ptr<SoundSource> s);
+    void songFinishing(std::shared_ptr<SoundSource> s);
 
 public slots:
 

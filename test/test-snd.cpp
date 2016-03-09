@@ -246,9 +246,9 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         player.waitEnd();         //espera a que terminen todos los flujos
         sleep(2);
     } catch (const std::exception &e) {
-        qFatal("Exception: %s", e.what());
+        FAIL() << "Exception" << e.what();
     } catch (...) {
-        qFatal("Exception");
+        FAIL() << "Exception";
     }
 }
 

@@ -7,6 +7,8 @@
 #include <memory>
 #include <QProcess>
 #include <QIODevice>
+#include <QSettings>
+#include <QDebug>
 
 struct shout;
 struct _util_dict;
@@ -36,7 +38,21 @@ public:
         QString name;
         QString url;
         QString user;
+        Config() {
 
+        }
+
+        Config(const QSettings &settings)
+            : hostName(settings.value("hostname").toString())
+            , port(settings.value("port").toInt())
+            , mount(settings.value("mount").toString())
+            , passwd(settings.value("passwd").toString())
+        {
+               qDebug() << hostName << port << mount << passwd;
+//               QSettings ss("test.ini", QSettings::Format::NativeFormat);
+//               ss.setValue("hostname", "pepe");
+//               ss.sync();;
+        }
 
     };
     OggFwd(const Config &config);

@@ -6,20 +6,21 @@ find_package(Qt5WebSockets REQUIRED)
 #add_subdirectory(sources)
 
 add_library(ecoradio SHARED scheduler.cpp
-    soundsource.cpp
-    ogg_encoder.cpp
-    mixer.cpp
-    file_scan.cpp
-    alsarec.cpp
-    oggfwd.cpp
-    mpg123wrap.cpp
-    util.cpp
-    sink.h
-    aosink.cpp
     alarm.cpp
-    websockserver.cpp
+    alsarec.cpp
+    aosink.cpp
     ecoradio.cpp
+    file_scan.cpp
     format.h
+    mixer.cpp
+    mpg123wrap.cpp
+    ogg_encoder.cpp
+    oggfwd.cpp
+    program.cpp
+    sink.h
+    soundsource.cpp
+    util.cpp
+    websockserver.cpp
      )
 
 add_executable(main main.cpp)

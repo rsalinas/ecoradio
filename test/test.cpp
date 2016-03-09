@@ -12,9 +12,6 @@
 #include <QDebug>
 #include <QBitArray>
 
-TEST (SchedulerTest, DISABLED_Scheduler0) {
-    Scheduler s;
-}
 
 static const QDir repositoryDir("/home/rsalinas/Sync/enconstruccio");
 static const QString vistosFile = "/tmp/vistos.txt";
@@ -64,6 +61,3 @@ TEST(MixerTest, DISABLED_BasicMixerTest) {
     }
 }
 
-TEST(DbTest, DbTest) {
-    Scheduler s;
-}

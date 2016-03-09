@@ -5,6 +5,12 @@
 #include "scheduler.h"
 #include "mixer.h"
 #include "websockserver.h"
+#include "oggfwd.h"
+#include <QSettings>
+
+class SndSink;
+
+class Program;
 
 
 class Ecoradio : public QObject
@@ -13,14 +19,25 @@ class Ecoradio : public QObject
 public:
     Ecoradio(QObject *parent = 0);
 
-public slots:
+private slots:
     void run();
+
+    void newProgram(std::shared_ptr<Program>);
+    void songFinishing(std::shared_ptr<SoundSource> s);
+    void songFinished(std::shared_ptr<SoundSource> s);
+
+public slots:
 
 signals:
     void finished();
 private:
+    QSettings m_settings;
     Mixer m_mixer;
+    std::shared_ptr<SndSink> m_ao;
+    std::shared_ptr<SndSink> m_ogg;
     Scheduler m_sched;
     WebsockServer wss;
+    std::shared_ptr<Program> m_current;
+    std::vector<std::shared_ptr<Program>> m_nextPrograms;
 };
 

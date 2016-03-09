@@ -10,10 +10,18 @@
 #include "soundsource.h"
 
 
+
+
 Mixer::Mixer(const SndFormat &format) :
     m_format(format), buf_size(format.bufferSize)
 {
-    start();
+    qRegisterMetaType<std::shared_ptr<SoundSource> >();
+    if (m_sinks.size()==0 ) {
+        qWarning() << "Mixer refusing to start without sinks";
+    } else {
+        start();
+    }
+
 }
 
 void Mixer::run() {
@@ -32,6 +40,8 @@ void Mixer::run() {
         {
             QMutexLocker lock(&mutex);
             sourcesNow = m_sources;
+            //            if (m_sinks.size() == 0)
+            //                usleep(1000);
         }
         int i=0;
         for (auto source : sourcesNow) {
@@ -46,6 +56,7 @@ void Mixer::run() {
                 qDebug() << source->name() << n;
                 m_sources.remove(source);
                 condition.wakeAll();
+                emit songFinished(source);
                 continue;
             }
             default:
@@ -109,6 +120,9 @@ int Mixer::addSource(std::shared_ptr<SoundSource> source) {
 }
 
 int Mixer::addSink(std::shared_ptr<SndSink> sink) {
+    if (!sink) {
+        qFatal("Cannot add empty sink");
+    }
     QMutexLocker lock(&mutex);
     m_sinks.push_back(sink);
 }
@@ -120,5 +134,7 @@ Mixer::~Mixer() {
     mutex.unlock();
     wait();
 }
+
+
 
 

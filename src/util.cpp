@@ -20,6 +20,6 @@ AutoTimeMeter::AutoTimeMeter(const QString &name,
 AutoTimeMeter::~AutoTimeMeter()
 {
     auto ellapsedTime = ellapsed();
-    if (ellapsedTime > m_threshold)
+    if (ellapsedTime >= m_threshold)
         qDebug() << "Finished " << m_name << ellapsedTime;
 }
