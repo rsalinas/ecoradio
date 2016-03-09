@@ -1,27 +1,16 @@
 #include "mixer.h"
 
 
-#include <cstring>
 #include <QDebug>
-#include <climits>
-#include <QThread>
-#include <list>
+
 #include "util.h"
 #include "soundsource.h"
-
-
 
 
 Mixer::Mixer(const SndFormat &format) :
     m_format(format), buf_size(format.bufferSize)
 {
     qRegisterMetaType<std::shared_ptr<SoundSource> >();
-    if (m_sinks.size()==0 ) {
-        qWarning() << "Mixer refusing to start without sinks";
-    } else {
-        start();
-    }
-
 }
 
 void Mixer::run() {
@@ -103,7 +92,7 @@ void Mixer::run() {
         if (ellapsed > 100)
             qDebug() << "In main: "  << ellapsed;
     }
-    qDebug() << __FUNCTION__ << "finished";
+    qDebug() << __FUNCTION__ << " finished properly";
 }
 
 void Mixer::waitEnd() {
@@ -134,7 +123,3 @@ Mixer::~Mixer() {
     mutex.unlock();
     wait();
 }
-
-
-
-

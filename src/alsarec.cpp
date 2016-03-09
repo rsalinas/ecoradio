@@ -1,6 +1,7 @@
 #include "alsarec.h"
 
 #include <QDateTime>
+#include <QDebug>
 #include "util.h"
 
 

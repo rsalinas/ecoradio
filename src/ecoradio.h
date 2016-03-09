@@ -7,6 +7,7 @@
 #include "websockserver.h"
 #include "oggfwd.h"
 #include <QSettings>
+class SoundSrc;
 
 class SndSink;
 
@@ -37,7 +38,9 @@ private:
     std::shared_ptr<SndSink> m_ogg;
     Scheduler m_sched;
     WebsockServer wss;
-    std::shared_ptr<Program> m_current;
+    std::shared_ptr<Program> m_current, m_currentFallback;
     std::vector<std::shared_ptr<Program>> m_nextPrograms;
+    std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
+
 };
 

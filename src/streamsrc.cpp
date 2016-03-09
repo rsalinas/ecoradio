@@ -28,7 +28,6 @@ void StreamSrc::streamReadyRead() {
     }
 }
 
-
 void StreamSrc::streamFinished() {
     qDebug() << __FUNCTION__ ;
     for (const auto &i : m_reply->rawHeaderList()) {

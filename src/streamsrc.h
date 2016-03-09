@@ -21,7 +21,6 @@ private:
     Fifo m_fifo;
     Mpg123 m_decoder;
 
-
 public slots:
     void streamReadyRead();
     void streamFinished();

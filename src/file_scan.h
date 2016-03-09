@@ -16,6 +16,9 @@ public:
     size_t size() {
         return files.size();
     }
+    QString basedir() {
+        return m_dir.absolutePath();
+    }
 
 private:
     QDir m_dir;

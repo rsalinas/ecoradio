@@ -2,9 +2,6 @@
 
 #include <QDebug>
 
-#include <cstdio>
-
-
 class MemHandle {
 public:
     MemHandle(QIODevice * dev)  : m_dev(dev)
@@ -114,6 +111,7 @@ Mpg123::Mpg123(const QString &file) : SoundSource(file), mh(commonInit())
 
 void Mpg123::postInit() {
     /* Peek into track and get first output format. */
+    qDebug() << "mpg123_getformat...";
     long rate = 0;
     int  channels = 0, encoding = 0;
     if (mpg123_getformat(mh, &rate, &channels, &encoding) != MPG123_OK ) {
@@ -132,7 +130,7 @@ void Mpg123::postInit() {
         throw Mpg123Exception();
     }
     /* Ensure that this output format will not change (it could, when we allow it). */
-    qDebug() << "format";
+    qDebug() << "format";    
     mpg123_format_none(mh);
     if (MPG123_OK != mpg123_format(mh, rate, channels, MPG123_ENC_SIGNED_16)) {
         qFatal("Cannot set format");

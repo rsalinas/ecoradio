@@ -11,7 +11,6 @@
 #include "program.h"
 
 class SqlException : public std::exception {
-
 };
 
 class Scheduler : public QObject
@@ -19,13 +18,13 @@ class Scheduler : public QObject
     Q_OBJECT
 public:
     Scheduler(const QString &filename);
-    std::vector<std::shared_ptr<Program>>  getPlan(bool current, const QDateTime &ts);
+
     std::shared_ptr<Program> getCurrent(const QDateTime &ts = QDateTime::currentDateTime());
     std::vector<std::shared_ptr<Program>> getNext(const QDateTime &ts = QDateTime::currentDateTime());
 
 private:
+    std::vector<std::shared_ptr<Program>>  getPlan(bool current, const QDateTime &ts);
     QSqlDatabase m_db;
-    std::vector<Program> periodic;
     std::vector<Program> puntual;
     QTimer m_timer;
 

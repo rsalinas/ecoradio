@@ -6,7 +6,6 @@
 
 #include <QString>
 #include <QProcess>
-#include <QDebug>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QMutexLocker>
@@ -32,12 +31,8 @@ public:
     virtual int currentMillis() {
         return -1;
     }
-    virtual void run() {
-        qDebug() << __FUNCTION__ << "source";
-//        while (!m_abort) {
+    virtual void run();
 
-//        }
-    }
 
     virtual int skip(int millis);
     int setFadeIn(int millis);
@@ -54,13 +49,7 @@ public:
     size_t fadingEndBytes;
     int m_fading = 0;
 
-    void waitEnd() {
-        QMutexLocker lock(&m_mutex);
-        while (!m_closed) {
-            qDebug() << "not closed";
-            m_cv.wait(&m_mutex);
-        }
-    }
+    void waitEnd();
 
 protected:
     bool m_closed = false;
@@ -81,51 +70,10 @@ signals:
 
 class ProcessDecoder : public SoundSource {
 public:
-    ProcessDecoder(const QString &name, const QString& binary, QStringList args) : SoundSource(name) {
-        m_process.setProcessChannelMode(QProcess::ForwardedErrorChannel);
-        m_process.setReadChannel(QProcess::StandardOutput);
+    ProcessDecoder(const QString &name, const QString& binary, QStringList args);
+    virtual ~ProcessDecoder();
+    virtual int readPcm(char * buf, const size_t length);
 
-        m_process.start(binary, args);
-        if (!m_process.waitForStarted(1000)) {
-            qDebug() << "error starting mpg123";
-
-        }
-        assert(m_process.waitForReadyRead(3000));
-    }
-    virtual ~ProcessDecoder() {
-        qDebug() << "killing process" << name();
-        m_process.terminate();
-        qDebug() << name() << "waitForFinished";
-        m_process.waitForFinished(1000);
-        qDebug() << name() << "waitForFinished done";
-    }
-
-    virtual int readPcm(char * buf, const size_t length) {
-        ssize_t remaining = length;
-        if (m_closed)
-            return -1;
-        do  {
-            if (! m_process.waitForReadyRead(3000)) {
-                qDebug() << "mp3: no data in time";
-            }
-            auto ret = m_process.read(buf, remaining);
-            if (ret < 0) {
-                qDebug() << "end of file";
-                memset(buf, 0, remaining);
-                if (length-remaining)
-                    return length-remaining;
-                else
-                    return -1;
-            }
-            if (ret > 0) {
-                remaining -= ret;
-                buf+= ret;
-            }
-
-        } while (remaining > 0);
-
-        return length;
-    }
 private:
     QProcess m_process;
 };

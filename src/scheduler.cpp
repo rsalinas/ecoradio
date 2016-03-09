@@ -11,14 +11,6 @@ Scheduler::Scheduler(const QString &filename) : m_db(QSqlDatabase::addDatabase("
     if (!m_db.open()) {
         qFatal("Cannot open db");
     }
-    //    QSqlQuery query(m_db);
-    //    if (query.exec("select 5+5")) {
-    //        while (query.next())
-    //        qDebug() << query.value(0).toString();
-    //    } else {
-    //        qDebug() << "error" <<  query.lastError();
-    //    }
-
 }
 
 std::shared_ptr<Program> Scheduler::getCurrent(const QDateTime &ts) {
@@ -28,11 +20,9 @@ std::shared_ptr<Program> Scheduler::getCurrent(const QDateTime &ts) {
     }
     else
         return nullptr;
-
 }
 
 static QString makeQuery() {
-
 }
 
 
@@ -64,17 +54,20 @@ Scheduler::getPlan(bool current,
                          current ?
                              -((nowDow-lineDow+7)%7) :
                              ((lineDow-nowDow+7)%7)), time);
-        auto type = query.value("hour").toString();
+        auto type = query.value("ptype").toString();
         auto rowid = query.value("program_rowid").toULongLong();
         std::shared_ptr<Program> p;
+        type = "folder"; //FIXME
         if (type == "live") {
             p = std::make_shared<LiveProgram>(rowid, lineDow, dt, query.value("name").toString());
         } else if (type == "stream") {
             p = std::make_shared<StreamProgram>(rowid, lineDow, dt, query.value("name").toString());
         } else if (type == "podcast") {
             p = std::make_shared<PodcastProgram>(rowid, lineDow, dt, query.value("name").toString());
+        } else if (type == "folder") {
+            p = std::make_shared<FolderProgram>(rowid, lineDow, dt, query.value("name").toString());
         } else {
-            p = std::make_shared<Program>(rowid, lineDow, dt, query.value("name").toString());
+            qWarning() << "Bad program found, ignoring. " << type;
         }
         l.push_back(p);
 //        qDebug() << *p;

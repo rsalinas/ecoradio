@@ -10,9 +10,9 @@
 #include <QObject>
 #include "oggfwd.h"
 #include <QFile>
-
+#include "rssparser.h"
 #include "ogg_encoder.h"
-
+#include "streamsrc.h"
 #include "oggfwd.h"
 #include "mpg123wrap.h"
 
@@ -186,12 +186,12 @@ void silenceFinished() {
 
 auto longMp3 = "/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3";
 
-TEST(Mp3, Mp3Qfile) {
+TEST(Mp3, DISABLED_Mp3Qfile) {
 
     auto f = "beep.mp3";
-//    QFile qfile(f);
-//    ASSERT_TRUE(qfile.open(QFile::ReadOnly));
-//    std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(&qfile);
+    //    QFile qfile(f);
+    //    ASSERT_TRUE(qfile.open(QFile::ReadOnly));
+    //    std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(&qfile);
     std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(f);
     char buf[4096];
     qDebug() << mp3->readPcm(buf, sizeof(buf));
@@ -229,20 +229,37 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
 
         std::shared_ptr<SoundSource> line;
 
-        QFile qfile(longMp3);
-        ASSERT_TRUE(qfile.open(QFile::ReadOnly));
-        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(&qfile);
-//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(longMp3);
-//        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
-//        auto srcMetadata = mp3->getMetadata();
-        std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
-        //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
-        //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
-        player.addSource(mp3);
-        sleep(2);
-        mp3->stopFadeOut(1000);
-        player.waitEnd();
+        if (false)
+            for (int i=0; i < 50 ; i++) {
+                auto m = std::make_shared<Mpg123>(longMp3);
+                m->stopFadeOut(500);
+                player.addSource(m);
+            }
 
+        if (false) {
+            QFile qfile(longMp3);
+            ASSERT_TRUE(qfile.open(QFile::ReadOnly));
+            std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(&qfile);
+
+            //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>(longMp3);
+            //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+            //        auto srcMetadata = mp3->getMetadata();
+            //        std::shared_ptr<SoundSource> mp3b = std::make_shared<Mpg123>("/home/rsalinas/Sync/enconstruccio/Dalactus - Follar mola.mp3");
+            //        std::shared_ptr<SoundSource> tone = std::make_shared<SinWave>(440.0);
+            //        std::shared_ptr<SoundSource> mp3 = std::make_shared<Mpg123>("beep.mp3");
+            player.addSource(mp3);
+            sleep(2);
+            mp3->stopFadeOut(1000);
+            player.waitEnd();
+        }
+        RssParser rss("rss/podcast-linterna-diogenes_fg_f136870_filtro_1.xml");
+        auto list = rss.getStreams();
+        if (list.size()) {
+            qDebug() << list.front();
+            auto ss = std::make_shared<StreamSrc>(list.front());
+            player.addSource(ss);
+            player.waitEnd();
+        }
         return;
         //    player.addStream(mp3b);
         //    player.addStream(tone);
@@ -262,8 +279,6 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         //    mp3->setFadeIn(1000);
         line->waitEnd();
         line.reset();
-        mp3->stopFadeOut(2000);
-        mp3b->stopFadeOut(5000);
 
         player.waitEnd();         //espera a que terminen todos los flujos
         sleep(2);

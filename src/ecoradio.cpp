@@ -5,6 +5,7 @@
 #include "ogg_encoder.h"
 #include "sink.h"
 #include "mpg123wrap.h"
+#include "streamsrc.h"
 #include <memory>
 
 Ecoradio::Ecoradio(QObject *parent) :
@@ -21,14 +22,25 @@ Ecoradio::Ecoradio(QObject *parent) :
     m_mixer.addSink(m_ogg);
     m_mixer.start();
     QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<Program>)), this, SLOT(newProgram(std::shared_ptr<Program>)));
+    QObject::connect(&m_mixer, SIGNAL(songFinishing(std::shared_ptr<SoundSource>)), this, SLOT(songFinishing(std::shared_ptr<SoundSource>)));
     QObject::connect(&m_mixer, SIGNAL(songFinished(std::shared_ptr<SoundSource>)), this, SLOT(songFinished(std::shared_ptr<SoundSource>)));
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
         qDebug() << "current: "<< *m_current;
+        m_currentStream  = m_current->getNextSong();
+//        m_currentStream->stopFadeOut(500);
+        m_nextStream = m_current->getNextSong();
 
+        if (m_currentStream) {
+            m_mixer.addSource(m_currentStream);
+        } else {
+            qWarning() << "could not get song from current stream" << *m_current;
+        }
     }
 
-    m_mixer.addSource(std::make_shared<Mpg123>("beep.mp3"));
+
+    //    m_mixer.addSource(std::make_shared<Mpg123>("beep.mp3"));
+    //    m_mixer.addSource(std::make_shared<StreamSrc>("http://stream.freefm.de:8100/"));
     //    m_current->
 }
 
@@ -52,7 +64,14 @@ void Ecoradio::songFinishing(std::shared_ptr<SoundSource> s) {
 
 void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
     qDebug() << __FUNCTION__;
-    auto s= std::make_shared<Mpg123>("beep.mp3");
-    s->setFadeIn(5000);
-    m_mixer.addSource(s);
+    m_currentStream = m_nextStream;
+//    m_currentStream->stopFadeOut(10);
+    m_mixer.addSource(m_currentStream);
+    if (m_current) {
+        qDebug() << "current: "<< *m_current;
+        m_nextStream = m_current->getNextSong();
+        if (!m_nextStream) {
+            qWarning() << "could not get song from current stream" << *m_current;
+        }
+    }
 }

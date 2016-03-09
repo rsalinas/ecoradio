@@ -1,21 +1,21 @@
 #include "soundsource.h"
 
-
+#include <QDebug>
 #include "util.h"
 
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {
-        start();
+    start();
 }
 
 
 SoundSource::~SoundSource()
 {
-        m_mutex.lock();
-        m_abort = true;
-        m_cv.wakeAll();
-        m_mutex.unlock();
-        wait();
+    m_mutex.lock();
+    m_abort = true;
+    m_cv.wakeAll();
+    m_mutex.unlock();
+    wait();
 
 }
 
@@ -121,4 +121,72 @@ int SoundSource::stopFadeOut(int millis) {
     m_bytes = 0;
     m_fading = -1;
     qDebug() << "fading " << m_fading << fadingEndBytes;
+}
+
+
+void SoundSource::run() {
+    qDebug() << __FUNCTION__ << "source";
+    //        while (!m_abort) {
+
+    //        }
+}
+
+
+void SoundSource::waitEnd() {
+    QMutexLocker lock(&m_mutex);
+    while (!m_closed) {
+        qDebug() << "not closed";
+        m_cv.wait(&m_mutex);
+    }
+}
+
+
+
+ProcessDecoder::ProcessDecoder(const QString &name, const QString& binary, QStringList args) : SoundSource(name) {
+    m_process.setProcessChannelMode(QProcess::ForwardedErrorChannel);
+    m_process.setReadChannel(QProcess::StandardOutput);
+
+    m_process.start(binary, args);
+    if (!m_process.waitForStarted(1000)) {
+        qDebug() << "error starting mpg123";
+
+    }
+    assert(m_process.waitForReadyRead(3000));
+}
+
+
+ProcessDecoder::~ProcessDecoder() {
+    qDebug() << "killing process" << name();
+    m_process.terminate();
+    qDebug() << name() << "waitForFinished";
+    m_process.waitForFinished(1000);
+    qDebug() << name() << "waitForFinished done";
+}
+
+
+int ProcessDecoder::readPcm(char * buf, const size_t length) {
+    ssize_t remaining = length;
+    if (m_closed)
+        return -1;
+    do  {
+        if (! m_process.waitForReadyRead(3000)) {
+            qDebug() << "mp3: no data in time";
+        }
+        auto ret = m_process.read(buf, remaining);
+        if (ret < 0) {
+            qDebug() << "end of file";
+            memset(buf, 0, remaining);
+            if (length-remaining)
+                return length-remaining;
+            else
+                return -1;
+        }
+        if (ret > 0) {
+            remaining -= ret;
+            buf+= ret;
+        }
+
+    } while (remaining > 0);
+
+    return length;
 }
