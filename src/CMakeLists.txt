@@ -22,12 +22,14 @@ add_library(ecoradio SHARED scheduler.cpp
     util.cpp
     websockserver.cpp
     icecast_monitor.cpp
+    rssparser.cpp
+    streamsrc.cpp
      )
 
 add_executable(main main.cpp)
 
 target_link_libraries(ecoradio Qt5::Widgets Qt5::Core Qt5Sql ao asound shout
-    mpg123 vorbisenc Qt5::WebSockets )
+    mpg123 vorbisenc Qt5::WebSockets Qt5Xml)
 target_link_libraries(main ecoradio)
 
 
