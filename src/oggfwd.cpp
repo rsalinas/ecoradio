@@ -75,7 +75,7 @@ qint64 OggFwd::writeData(const char *data, qint64 len) {
     int ret = shout_send(shout, reinterpret_cast<const unsigned char*>(data), len);
     if (ret != SHOUTERR_SUCCESS) {
         qDebug() << "Send error" << shout_get_error(shout);
-        //        quit = 1;
+        //        quit = 1; FIXME!
     }
 
     auto sync = false;
@@ -88,8 +88,6 @@ OggFwd::~OggFwd() {
     shout_close(shout);
     shout_free(shout);
 }
-
-
 
 OggFwd::OggFwdException::OggFwdException(const QString &msg) : m_msg(msg.toStdString()){
 }
