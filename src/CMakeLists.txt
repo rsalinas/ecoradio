@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-
-find_package(Qt5Widgets REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Network REQUIRED)
 #add_subdirectory(sources)

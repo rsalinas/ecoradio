@@ -5,7 +5,6 @@ add_subdirectory(/usr/src/gtest gtest)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 
 enable_testing()
