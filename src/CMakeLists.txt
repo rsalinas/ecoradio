@@ -24,6 +24,7 @@ add_library(ecoradio SHARED scheduler.cpp
     rssparser.cpp
     streamsrc.cpp
     fifo.cpp
+    wavwriter.cpp
      )
 
 add_executable(main main.cpp)
