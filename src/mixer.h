@@ -38,6 +38,7 @@ public:
     void waitEnd();
 
     const int buf_size;
+    size_t activeSourceCount();
 
 private:
     const SndFormat m_format;
@@ -48,10 +49,10 @@ private:
     QWaitCondition condition;
     bool abort = false;
 
-signals:
+signals:   
     void silenceFinished();
     void silenceStarted();
-    void songFinished(std::shared_ptr<SoundSource> s);
+    void sourceFinished(std::shared_ptr<SoundSource> s);
     void songFinishing(std::shared_ptr<SoundSource> s);
 
 public slots:

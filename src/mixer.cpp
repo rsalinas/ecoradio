@@ -2,7 +2,7 @@
 
 
 #include <QDebug>
-
+#include <QEventLoop>
 #include "util.h"
 #include "soundsource.h"
 
@@ -45,7 +45,7 @@ void Mixer::run() {
                 qDebug() << source->name() << n;
                 m_sources.remove(source);
                 condition.wakeAll();
-                emit songFinished(source);
+                emit sourceFinished(source);
                 continue;
             }
             default:
@@ -95,10 +95,14 @@ void Mixer::run() {
     qDebug() << __FUNCTION__ << " finished properly";
 }
 
-void Mixer::waitEnd() {
+size_t Mixer::activeSourceCount() {
+    return m_sources.size();
+}
+
+void Mixer:: waitEnd() {
     QMutexLocker lock(&mutex);
     while (m_sources.size()) {
-        qDebug() << "Waiting for finish. Sources: " << m_sources.size();
+        qDebug() << "Waiting for finish. Sources: " << m_sources.size();       
         condition.wait(&mutex);
     }
 }

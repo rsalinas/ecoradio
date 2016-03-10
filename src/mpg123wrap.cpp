@@ -27,7 +27,7 @@ public:
             offset = m_dev->size() + offset;
             break;
         }
-        auto ret = m_dev->seek(offset);;
+        auto ret = m_dev->seek(offset);
         if (ret)
             return offset;
         else {
@@ -37,6 +37,10 @@ public:
 
     ~MemHandle() {
         qDebug() << __FUNCTION__;
+    }
+
+    size_t bytesAvailable() {
+        return m_dev->bytesAvailable();
     }
 
 
@@ -86,30 +90,42 @@ mpg123_handle *commonInit() {
     return mh;
 }
 
-Mpg123::Mpg123(QIODevice * dev) : SoundSource("dev"), mh(commonInit())
-{
-
+int Mpg123::initMh() {
+    qDebug() << __FUNCTION__;
     mpg123_replace_reader_handle(mh, MemHandle::r_read, MemHandle::r_lseek, MemHandle::cleanup);
-    m_filemh = new MemHandle(dev);
+
     if (mpg123_open_handle(mh, m_filemh) != MPG123_OK) {
         fprintf( stderr, "Trouble with mpg123: %s\n", mpg123_strerror(mh) );
         throw Mpg123Exception();
     }
     postInit();
+    return 0;
 }
+
+Mpg123::Mpg123(QIODevice * dev) : SoundSource("dev"), mh(commonInit()), m_filemh(new MemHandle(dev))
+{
+    qDebug() << "delaying start of filemh";
+}
+
+Mpg123::Mpg123(std::shared_ptr<QIODevice> dev) : SoundSource("dev"), mh(commonInit()), m_devholder(dev), m_filemh(new MemHandle(dev.get()))
+{
+    qDebug() << "delaying start of filemh";
+}
+
 
 Mpg123::Mpg123(const QString &file) : SoundSource(file), mh(commonInit())
 {
     qDebug() << "Mpg123 opening " << file;
+    postInit();
 
     if (mpg123_open(mh, file.toStdString().c_str()) != MPG123_OK) {
         fprintf( stderr, "Trouble with mpg123: %s\n", mpg123_strerror(mh) );
         throw Mpg123Exception();
     }
-    postInit();
 }
 
 void Mpg123::postInit() {
+    qDebug() << __FUNCTION__;
     /* Peek into track and get first output format. */
     qDebug() << "mpg123_getformat...";
     long rate = 0;
@@ -130,19 +146,32 @@ void Mpg123::postInit() {
         throw Mpg123Exception();
     }
     /* Ensure that this output format will not change (it could, when we allow it). */
-    qDebug() << "format";    
+    qDebug() << "format";
     mpg123_format_none(mh);
     if (MPG123_OK != mpg123_format(mh, rate, channels, MPG123_ENC_SIGNED_16)) {
         qFatal("Cannot set format");
     }
 
     qDebug() << "mpg123_outblock(mh)" << mpg123_outblock(mh);
+    m_initialized = true;
 }
 
 int Mpg123::readPcm(char *buf, const size_t length)
 {
+       qDebug() << "Mpg123::readPcm starts" << length;
     if (m_closed) {
+        qDebug() << "mp3 closed";
         return -1;
+    }
+    if (!m_initialized && m_filemh) {
+        qDebug() << "!m_initialized && m_filemh";
+        if (initMh() < 0)
+            return -1;
+    }
+    qDebug() << m_filemh->bytesAvailable() ;
+    if (m_filemh && m_filemh->bytesAvailable() < 32*1024) {
+        qDebug() << "mp3 streamer has less than 32kB, returning 0 WAV bytes" << m_filemh->bytesAvailable();
+        return 0;
     }
     size_t done = 0;
     int  err = mpg123_read( mh, reinterpret_cast<unsigned char*>(buf), length, &done);

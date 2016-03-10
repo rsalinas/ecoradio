@@ -23,7 +23,7 @@ add_executable(alsa-record-example alsa-record-example.c)
 target_link_libraries(alsa-record-example asound)
 
 target_link_libraries(test gtest ecoradio)
-target_link_libraries(test-snd gtest gtest_main ecoradio)
+target_link_libraries(test-snd gtest ecoradio)
 target_link_libraries(sound_playback asound)
 target_link_libraries(test-sched ecoradio gtest)
 target_link_libraries(test-rss gtest  Qt5::Core ecoradio)

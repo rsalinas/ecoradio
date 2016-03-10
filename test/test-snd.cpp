@@ -203,31 +203,32 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
         SndFormat format;
         Mixer player(format);
         player.addSink(std::make_shared<AoSink>(format));
-        OggFwd::Config fwdConfig;
-        fwdConfig.hostName = "vps66370.ovh.net";
-        fwdConfig.port = 8000;
-        fwdConfig.mount = "/tests.ogg";
-        fwdConfig.passwd = "ecoradio";
 
-        std::unique_ptr<OggFwd> output(new OggFwd(fwdConfig));
-        OggFwd::Metadata metadata;
-        metadata.add("ARTIST", "Artist");
-        metadata.add("TITLE", "Title");
-        output->setMetadata(metadata);
-        qDebug() << "casi";
-        auto encoder = std::make_shared<OggEncoder>(std::move(output));
+        if (false) {
+            OggFwd::Config fwdConfig;
+            fwdConfig.hostName = "vps66370.ovh.net";
+            fwdConfig.port = 8000;
+            fwdConfig.mount = "/tests.ogg";
+            fwdConfig.passwd = "ecoradio";
+            std::unique_ptr<OggFwd> output(new OggFwd(fwdConfig));
+            OggFwd::Metadata metadata;
+            metadata.add("ARTIST", "Artist");
+            metadata.add("TITLE", "Title");
+            output->setMetadata(metadata);
+            qDebug() << "casi";
+            auto encoder = std::make_shared<OggEncoder>(std::move(output));
+            player.addSink(encoder);
+        }
 
-
-        player.addSink(encoder);
-        player.start();
 
 
         QObject::connect(&player, SIGNAL(silenceStarted()), &sl, SLOT(silenceStarted()));
         QObject::connect(&player, SIGNAL(silenceFinished()), &sl, SLOT(silenceFinished()));
         QObject::connect(&player, (&Mixer::silenceStarted), silenceStarted);
         QObject::connect(&player, (&Mixer::silenceFinished), silenceFinished);
+        player.start();
 
-        std::shared_ptr<SoundSource> line;
+
 
         if (false)
             for (int i=0; i < 50 ; i++) {
@@ -252,33 +253,47 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
             mp3->stopFadeOut(1000);
             player.waitEnd();
         }
+
         RssParser rss("rss/podcast-linterna-diogenes_fg_f136870_filtro_1.xml");
         auto list = rss.getStreams();
         if (list.size()) {
             qDebug() << list.front();
-            auto ss = std::make_shared<StreamSrc>(list.front());
+            auto fifo = std::make_shared<Fifo>();
+            auto dl = std::make_shared<StreamSrc>(list.front(), fifo);
+            auto ss = std::make_shared<Mpg123>(fifo);
             player.addSource(ss);
-            player.waitEnd();
+            sleep(2);
+
+            while (player.activeSourceCount()) {
+                QCoreApplication::instance()->processEvents(QEventLoop::AllEvents, 100);
+            }
+            //            player.waitEnd();
         }
         return;
         //    player.addStream(mp3b);
         //    player.addStream(tone);
 
 
-        if (false)
-            line= std::make_shared<Arecord>();
-        else
-            line= std::make_shared<AlsaRec>("default");
-        line->setFadeIn(1000);   //empezará con un fundido
-        player.addSource(line);
-        sleep(5);
+        if (false) {
+            std::shared_ptr<SoundSource> line;
+            if (false)
+                line= std::make_shared<Arecord>();
+            else
+                line= std::make_shared<AlsaRec>("default");
+            line->setFadeIn(1000);   //empezará con un fundido
+            player.addSource(line);
+            sleep(5);
+            line->stopFadeOut(1000);
+            sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
+            line->stopFadeOut(1000);   //hará un fundido de bajada y parará
+            line->waitEnd();
+            line.reset();
+        }
+
         //    tone->stopFadeOut(2000);
-        line->stopFadeOut(1000);
-        sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
-        line->stopFadeOut(1000);   //hará un fundido de bajada y parará
+
         //    mp3->setFadeIn(1000);
-        line->waitEnd();
-        line.reset();
+
 
         player.waitEnd();         //espera a que terminen todos los flujos
         sleep(2);
@@ -290,6 +305,25 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
 }
 TEST(Mp3, DISABLED_Mp3) {
     Mpg123 m("test.mp3");
+}
+
+class TestWrapper : public QObject {
+    Q_OBJECT
+public:
+    void run() {
+        QCoreApplication::instance()->exit(RUN_ALL_TESTS());
+    }
+};
+
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+    TestWrapper tw;
+    ::testing::InitGoogleTest(&argc, argv);
+    QTimer::singleShot(0, &tw, &TestWrapper::run);
+
+    return app.exec();
 }
 
 

@@ -7,22 +7,20 @@
 #include <QtNetwork/QNetworkReply>
 #include "mpg123wrap.h"
 
-class StreamSrc : public SoundSource
+class StreamSrc : public QObject
 {
     Q_OBJECT
 public:
-    StreamSrc(const QString &url);
-    virtual int readPcm(char * buf, const size_t length);
-    virtual     ~StreamSrc();
-
-private:
-    QNetworkAccessManager m_nam;
-    QNetworkReply * m_reply;
-    Fifo m_fifo;
-    Mpg123 m_decoder;
+    StreamSrc(const QString &url, std::shared_ptr<Fifo> fifo);
+    virtual ~StreamSrc();
 
 public slots:
     void streamReadyRead();
     void streamFinished();
     void networkError(QNetworkReply::NetworkError error);
+
+private:
+    QNetworkAccessManager m_nam;
+    QNetworkReply * m_reply;
+    std::shared_ptr<Fifo> m_fifo;
 };

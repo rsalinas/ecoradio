@@ -25,7 +25,7 @@ TEST(TestSched, TestSched)
         auto streams = rp.getStreams();
         for (auto url : streams) {
             qDebug() << "  "<< url;
-            ss.reset(new StreamSrc (url));
+            ss.reset(new StreamSrc (url, nullptr));
 //ss.reset(new StreamSrc ("http://www.upv.es"));
             break;
         }

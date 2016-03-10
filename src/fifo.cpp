@@ -13,32 +13,39 @@ Fifo::~Fifo() {
 
 qint64 Fifo::readData(char *data, qint64 maxlen)
 {
-    qDebug() << "Fifo::readData";
+    qDebug() << "Fifo::readData" << maxlen;
     QMutexLocker lock(&m_mutex);
     while (maxlen) {
         int n = m_cb.read(data, maxlen);
         m_condvar.wakeAll();
         maxlen -= n;
         data += n;
-        if (n==0) {
+        while (n==0) {
+            qDebug() << "waiting for data n==" << n << "av: " << bytesAvailable();
             m_condvar.wait(&m_mutex);
         }
     }
+    return maxlen;
 }
 
 qint64 Fifo::writeData(const char *data, qint64 len)
 {
-    qDebug() << "Fifo::writeData";
+    size_t written = 0;
+    qDebug() << "Fifo::writeData pre" << len << "av: "<< bytesAvailable();
     QMutexLocker lock(&m_mutex);
     while (len) {
         int n = m_cb.write(data, len);
+        qDebug() << "Fifo::writeData done" << len << n << bytesAvailable() ;
+        written += n;
         len -= n;
         data += n;
         m_condvar.wakeAll();
-        if (n==0) {
+        while (n==0) {
+            qDebug() << __FUNCTION__ << "FIFO lleno, waiting";
             m_condvar.wait(&m_mutex);
         }
     }
+    return written;
 }
 
 
@@ -51,8 +58,9 @@ CircularBuffer::CircularBuffer(size_t capacity)
     , end_index_(0)
     , size_(0)
     , capacity_(capacity)
+     , data_(new char[capacity])
 {
-    data_ = new char[capacity];
+    ;
 }
 
 CircularBuffer::~CircularBuffer()

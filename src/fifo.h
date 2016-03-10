@@ -7,7 +7,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 
-
+//from http://asawicki.info/news_1468_circular_buffer_of_raw_binary_data_in_c.html
 class CircularBuffer
 {
 public:
@@ -16,14 +16,14 @@ public:
 
   size_t size() const { return size_; }
   size_t capacity() const { return capacity_; }
-  // Return number of bytes written.
   size_t write(const char *data, size_t bytes);
-  // Return number of bytes read.
-  size_t read(char *data, size_t bytes);
+  size_t read(char *data, size_t bytes);  
 
 private:
-  size_t beg_index_, end_index_, size_, capacity_;
-  char *data_;
+  size_t beg_index_, end_index_;
+  size_t size_;
+  const size_t capacity_;
+  char *const data_;
 };
 
 
@@ -36,6 +36,9 @@ public:
     virtual qint64 writeData(const char *data, qint64 len) override ;
     bool isSequential() const override {
         return true;
+    }
+    qint64 bytesAvailable() const override {
+        return m_cb.size();
     }
 
 private:

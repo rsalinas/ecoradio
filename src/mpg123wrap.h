@@ -12,6 +12,7 @@ public:
     };
 
     Mpg123(QIODevice *dev);
+    Mpg123(std::shared_ptr<QIODevice> dev);
     Mpg123(const QString &file);
     ~Mpg123();
     int readPcm(char *buf, const size_t length) override;
@@ -21,7 +22,10 @@ public:
 
 private:
     void postInit();
+    int initMh();
     mpg123_handle *mh;
 
-    MemHandle * m_filemh;
+    std::shared_ptr<QIODevice> m_devholder;
+    MemHandle * m_filemh = nullptr;
+    bool m_initialized = false;
 };
