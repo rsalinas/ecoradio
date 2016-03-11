@@ -17,6 +17,13 @@ class SoundSource : public QThread
 {
     Q_OBJECT
 public:
+    enum FadeAction {
+        Stop, Pause, Silence
+    };
+    enum Status {
+        Initial, Playing, Paused, Finished
+    };
+
     SoundSource(const QString &name);
     virtual ~SoundSource();
     int readFading(char * buf, const size_t length);
@@ -36,23 +43,28 @@ public:
 
     virtual int skip(int millis);
     int setFadeIn(int millis);
-    int stopFadeOut(int millis);
+    int fadeOut(int millis, FadeAction);
+    int stopFadeOut(int millis) {
+        return fadeOut(millis, FadeAction::Stop);
+    }
 
     QString name() {
         return m_name;
     }
 
+    void pause();
     void close();
 
     unsigned char m_mastervolume = 255;
     size_t m_bytes = 0;
     size_t fadingEndBytes;
     int m_fading = 0;
+    FadeAction m_fadeAction = FadeAction::Stop;
 
     void waitEnd();
 
 protected:
-    bool m_closed = false;
+    Status m_status = Status::Playing;
 
 private:
     QString m_name;

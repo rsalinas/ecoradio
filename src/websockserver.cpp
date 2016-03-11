@@ -76,3 +76,10 @@ void WebsockServer::socketDisconnected()
         pClient->deleteLater();
     }
 }
+
+
+void WebsockServer::vumeter(int channel, int value) {
+    for (auto c : m_clients)     {
+        c->sendTextMessage(QString("VU ") + QString::number(channel)+ " "+ QString::number(value));
+    }
+}

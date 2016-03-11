@@ -230,7 +230,7 @@ void Mpg123::postInit() {
 int Mpg123::readPcm(char *buf, const size_t length)
 {
 //    qDebug() << (m_filemh?m_filemh->bytesAvailable():-1) << m_complete;
-    if (m_closed) {
+    if (m_status != Playing) {
         qDebug() << "mp3 closed";
         return -1;
     }

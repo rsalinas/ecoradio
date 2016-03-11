@@ -69,7 +69,7 @@ int AlsaRec::readPcm(char * buf, const size_t length)
 {
     AutoTimeMeter tm(__FUNCTION__);
 
-    if (m_closed) {
+    if (m_status == Finished) {
         qDebug() << "AlsaRec was closed";
         return -1;
     }

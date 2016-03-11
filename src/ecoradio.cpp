@@ -24,6 +24,7 @@ Ecoradio::Ecoradio(QObject *parent) :
     QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<Program>)), this, SLOT(newProgram(std::shared_ptr<Program>)));
     QObject::connect(&m_mixer, SIGNAL(songFinishing(std::shared_ptr<SoundSource>)), this, SLOT(songFinishing(std::shared_ptr<SoundSource>)));
     QObject::connect(&m_mixer, SIGNAL(songFinished(std::shared_ptr<SoundSource>)), this, SLOT(songFinished(std::shared_ptr<SoundSource>)));
+    QObject::connect(&m_mixer, SIGNAL(vumeter(int,int)), &m_wss, SLOT(vumeter(int,int)));
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
         qDebug() << "current: "<< *m_current;
@@ -75,3 +76,4 @@ void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
         }
     }
 }
+

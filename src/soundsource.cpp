@@ -37,7 +37,17 @@ int SoundSource::readFading(char * buf, const size_t length)  {
             } else if (m_fading == -1 ){
                 m_fading = 0;
                 volume = 0;
-                close();
+                switch (m_fadeAction) {
+                case Stop:
+                    close();
+                    break;
+                case Pause:
+                    pause();
+                    break;
+                case Silence:
+                    break;
+                }
+
             }
         } else {
             if (m_fading == 1) {
@@ -65,7 +75,7 @@ SinWave::SinWave(float freq, int rate) : SoundSource("sin"+QString::number(freq)
 }
 
 int SinWave::readPcm(char * buffer, const size_t length) {
-    if (m_closed) {
+    if (m_status == Finished) {
         return -1;
     }
     for (int i=0; i < length/4; i++) {
@@ -81,17 +91,22 @@ int SinWave::readPcm(char * buffer, const size_t length) {
 }
 
 void SoundSource::close() {
-    bool wasClosed;
+    Status previousStatus;
     {
         QMutexLocker lock(&m_mutex);
-        wasClosed = m_closed;
-        m_closed = true;
+        previousStatus = m_status;
+        m_status = Finished;
         m_cv.wakeAll();
     }
-    if (!wasClosed)
+    if (previousStatus != Finished)
         emit finished();
 }
 
+void SoundSource::pause() {
+        QMutexLocker lock(&m_mutex);
+        m_status= Paused;
+        m_cv.wakeAll();
+}
 
 
 int SoundSource::skip(int millis) {
@@ -116,10 +131,11 @@ int SoundSource::setFadeIn(int millis) {
     return 1;
 }
 
-int SoundSource::stopFadeOut(int millis) {
+int SoundSource::fadeOut(int millis, FadeAction fadeAction) {
     fadingEndBytes = m_bytes + (44100 * 2 * 2 * millis / 1000);
     m_bytes = 0;
     m_fading = -1;
+    m_fadeAction = fadeAction;
     qDebug() << "fading " << m_fading << fadingEndBytes;
 }
 
@@ -134,7 +150,7 @@ void SoundSource::run() {
 
 void SoundSource::waitEnd() {
     QMutexLocker lock(&m_mutex);
-    while (!m_closed) {
+    while (m_status == Playing) {
         qDebug() << "not closed";
         m_cv.wait(&m_mutex);
     }
@@ -166,8 +182,12 @@ ProcessDecoder::~ProcessDecoder() {
 
 int ProcessDecoder::readPcm(char * buf, const size_t length) {
     ssize_t remaining = length;
-    if (m_closed)
+    if (m_status == Finished)
         return -1;
+
+    if (m_status == Paused)
+        return 0;
+
     do  {
         if (! m_process.waitForReadyRead(3000)) {
             qDebug() << "mp3: no data in time";

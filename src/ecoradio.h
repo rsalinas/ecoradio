@@ -25,7 +25,7 @@ private slots:
 
     void newProgram(std::shared_ptr<Program>);
     void songFinishing(std::shared_ptr<SoundSource> s);
-    void songFinished(std::shared_ptr<SoundSource> s);
+    void songFinished(std::shared_ptr<SoundSource> s);    
 
 public slots:
 

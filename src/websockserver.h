@@ -22,7 +22,7 @@ private Q_SLOTS:
     void processTextMessage(QString message);
     void processBinaryMessage(QByteArray message);
     void socketDisconnected();
-
+    void vumeter(int channel, int value);
 
 private:
     std::unique_ptr<QWebSocketServer> m_pWebSocketServer;

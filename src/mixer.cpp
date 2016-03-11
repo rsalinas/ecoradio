@@ -7,6 +7,7 @@
 #include "soundsource.h"
 
 
+
 Mixer::Mixer(const SndFormat &format) :
     m_format(format), buf_size(format.bufferSize)
 {
@@ -70,6 +71,8 @@ void Mixer::run() {
 
         }
         auto ellapsed = tm.ellapsed();
+
+
         if (i) {
             for (auto sink : m_sinks) {
                 sink->writePcm(buffer, sizeof(buffer));
@@ -82,12 +85,22 @@ void Mixer::run() {
         } else {
             for (auto sink : m_sinks) {
                 sink->writePcm(zeros, sizeof(zeros));
+
             }
             if (!silence) {
                 silence = true;
                 emit silenceStarted();
             }
         }
+
+        quint64 sqSum = 0;
+        auto b = reinterpret_cast<signed short int *>(buffer);
+        for (int pos=0; pos < sizeof(buffer)/ (m_format.sampleSizeBits/8 ); ++pos) {
+            sqSum += b[pos] * b[pos];
+        }
+        float asp = std::sqrt(float(sqSum) / sizeof(buffer)/2);
+        emit vumeter(0, asp * 255.0);
+
 
         if (ellapsed > 100)
             qDebug() << "In main: "  << ellapsed;

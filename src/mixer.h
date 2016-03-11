@@ -54,6 +54,7 @@ signals:
     void silenceStarted();
     void sourceFinished(std::shared_ptr<SoundSource> s);
     void songFinishing(std::shared_ptr<SoundSource> s);
+    void vumeter(int channel, int value);
 
 public slots:
 
