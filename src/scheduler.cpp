@@ -114,10 +114,11 @@ QStringList Scheduler::getPrograms() {
     QStringList ret;
     QSqlQuery query(m_db)    ;
     //FIXME only active programs
-    if (query.exec("Select name from program where true order by name")) {
+    if (query.exec("Select name from program order by name")) {
         while (query.next())  {
             ret.push_back(query.value("name").toString());
         }
     }
+    qDebug() << __FUNCTION__ << ret;
     return ret;
 }

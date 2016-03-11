@@ -62,14 +62,11 @@ void WebsockServer::processTextMessage(QString message)
         emit cmd_ptt(value != 0);
     } else if (split[0] == "GET_PROGRAMS") {
         auto list = m_ecoradio.getScheduler().getPrograms();
-        pClient->sendTextMessage("STARTPRG");
+        QString msg("PRGLIST");
         for (const auto &s : list) {
-            pClient->sendTextMessage("PRG "+s);
+            msg.append("\n").append(s);
         }
-        pClient->sendTextMessage(".");
-    }
-    if (pClient) {
-        pClient->sendTextMessage("OK "+message);
+        pClient->sendTextMessage(msg);
     }
 }
 

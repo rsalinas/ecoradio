@@ -41,6 +41,7 @@ Ecoradio::Ecoradio(QObject *parent) :
             qWarning() << "could not get song from current stream" << *m_current;
         }
     }
+    qDebug() << "progs" << m_sched.getPrograms();
     //    m_mixer.addSource(std::make_shared<StreamSrc>("http://stream.freefm.de:8100/"));
 }
 
