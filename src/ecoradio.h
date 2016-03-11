@@ -37,10 +37,9 @@ private:
     std::shared_ptr<SndSink> m_ao;
     std::shared_ptr<SndSink> m_ogg;
     Scheduler m_sched;
-    WebsockServer wss;
+    WebsockServer m_wss;
     std::shared_ptr<Program> m_current, m_currentFallback;
     std::vector<std::shared_ptr<Program>> m_nextPrograms;
     std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
-
 };
 

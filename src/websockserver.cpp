@@ -43,6 +43,7 @@ void WebsockServer::onNewConnection()
     connect(pSocket, &QWebSocket::textMessageReceived, this, &WebsockServer::processTextMessage);
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &WebsockServer::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &WebsockServer::socketDisconnected);
+    pSocket->sendTextMessage("VU 0 50");
 
     m_clients << pSocket;
 }

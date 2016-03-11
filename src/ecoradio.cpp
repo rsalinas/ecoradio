@@ -13,10 +13,10 @@ Ecoradio::Ecoradio(QObject *parent) :
     m_settings("ecoradio.ini", QSettings::Format::NativeFormat),
     m_ao(std::make_shared<AoSink>(SndFormat())),
     m_ogg(std::make_shared<OggEncoder>(std::unique_ptr<OggFwd>(new OggFwd(OggFwd::Config(m_settings))))),
-    m_sched("radio.sqlite"),
+    m_sched("radio.sqlite"),    
     m_current(m_sched.getCurrent()),
     m_nextPrograms(m_sched.getNext()),
-    wss(1234, this)
+    m_wss(quint16(m_settings.value("wss.port", 1234).toInt()), this)
 {
     m_mixer.addSink(m_ao);
     m_mixer.addSink(m_ogg);

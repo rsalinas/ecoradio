@@ -30,6 +30,7 @@ public:
             break;
         case SEEK_END:
             offset = m_dev->size() + offset;
+            //FIXME i f sequential!
             break;
         }
         auto ret = m_dev->seek(offset);
@@ -183,12 +184,14 @@ Mpg123::Mpg123(std::shared_ptr<QIODevice> dev) : SoundSource("dev"), mh(commonIn
 Mpg123::Mpg123(const QString &file) : SoundSource(file), mh(commonInit())
 {
     qDebug() << "Mpg123 opening " << file;
-    postInit();
+
+
 
     if (mpg123_open(mh, file.toStdString().c_str()) != MPG123_OK) {
         fprintf( stderr, "Trouble with mpg123: %s\n", mpg123_strerror(mh) );
         throw Mpg123Exception();
     }
+        postInit();
 }
 
 void Mpg123::postInit() {
@@ -226,7 +229,7 @@ void Mpg123::postInit() {
 
 int Mpg123::readPcm(char *buf, const size_t length)
 {
-    qDebug() << m_filemh->bytesAvailable() << m_complete;
+//    qDebug() << (m_filemh?m_filemh->bytesAvailable():-1) << m_complete;
     if (m_closed) {
         qDebug() << "mp3 closed";
         return -1;

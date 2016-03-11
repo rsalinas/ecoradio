@@ -45,9 +45,7 @@ public:
                 } else if (atts.qName(index) == "length") {
                     size = atts.value(index).toInt();
                 }
-
             }
-
         }
         if (url.size()) {
 //            qDebug() << "MP3: " << url << size;
