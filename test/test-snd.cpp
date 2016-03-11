@@ -4,6 +4,7 @@
 #include "soundsource.h"
 #include "mixer.h"
 #include "alsarec.h"
+#include "util.h"
 #include <QBitArray>
 #include <QCoreApplication>
 #include <QTimer>
@@ -15,6 +16,7 @@
 #include "streamsrc.h"
 #include "oggfwd.h"
 #include "mpg123wrap.h"
+
 
 //https://www.xiph.org/vorbis/doc/v-comment.html
 
@@ -198,6 +200,43 @@ TEST(Mp3, DISABLED_Mp3Qfile) {
     qDebug()<< "finished test1";
 }
 
+
+class SynSleep: public QObject {
+    Q_OBJECT
+public:
+    SynSleep(){
+        needRunning=1;
+    }
+
+public slots:
+
+    void sleep(const QObject *sender, const char *signal){
+        QObject::connect(sender, signal, this   , SLOT(finish()));
+        if (needRunning==1)
+            loop.exec();
+    }
+    void sleep(){
+        if (needRunning==1)
+            loop.exec();
+    }
+
+    void reset(){
+        needRunning=1;
+    }
+
+    virtual void finish(){
+        qDebug() << "FINISHED!";
+        needRunning=0;
+        loop.exit();
+    }
+
+private:
+    QEventLoop loop;
+    int needRunning;
+
+};
+
+
 TEST_F(PlayerFixture, ArecordPlayerThread ){
     try {
         SndFormat format;
@@ -254,20 +293,25 @@ TEST_F(PlayerFixture, ArecordPlayerThread ){
             player.waitEnd();
         }
 
-        RssParser rss("rss/podcast-linterna-diogenes_fg_f136870_filtro_1.xml");
-        auto list = rss.getStreams();
-        if (list.size()) {
-            qDebug() << list.front();
-            auto fifo = std::make_shared<Fifo>();
-            auto dl = std::make_shared<StreamSrc>(list.front(), fifo);
-            auto ss = std::make_shared<Mpg123>(fifo);
-            player.addSource(ss);
-            sleep(2);
+        if (true) {
+            RssParser rss("rss/podcast-linterna-diogenes_fg_f136870_filtro_1.xml");
+            auto list = rss.getStreams();
+            if (list.size()) {
+                qDebug() << list.front();
+                AutoTimeMeter atm("mp3");
+                SynSleep sl0;
+                auto ss = std::make_shared<Mpg123>(QUrl("http://vps66370.ovh.net/~rsalinas/beep.mp3" /*list.front()*/));
+                qDebug() << "Waiting for MP3 to connect";
+                sl0.sleep(ss.get(), SIGNAL(ready()));
+                qDebug() << atm.ellapsed() << "Waiting for MP3 to connect. CONNECTED";
 
-            while (player.activeSourceCount()) {
-                QCoreApplication::instance()->processEvents(QEventLoop::AllEvents, 100);
+                SynSleep sl;
+                player.addSource(ss);
+                sl.sleep(&player, SIGNAL(sourceFinished(std::shared_ptr<SoundSource> s)));
+                qDebug() << atm.ellapsed() << "finished track";
+
+                //                            player.waitEnd();
             }
-            //            player.waitEnd();
         }
         return;
         //    player.addStream(mp3b);

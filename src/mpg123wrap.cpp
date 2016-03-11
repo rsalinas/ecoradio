@@ -1,6 +1,11 @@
 #include "mpg123wrap.h"
 
 #include <QDebug>
+#include "streamsrc.h"
+#include <QTimer>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+
 
 class MemHandle {
 public:
@@ -57,12 +62,27 @@ public:
     }
 
 
-private:
+    //private:
     QIODevice * m_dev;
 };
 
+int initLibrary() {
+    qDebug() << __FUNCTION__;
+    int err = mpg123_init();
+    if (err == MPG123_OK) {
+        atexit(&mpg123_exit);
+    }
+    return err;
+}
+
+
 mpg123_handle *commonInit() {
-    int  err  = mpg123_init();
+    static int  initStatus = initLibrary();
+    if (initStatus  != MPG123_OK)  {
+        qFatal("cannot init mpg123");
+    }
+
+    int err;
     mpg123_handle *mh;
     if(err != MPG123_OK || (mh = mpg123_new(NULL, &err)) == NULL)
     {
@@ -102,7 +122,54 @@ int Mpg123::initMh() {
     return 0;
 }
 
-Mpg123::Mpg123(QIODevice * dev) : SoundSource("dev"), mh(commonInit()), m_filemh(new MemHandle(dev))
+void Mpg123::readyRead() {
+    if (m_filemh->m_dev->bytesAvailable() > 512) {
+        emit ready();
+    }
+
+}
+
+void Mpg123::streamFinished() {
+    qDebug() << __FUNCTION__;
+
+    for (const auto &i : m_reply->rawHeaderList()) {
+        qDebug() << i << m_reply->rawHeader(i);
+    }
+    auto cookie = m_reply->header(QNetworkRequest::KnownHeaders::CookieHeader);
+    auto location = m_reply->header(QNetworkRequest::KnownHeaders::LocationHeader).toString();
+    if (location.size()) {
+        qDebug() << "Location: " << location;
+        QNetworkRequest req(location);
+        req.setHeader(QNetworkRequest::KnownHeaders::CookieHeader, cookie);
+        sender()->deleteLater();
+        m_reply = m_nam->get(req);
+        m_filemh->m_dev = m_reply;
+        QObject::connect(m_reply, SIGNAL(readyRead()), this,  SLOT(readyRead()));
+        QObject::connect(m_reply, SIGNAL(finished()), this,  SLOT(streamFinished()));
+    } else {
+        qDebug() << "COMPLETE!";
+        m_complete = true;
+    }
+
+
+}
+
+Mpg123::Mpg123(const QUrl &url)
+    : SoundSource(url.url())
+    , mh(commonInit())
+{
+    m_nam = new QNetworkAccessManager(this);
+    m_reply = m_nam->get(QNetworkRequest(url));
+    m_filemh = new MemHandle(m_reply);
+    connect(m_reply, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(m_reply, SIGNAL(finished()), this, SLOT(streamFinished()));
+    qDebug() << "Download started" << m_reply->error();
+}
+
+Mpg123::Mpg123(QIODevice * dev) :
+    SoundSource("dev"),
+    mh(commonInit()),
+    m_filemh(new MemHandle(dev))
 {
     qDebug() << "delaying start of filemh";
 }
@@ -154,25 +221,36 @@ void Mpg123::postInit() {
 
     qDebug() << "mpg123_outblock(mh)" << mpg123_outblock(mh);
     m_initialized = true;
+    emit ready();
 }
 
 int Mpg123::readPcm(char *buf, const size_t length)
 {
-       qDebug() << "Mpg123::readPcm starts" << length;
+    qDebug() << m_filemh->bytesAvailable() << m_complete;
     if (m_closed) {
         qDebug() << "mp3 closed";
         return -1;
     }
-    if (!m_initialized && m_filemh) {
-        qDebug() << "!m_initialized && m_filemh";
-        if (initMh() < 0)
+    if (m_filemh ) {
+        if (m_reply->error()) {
+            qDebug() << "Network error";
             return -1;
+        }
+        if (!m_initialized ) {
+            if (m_filemh->bytesAvailable() < 512 && ! m_complete) {
+                qDebug() << "available: " << m_filemh->bytesAvailable();
+                return 0;
+            }
+            if (initMh() < 0)
+                return -1;
+        }
+
+        if (!m_complete && m_filemh->bytesAvailable() < 64*1024) {
+            qDebug() << "mp3 streamer has less than 64kB, returning 0 WAV bytes" << m_filemh->bytesAvailable();
+            return 0;
+        }
     }
-    qDebug() << m_filemh->bytesAvailable() ;
-    if (m_filemh && m_filemh->bytesAvailable() < 32*1024) {
-        qDebug() << "mp3 streamer has less than 32kB, returning 0 WAV bytes" << m_filemh->bytesAvailable();
-        return 0;
-    }
+
     size_t done = 0;
     int  err = mpg123_read( mh, reinterpret_cast<unsigned char*>(buf), length, &done);
     switch (err) {
@@ -190,11 +268,9 @@ int Mpg123::readPcm(char *buf, const size_t length)
     }
 }
 
-
 Mpg123::~Mpg123() {
     mpg123_close(mh);
     mpg123_delete(mh);
-    mpg123_exit();
 }
 
 int lengthMillis();

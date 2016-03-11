@@ -7,10 +7,6 @@ StreamSrc::~StreamSrc() {
     qDebug() << __FUNCTION__;
 }
 
-void ping() {
-    qDebug() << __FUNCTION__;
-}
-
 StreamSrc::StreamSrc(const QString &url, std::shared_ptr<Fifo> fifo) :
     m_nam(this), m_fifo(fifo)
 {
@@ -19,7 +15,6 @@ StreamSrc::StreamSrc(const QString &url, std::shared_ptr<Fifo> fifo) :
     m_reply = m_nam.get(req);
     QObject::connect(m_reply, SIGNAL(readyRead()), this,  SLOT(streamReadyRead()));
     QObject::connect(m_reply, SIGNAL(finished()), this,  SLOT(streamFinished()));
-    QTimer::singleShot(0, 0, &ping);
     qDebug() << __FUNCTION__ << "returning";
 }
 
