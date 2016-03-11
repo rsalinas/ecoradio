@@ -1,9 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "scheduler.h"
-#include "soundsource.h"
 #include "file_scan.h"
-#include "soundsource.h"
+#include "sources/soundsource.h"
 #include "mixer.h"
 
 #include <QMap>

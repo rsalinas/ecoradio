@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QEventLoop>
 #include "util.h"
-#include "soundsource.h"
+#include "sources/soundsource.h"
 
 
 

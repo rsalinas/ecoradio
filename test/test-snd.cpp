@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "aosink.h"
-#include "soundsource.h"
+#include "sinks/aosink.h"
+#include "sources/soundsource.h"
 #include "mixer.h"
-#include "alsarec.h"
+#include "sources/alsarec.h"
 #include "util.h"
 #include <QBitArray>
 #include <QCoreApplication>
@@ -12,10 +12,10 @@
 #include "oggfwd.h"
 #include <QFile>
 #include "rssparser.h"
-#include "ogg_encoder.h"
+#include "sinks/ogg_encoder.h"
 #include "streamsrc.h"
 #include "oggfwd.h"
-#include "mpg123wrap.h"
+#include "sources/mpg123wrap.h"
 
 
 //https://www.xiph.org/vorbis/doc/v-comment.html

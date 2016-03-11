@@ -3,10 +3,10 @@
 #include <QDebug>
 #include <memory>
 
-#include "ogg_encoder.h"
-#include "aosink.h"
-#include "sink.h"
-#include "mpg123wrap.h"
+#include "sinks/ogg_encoder.h"
+#include "sinks/aosink.h"
+#include "sinks/sink.h"
+#include "sources/mpg123wrap.h"
 #include "streamsrc.h"
 
 

@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QtWebSockets/QtWebSockets>
 
+#include "../interfaces/common.h"
 
 class RadioStub : public QObject
 {

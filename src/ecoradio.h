@@ -8,7 +8,7 @@
 #include "oggfwd.h"
 #include <QSettings>
 #include <memory>
-#include "soundsource.h"
+#include "sources/soundsource.h"
 
 class SndSink;
 class Program;

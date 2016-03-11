@@ -2,7 +2,7 @@
 
 
 #include <csignal>
-#include <sink.h>
+#include "sinks/sink.h"
 #include <exception>
 #include <memory>
 #include <QProcess>

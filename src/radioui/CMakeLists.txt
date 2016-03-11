@@ -12,6 +12,7 @@ set(CMAKE_AUTOUIC ON)
 
 # Find the QtWidgets library
 find_package(Qt5Widgets)
+include_directories(../interfaces)
 
 #QT5_WRAP_CPP(Cmake_hdr_moc radioconsole.h  newprogramdialog.h)
 QT5_WRAP_UI(Cmake_form_hdr radioconsole.ui newprogramdialog.ui)

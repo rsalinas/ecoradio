@@ -15,6 +15,8 @@ RadioStub::RadioStub(const QUrl &url, QObject *parent) :
 }
 
 void RadioStub::disconnected() {
+    qDebug() << __FUNCTION__;
+    qDebug() << m_websocket.closeReason() << m_websocket.closeCode() << m_websocket.errorString();
     emit connectionClosed();
 }
 

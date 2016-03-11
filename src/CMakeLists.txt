@@ -6,25 +6,26 @@ add_subdirectory(radioui)
 
 add_library(ecoradio SHARED scheduler.cpp
     alarm.cpp
-    alsarec.cpp
-    aosink.cpp
+    sources/alsarec.cpp
+    sources/mpg123wrap.cpp
+    sources/soundsource.cpp
+    streamsrc.cpp
+    sinks/aosink.cpp
+    sinks/ogg_encoder.cpp
+    sinks/sink.h
     ecoradio.cpp
     file_scan.cpp
     format.h
     mixer.cpp
-    mpg123wrap.cpp
-    ogg_encoder.cpp
     oggfwd.cpp
     program.cpp
-    sink.h
-    soundsource.cpp
     util.cpp
     websockserver.cpp
     icecast_monitor.cpp
     rssparser.cpp
-    streamsrc.cpp
     fifo.cpp
     wavwriter.cpp
+    interfaces/common.h
      )
 
 add_executable(main main.cpp)

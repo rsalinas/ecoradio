@@ -1,7 +1,7 @@
 #include "program.h"
 
 #include <memory>
-#include "mpg123wrap.h"
+#include "sources/mpg123wrap.h"
 
 std::shared_ptr<SoundSource> LiveProgram::getNextSong() {
 return nullptr;

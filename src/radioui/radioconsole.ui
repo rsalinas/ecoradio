@@ -103,7 +103,7 @@
      <item row="1" column="0" colspan="3">
       <widget class="QProgressBar" name="vumMain">
        <property name="value">
-        <number>24</number>
+        <number>0</number>
        </property>
       </widget>
      </item>
@@ -225,5 +225,22 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_Exit</sender>
+   <signal>triggered()</signal>
+   <receiver>RadioConsole</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>251</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

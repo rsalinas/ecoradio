@@ -11,7 +11,7 @@
 #include <memory>
 #include <QThread>
 #include <QObject>
-#include "sink.h"
+#include "sinks/sink.h"
 
 class SoundSource;
 class PlayingThread;
