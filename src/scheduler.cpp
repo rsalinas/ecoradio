@@ -108,3 +108,16 @@ void Scheduler::programTimerExpired() {
     emit programChanged(getCurrent());
     getNext();
 }
+
+
+QStringList Scheduler::getPrograms() {
+    QStringList ret;
+    QSqlQuery query(m_db)    ;
+    //FIXME only active programs
+    if (query.exec("Select name from program where true order by name")) {
+        while (query.next())  {
+            ret.push_back(query.value("name").toString());
+        }
+    }
+    return ret;
+}

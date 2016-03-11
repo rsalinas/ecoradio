@@ -21,6 +21,7 @@ public:
 
     std::shared_ptr<Program> getCurrent(const QDateTime &ts = QDateTime::currentDateTime());
     std::vector<std::shared_ptr<Program>> getNext(const QDateTime &ts = QDateTime::currentDateTime());
+    QStringList getPrograms();
 
 private:
     std::vector<std::shared_ptr<Program>>  getPlan(bool current, const QDateTime &ts);

@@ -25,7 +25,7 @@ public:
     };
 
     SoundSource(const QString &name);
-    virtual ~SoundSource();
+    virtual ~SoundSource() = 0;
     int readFading(char * buf, const size_t length);
     virtual int readPcm(char * buf, const size_t length) = 0;
     virtual int goTo(int millis) {
@@ -52,6 +52,7 @@ public:
         return m_name;
     }
 
+    void play();
     void pause();
     void close();
 

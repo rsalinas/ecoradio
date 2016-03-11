@@ -1,8 +1,8 @@
-#ifndef WEBSOCKSERVER_H
-#define WEBSOCKSERVER_H
-
+#pragma once
 #include <QObject>
 #include <memory>
+
+class Ecoradio;
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -11,11 +11,12 @@ class WebsockServer : public QObject
 {
        Q_OBJECT;
 public:
-    WebsockServer(quint16 port, QObject * parent = nullptr);
+    WebsockServer(Ecoradio &m_ecoradio, quint16 port, QObject * parent = nullptr);
     ~WebsockServer();
 
 Q_SIGNALS:
     void closed();
+    void cmd_ptt(bool on);
 
 private Q_SLOTS:
     void onNewConnection();
@@ -25,8 +26,7 @@ private Q_SLOTS:
     void vumeter(int channel, int value);
 
 private:
+    Ecoradio &m_ecoradio;
     std::unique_ptr<QWebSocketServer> m_pWebSocketServer;
     QList<QWebSocket *> m_clients;
 };
-
-#endif // WEBSOCKSERVER_H

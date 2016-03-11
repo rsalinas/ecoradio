@@ -4,6 +4,7 @@
 #include <exception>
 #include <mpg123.h>
 #include <QUrl>
+
 class MemHandle;
 class QNetworkAccessManager;
 class QNetworkReply;

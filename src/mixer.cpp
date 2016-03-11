@@ -30,8 +30,6 @@ void Mixer::run() {
         {
             QMutexLocker lock(&mutex);
             sourcesNow = m_sources;
-            //            if (m_sinks.size() == 0)
-            //                usleep(1000);
         }
         int i=0;
         for (auto source : sourcesNow) {

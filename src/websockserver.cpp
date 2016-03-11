@@ -4,6 +4,8 @@
 #include "QtWebSockets/qwebsocket.h"
 #include <QtCore/QDebug>
 
+#include "ecoradio.h"
+
 QT_USE_NAMESPACE
 
 /*
@@ -16,11 +18,12 @@ QT_USE_NAMESPACE
 
 */
 
-WebsockServer::WebsockServer(quint16 port, QObject *parent) :
-    QObject(parent),
-    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
-                                            QWebSocketServer::NonSecureMode, this)),
-    m_clients()
+WebsockServer::WebsockServer(Ecoradio &ecoradio, quint16 port, QObject *parent)
+    : m_ecoradio(ecoradio)
+    , QObject(parent)
+    , m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
+                                                 QWebSocketServer::NonSecureMode, this))
+    , m_clients()
 {
     if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
         qDebug() << "WebsockServer listening on port" << port;
@@ -52,7 +55,19 @@ void WebsockServer::processTextMessage(QString message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     qDebug() << "Message received:" << message;
-    qDebug() << message.split(" ");
+    QStringList split = message.split(" ");
+    qDebug() << split;
+    if (split[0] == "PTT") {
+        int value = split[1].toInt();
+        emit cmd_ptt(value != 0);
+    } else if (split[0] == "GET_PROGRAMS") {
+        auto list = m_ecoradio.getScheduler().getPrograms();
+        pClient->sendTextMessage("STARTPRG");
+        for (const auto &s : list) {
+            pClient->sendTextMessage("PRG "+s);
+        }
+        pClient->sendTextMessage(".");
+    }
     if (pClient) {
         pClient->sendTextMessage("OK "+message);
     }

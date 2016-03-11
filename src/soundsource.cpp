@@ -104,7 +104,13 @@ void SoundSource::close() {
 
 void SoundSource::pause() {
         QMutexLocker lock(&m_mutex);
-        m_status= Paused;
+        m_status = Paused;
+        m_cv.wakeAll();
+}
+
+void SoundSource::play() {
+        QMutexLocker lock(&m_mutex);
+        m_status = Playing;
         m_cv.wakeAll();
 }
 
