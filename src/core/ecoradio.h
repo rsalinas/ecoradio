@@ -3,12 +3,12 @@
 #include <QObject>
 
 #include "scheduler.h"
-#include "mixer.h"
+#include "snd/mixer.h"
 #include "websockserver.h"
-#include "oggfwd.h"
+#include "snd/oggfwd.h"
 #include <QSettings>
 #include <memory>
-#include "sources/soundsource.h"
+#include "snd/sources/soundsource.h"
 
 class SndSink;
 class Program;

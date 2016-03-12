@@ -1,10 +1,12 @@
 #include "mpg123wrap.h"
 
 #include <QDebug>
-#include "streamsrc.h"
 #include <QTimer>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+
+
+#include "util/streamsrc.h"
 
 
 class MemHandle {

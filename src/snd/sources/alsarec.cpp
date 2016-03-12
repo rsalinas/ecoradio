@@ -2,7 +2,7 @@
 
 #include <QDateTime>
 #include <QDebug>
-#include "util.h"
+#include "util/util.h"
 
 
 AlsaRec::AlsaRec(const QString &deviceName) : SoundSource(__FUNCTION__)

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "sources/soundsource.h"
-
 #include "fifo.h"
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
-#include "sources/mpg123wrap.h"
+
+#include <memory>
 
 class StreamSrc : public QObject
 {

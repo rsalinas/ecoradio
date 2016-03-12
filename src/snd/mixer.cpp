@@ -3,7 +3,7 @@
 
 #include <QDebug>
 #include <QEventLoop>
-#include "util.h"
+#include "util/util.h"
 #include "sources/soundsource.h"
 
 

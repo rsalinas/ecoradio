@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "scheduler.h"
+#include "core/scheduler.h"
 #include <QCoreApplication>
 
 Scheduler sched("/home/rsalinas/Sync/Projects/ecoradio2/radio.sqlite");

@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <memory>
-#include "util.h"
+#include "util/util.h"
 
 Scheduler::Scheduler(const QString &filename) : m_db(QSqlDatabase::addDatabase("QSQLITE"))
 {

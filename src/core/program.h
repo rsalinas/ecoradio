@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sources/soundsource.h"
+#include "snd/sources/soundsource.h"
 #include "file_scan.h"
 #include <QDateTime>
 typedef uint64_t rowid_t;

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <QDebug>
-#include "fifo.h"
+#include "util/fifo.h"
 
 TEST(FifoTest, Fifo)
 {

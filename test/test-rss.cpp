@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "rssparser.h"
+#include "util/rssparser.h"
 #include <QDir>
-#include "streamsrc.h"
+#include "util/streamsrc.h"
 #include <QDebug>
 #include <QCoreApplication>
 #include <QTimer>

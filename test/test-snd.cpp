@@ -1,21 +1,22 @@
 #include "gtest/gtest.h"
 
-#include "sinks/aosink.h"
-#include "sources/soundsource.h"
-#include "mixer.h"
-#include "sources/alsarec.h"
-#include "util.h"
 #include <QBitArray>
 #include <QCoreApplication>
-#include <QTimer>
-#include <QObject>
-#include "oggfwd.h"
 #include <QFile>
-#include "rssparser.h"
-#include "sinks/ogg_encoder.h"
-#include "streamsrc.h"
-#include "oggfwd.h"
-#include "sources/mpg123wrap.h"
+#include <QObject>
+#include <QTimer>
+
+#include "snd/mixer.h"
+#include "snd/oggfwd.h"
+#include "snd/oggfwd.h"
+#include "snd/sinks/aosink.h"
+#include "snd/sinks/ogg_encoder.h"
+#include "snd/sources/alsarec.h"
+#include "snd/sources/mpg123wrap.h"
+#include "snd/sources/soundsource.h"
+#include "util/rssparser.h"
+#include "util/streamsrc.h"
+#include "util/util.h"
 
 
 //https://www.xiph.org/vorbis/doc/v-comment.html

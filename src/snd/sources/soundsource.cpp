@@ -1,7 +1,7 @@
 #include "soundsource.h"
 
 #include <QDebug>
-#include "util.h"
+#include "util/util.h"
 
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {

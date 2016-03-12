@@ -3,11 +3,11 @@
 #include <QDebug>
 #include <memory>
 
-#include "sinks/ogg_encoder.h"
-#include "sinks/aosink.h"
-#include "sinks/sink.h"
-#include "sources/mpg123wrap.h"
-#include "streamsrc.h"
+#include "snd/sinks/ogg_encoder.h"
+#include "snd/sinks/aosink.h"
+#include "snd/sinks/sink.h"
+#include "snd/sources/mpg123wrap.h"
+#include "util/streamsrc.h"
 
 
 Ecoradio::Ecoradio(QObject *parent) :
