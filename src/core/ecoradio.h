@@ -9,6 +9,7 @@
 #include "snd/oggfwd.h"
 #include "snd/sources/soundsource.h"
 #include "websockserver.h"
+#include "programplayer.h"
 
 class SndSink;
 class Program;
@@ -48,6 +49,7 @@ private:
     Scheduler m_sched;
     WebsockServer m_wss;
     std::shared_ptr<Program> m_current, m_currentFallback;
+    std::shared_ptr<ProgramPlayer> m_currentPlayer;
     std::vector<std::shared_ptr<Program>> m_nextPrograms;
     std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
     std::shared_ptr<SoundSource> m_linein;

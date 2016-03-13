@@ -8,7 +8,7 @@
 #include <memory>
 #include <exception>
 
-#include "program.h"
+#include "common/program.h"
 
 class SqlException : public std::exception {
 };

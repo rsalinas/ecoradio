@@ -10,6 +10,19 @@
 #include "util/streamsrc.h"
 
 
+std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p) {
+    if (dynamic_cast<const FolderProgram*>(&p)) {
+        return std::make_shared<FolderProgramPlayer>(*dynamic_cast<const FolderProgram*>(&p));
+    } else if (dynamic_cast<const PodcastProgram*>(&p)) {
+        return std::make_shared<PodcastProgramPlayer>(*dynamic_cast<const PodcastProgram*>(&p));
+    } else if (dynamic_cast<const LiveProgram*>(&p)) {
+        return std::make_shared<LiveProgramPlayer>(*dynamic_cast<const LiveProgram*>(&p));
+    } else if (dynamic_cast<const StreamProgram*>(&p)) {
+        return std::make_shared<StreamProgramPlayer>(*dynamic_cast<const StreamProgram*>(&p));
+    } else
+        return nullptr;
+}
+
 Ecoradio::Ecoradio(QObject *parent) :
     QObject(parent),
     m_settings("ecoradio.ini", QSettings::Format::NativeFormat),
@@ -17,6 +30,7 @@ Ecoradio::Ecoradio(QObject *parent) :
     m_ogg(std::make_shared<OggEncoder>(std::unique_ptr<OggFwd>(new OggFwd(OggFwd::Config(m_settings))))),
     m_sched("radio.sqlite"),
     m_current(m_sched.getCurrent()),
+    m_currentPlayer(getProgramPlayer(*m_current)),
     m_nextPrograms(m_sched.getNext()),
     m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
 {
@@ -32,8 +46,8 @@ Ecoradio::Ecoradio(QObject *parent) :
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
         qDebug() << "current: "<< *m_current;
-        m_currentStream  = m_current->getNextSong();
-        m_nextStream = m_current->getNextSong();
+        m_currentStream  = m_currentPlayer->getNextSong();
+        m_nextStream = m_currentPlayer->getNextSong();
 
         if (m_currentStream) {
             m_mixer.addSource(m_currentStream);
@@ -72,7 +86,7 @@ void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
     m_mixer.addSource(m_currentStream);
     if (m_current) {
         qDebug() << "current: "<< *m_current;
-        m_nextStream = m_current->getNextSong();
+        m_nextStream = m_currentPlayer->getNextSong();
         if (!m_nextStream) {
             qWarning() << "could not get song from current stream" << *m_current;
         }

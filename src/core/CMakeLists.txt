@@ -20,12 +20,13 @@ add_library(ecoradio_core
     ecoradio.cpp
     file_scan.cpp
     icecast_monitor.cpp
-    program.cpp
     scheduler.cpp
     websockserver.cpp
+    programplayer.cpp
 )
 
 target_link_libraries(ecoradio_core
     Qt5::Core
     ecoradio_snd
+    ecoradio_common
 )

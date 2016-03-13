@@ -2,6 +2,7 @@
 
 #include "core/scheduler.h"
 #include <QCoreApplication>
+#include <QDebug>
 
 Scheduler sched("radio.sqlite");
 
