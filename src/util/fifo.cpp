@@ -16,7 +16,7 @@ qint64 Fifo::readData(char *data, qint64 maxlen)
     qDebug() << "Fifo::readData" << maxlen;
     QMutexLocker lock(&m_mutex);
     while (maxlen) {
-        int n = m_cb.read(data, maxlen);
+        int n = m_cb.readData(data, maxlen);
         m_condvar.wakeAll();
         maxlen -= n;
         data += n;
@@ -34,7 +34,7 @@ qint64 Fifo::writeData(const char *data, qint64 len)
     qDebug() << "Fifo::writeData pre" << len << "av: "<< bytesAvailable();
     QMutexLocker lock(&m_mutex);
     while (len) {
-        int n = m_cb.write(data, len);
+        int n = m_cb.writeData(data, len);
         qDebug() << "Fifo::writeData done" << len << n << bytesAvailable() ;
         written += n;
         len -= n;
@@ -68,12 +68,12 @@ CircularBuffer::~CircularBuffer()
     delete [] data_;
 }
 
-size_t CircularBuffer::write(const char *data, size_t bytes)
+qint64 CircularBuffer::writeData(const char *data, qint64  bytes)
 {
     if (bytes == 0) return 0;
 
-    size_t capacity = capacity_;
-    size_t bytes_to_write = std::min(bytes, capacity - size_);
+    qint64  capacity = capacity_;
+    qint64  bytes_to_write = std::min(bytes, capacity - size_);
 
     // Write in a single step
     if (bytes_to_write <= capacity - end_index_)
@@ -96,7 +96,7 @@ size_t CircularBuffer::write(const char *data, size_t bytes)
     return bytes_to_write;
 }
 
-size_t CircularBuffer::read(char *data, size_t bytes)
+qint64 CircularBuffer::readData(char *data, qint64  bytes)
 {
     if (bytes == 0) return 0;
 

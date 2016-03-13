@@ -8,21 +8,25 @@
 #include <QWaitCondition>
 
 //from http://asawicki.info/news_1468_circular_buffer_of_raw_binary_data_in_c.html
-class CircularBuffer
+class CircularBuffer : public QIODevice
 {
 public:
-  CircularBuffer(size_t capacity);
+  CircularBuffer(size_t size);
   ~CircularBuffer();
 
-  size_t size() const { return size_; }
-  size_t capacity() const { return capacity_; }
-  size_t write(const char *data, size_t bytes);
-  size_t read(char *data, size_t bytes);  
+  qint64 bytesAvailable() const override { return size_; }
+  qint64 size() const { return capacity_; }
+  qint64 writeData(const char *data, qint64 bytes) override;
+  qint64 readData(char *data, qint64 bytes) override;
+  bool isSequential() const override {
+      return true;
+  }
+
 
 private:
   size_t beg_index_, end_index_;
-  size_t size_;
-  const size_t capacity_;
+  qint64 size_;
+  const qint64 capacity_;
   char *const data_;
 };
 
@@ -34,11 +38,8 @@ public:
     ~Fifo();
     virtual qint64 readData(char *data, qint64 maxlen) override ;
     virtual qint64 writeData(const char *data, qint64 len) override ;
-    bool isSequential() const override {
-        return true;
-    }
     qint64 bytesAvailable() const override {
-        return m_cb.size();
+        return m_cb.bytesAvailable();
     }
 
 private:
