@@ -10,4 +10,4 @@ include_directories(..)
 add_library(${PROJECT_NAME} SHARED
     radiostub.cpp
      )     
-target_link_libraries(${PROJECT_NAME} Qt5::WebSockets)
+target_link_libraries(${PROJECT_NAME} Qt5::WebSockets ecoradio_common)

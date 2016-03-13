@@ -4,10 +4,13 @@
 
 #include <QStringList>
 
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Program>>)
+
 RadioStub::RadioStub(const QUrl &url, QObject *parent) :
     QObject(parent), m_websocket()
 {
     qDebug() << __FUNCTION__ << url;
+    qRegisterMetaType<QList<std::shared_ptr<Program>> >();
     connect(&m_websocket, &QWebSocket::connected, this, &RadioStub::onConnected);
     connect(&m_websocket, &QWebSocket::disconnected, this, &RadioStub::disconnected);
     m_websocket.open(url);
@@ -26,43 +29,70 @@ void RadioStub::onConnected()
     qDebug() << "WebSocket connected";
     connect(&m_websocket, &QWebSocket::textMessageReceived,
             this, &RadioStub::onTextMessageReceived);
+    connect(&m_websocket, &QWebSocket::binaryMessageReceived,
+            this, &RadioStub::onBinaryMessageReceived);
     m_websocket.sendTextMessage(QStringLiteral("USER user"));
+}
+
+void RadioStub::onBinaryMessageReceived(QByteArray message)
+{
+    QDataStream ds(&message, QIODevice::ReadOnly);
+    QString type;
+    ds >> type;
+    if (type == "program") {
+
+//        FolderProgram fp()
+    }
+
 }
 
 void RadioStub::onTextMessageReceived(QString message)
 {
-//    qDebug() << "Message received:" << message;
-    //    m_webSocket.close();
-    QStringList lsplit = message.split('\n');
-    QStringList split(lsplit[0].split(' '));
-    if (split[0] == "VU") {
-        //        qDebug() << "vumeter";
-        int channel = split[1].toInt();
-        int value = split[2].toInt();
+    QTextStream ts(&message);
+    QString cmd = ts.readLine();
+
+    qDebug() << "Message received:" << message << cmd;
+//    //    m_webSocket.close();
+//    QStringList lsplit = message.split('\n');
+//    QStringList split(lsplit[0].split(' '));
+    if (cmd == "VU") {
+
+        int channel = ts.readLine().toInt();
+        int value = ts.readLine().toInt();
+        qDebug() << "vumeter" << channel << value;
         emit vuMeterUpdate(channel, value);
-    } else if (split[0] == "PRGLIST") {
-        qDebug() << "program list!";
-        QStringList programs;
-        for (size_t i = 1; i < lsplit.size(); ++i) {
-            programs.push_back(lsplit[i]);
-        }
-        emit programListReady(programs);
-    } else if (split[0]  == "SET_PROGRAM") {
-        QStringList programs;
-        if (lsplit.size()<2 )
-            return;
-        auto current = lsplit[1];
-        for (size_t i = 2; i < lsplit.size(); ++i) {
-            programs.push_back(lsplit[i]);
-        }
-        emit newProgram(current, programs);
-    } else if (split[0] == "nextSong") {
-        emit nextSong(lsplit[1]);
-    } else if (split[0] == "currentSong") {
-        emit currentSong(lsplit[1]);
-    } else if (split[0] == "currentPos") {                
+    } else if (cmd == "PRGLIST") {
+//        qDebug() << "program list!";
+//        QStringList programs;
+//        for (size_t i = 1; i < lsplit.size(); ++i) {
+//            programs.push_back(lsplit[i]);
+//        }
+//        emit programListReady(programs);
+    } else if (cmd  == "programChange") {
+        auto rest = ts.readAll().toLocal8Bit();
+        auto doc = QJsonDocument::fromJson(rest);
+        qDebug().noquote() <<  "REST: " <<rest;
+        qDebug().noquote() <<  "DOC: " << doc;
+        auto current = programFromJson(doc.object()["current"].toObject());
+        auto next = programListFromJson(doc.object()["current"].toArray());
+        qDebug() << "parsed: " << *current;
+//        QStringList programs;
+//        if (lsplit.size()<2 )
+//            return;
+//        auto current =  lsplit[1];
+//        for (size_t i = 2; i < lsplit.size(); ++i) {
+//            programs.push_back(lsplit[i]);
+//        }
+        emit newProgram(current, next);
+    } else if (cmd == "nextSong") {
+        emit nextSong(ts.readLine());
+    } else if (cmd == "currentSong") {
+        emit currentSong(ts.readLine());
+    } else if (cmd == "currentPos") {
         qDebug() << "CURRENT POS" << message;
-        emit currentPos(split[1].toFloat(), split[2].toFloat());
+        auto pos = ts.readLine().toFloat();
+        auto total = ts.readLine().toFloat();
+        emit currentPos(pos, total);
     } else {
         qWarning () << "BAD MESSAGE RECEIVED: "<< message;
     }
@@ -70,8 +100,8 @@ void RadioStub::onTextMessageReceived(QString message)
 }
 
 
-bool RadioStub::startProgram(int id) {
-    m_websocket.sendTextMessage(QStringLiteral("START_PROGRAM ")+QString::number(id));
+bool RadioStub::startProgram(Program program, QString title, int delay) {
+    m_websocket.sendTextMessage(QStringLiteral("START_PROGRAM ")+QString::number(0)); //FIXME
     return true;
 }
 

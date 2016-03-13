@@ -36,5 +36,5 @@ public slots:
     void programTimerExpired();
 };
 
-QDebug operator<<(QDebug dbg, const Program &program);
+
 

@@ -18,6 +18,7 @@ class PlayingThread;
 
 Q_DECLARE_METATYPE(std::shared_ptr<SoundSource>)
 
+
 class Mixer : public QThread
 {
     Q_OBJECT

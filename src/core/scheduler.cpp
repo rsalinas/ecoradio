@@ -90,17 +90,6 @@ std::vector<std::shared_ptr<Program>> Scheduler::getNext(const QDateTime &ts) {
 }
 
 
-QDebug operator<<(QDebug dbg, const Program &program) {
-    dbg.noquote() << QDate::longDayName(program.dow) << program.ts.toString() << program.name;
-    auto now = QDateTime::currentDateTime();
-    qDebug() << program.ts;
-    //    if (program.ts < now) {
-
-    dbg <<  now.msecsTo(program.ts) /1000/60 << "minutes";
-    //    } else
-    //        dbg << -program.ts.msecsTo(now) /1000/60  << "minuteS";
-    return dbg;
-}
 
 
 void Scheduler::programTimerExpired() {

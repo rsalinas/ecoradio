@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QList>
 
 #include "wsstub/radiostub.h"
 
@@ -27,7 +28,8 @@ private slots:
     void on_pttButton_pressed();
     void on_pttButton_released();
     void on_skipButton_clicked();
-    void newProgram(QString current, QStringList nextPrograms);
+    void newProgram(std::shared_ptr<Program> current,
+                    QList<std::shared_ptr<Program>> nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString nextSong);
     void startProgram(int id);

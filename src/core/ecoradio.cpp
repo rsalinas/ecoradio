@@ -78,7 +78,7 @@ void Ecoradio::newProgram(std::shared_ptr<Program> p)
 {
     qDebug() << "Ecoradio::programChanged: " << *p;
     QStringList nextProgramNames = m_sched.getPrograms();
-    m_wss.programChange(p->name, nextProgramNames);
+    m_wss.programChange(m_current, m_nextPrograms);
 }
 
 
@@ -127,7 +127,7 @@ void Ecoradio::cmd_ptt(bool on) {
 
 void Ecoradio::clientConnected() {
     qDebug() << __FUNCTION__;
-    emit m_wss.programChange(m_current->name, m_sched.getPrograms());
+    emit m_wss.programChange(m_current, m_nextPrograms);
     if (m_currentStream) {
         emit m_wss.currentSong(m_currentStream->name());
         everySecond();

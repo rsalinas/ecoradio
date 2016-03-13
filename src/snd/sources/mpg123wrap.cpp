@@ -85,7 +85,7 @@ mpg123_handle *commonInit() {
         qFatal("cannot init mpg123");
     }
 
-    int err;
+    int err = MPG123_OK;
     mpg123_handle *mh;
     if(err != MPG123_OK || (mh = mpg123_new(NULL, &err)) == NULL)
     {

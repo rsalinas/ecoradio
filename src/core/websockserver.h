@@ -4,6 +4,8 @@
 #include <memory>
 #include "common/common.h"
 
+class Program;
+
 class Ecoradio;
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
@@ -21,7 +23,8 @@ public:
 
 
 public slots:
-    void programChange(QString program, QStringList nextPrograms);
+    void programChange(std::shared_ptr<Program> current,
+                       std::vector<std::shared_ptr<Program>> next);
 
 signals:
     void closed();

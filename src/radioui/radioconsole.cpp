@@ -7,18 +7,27 @@
 
 #include "newprogramdialog.h"
 
+Q_DECLARE_METATYPE(std::shared_ptr<Program>)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Program>>)
+
 RadioConsole::RadioConsole(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RadioConsole),
     m_wallclockTimer(new QTimer(this)),
     m_stub(QUrl("ws://localhost:1234")) //FIXME
 {
+    qRegisterMetaType<std::shared_ptr<Program> >();
+    qRegisterMetaType<QList<std::shared_ptr<Program>> >();
+
     ui->setupUi(this);
     updateClock();
     QObject::connect(m_wallclockTimer, SIGNAL(timeout()), this, SLOT(updateClock()));
     m_wallclockTimer->start(1000);
     QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int)));
-    QObject::connect(&m_stub, SIGNAL(newProgram(QString,QStringList)), this, SLOT(newProgram(QString,QStringList)));
+    QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<Program> current,
+                                                QList<std::shared_ptr<Program>> nextPrograms)),
+                     this, SLOT(newProgram(std::shared_ptr<Program> current,
+                                           QList<std::shared_ptr<Program>> nextPrograms)));
     QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString)));
     QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString)));
     QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float)));
@@ -36,7 +45,8 @@ RadioConsole::~RadioConsole()
 
 void RadioConsole::startProgram(int id) {
     qDebug() << __FUNCTION__ << id;
-    m_stub.startProgram(id);
+    abort();
+    //FIXME m_stub.startProgram(id);
 }
 
 
@@ -94,12 +104,13 @@ void RadioConsole::vuMeterUpdate(int channel, int value) {
 }
 
 
-void RadioConsole::newProgram(QString current, QStringList nextPrograms) {
+void RadioConsole::newProgram(std::shared_ptr<Program> current,
+                              QList<std::shared_ptr<Program>> nextPrograms) {
     qDebug() << __FUNCTION__;
-    ui->statusBar->showMessage(current);
+    ui->statusBar->showMessage(current->ts.toString("hh:mm:ss ")+ current->name);
     ui->programList->clear();
     for (auto s : nextPrograms) {
-        ui->programList->addItem(s);
+        ui->programList->addItem(s->name);
     }
 }
 
@@ -116,5 +127,5 @@ void RadioConsole::currentPos(float pos, float total) {
     auto value = int(pos*100/total);
     qDebug() << "current pos client: "<< pos << value;
     ui->currentPosSlider->setValue(value);
-//    ui->
+    //    ui->
 }

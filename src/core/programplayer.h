@@ -4,6 +4,7 @@
 
 #include "common/program.h"
 #include "file_scan.h"
+#include <snd/sources/soundsource.h>
 
 class ProgramPlayer  {
 public:

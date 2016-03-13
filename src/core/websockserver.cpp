@@ -3,7 +3,8 @@
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QtCore/QDebug>
-
+#include <QJsonDocument>
+#include <QJsonObject>
 #include "ecoradio.h"
 
 QT_USE_NAMESPACE
@@ -39,7 +40,6 @@ void WebsockServer::onNewConnection()
     connect(pSocket, &QWebSocket::textMessageReceived, this, &WebsockServer::processTextMessage);
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &WebsockServer::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &WebsockServer::socketDisconnected);
-    pSocket->sendTextMessage("VU 0 50");
     m_clients << pSocket;
     m_ecoradio.clientConnected();
 }
@@ -89,29 +89,48 @@ void WebsockServer::socketDisconnected()
 
 
 void WebsockServer::vumeter(int channel, int value) {
-    broadCastTextMessage(QString("VU ") + QString::number(channel)+ " "+ QString::number(value));
+    broadCastTextMessage(QString("VU\n") + QString::number(channel)+ '\n' + QString::number(value));
 }
 
 
-void WebsockServer::programChange(QString program, QStringList nextPrograms) {   
-    broadCastTextMessage("SET_PROGRAM\n"+program+"\n"+nextPrograms.join('\n'));
+void WebsockServer::programChange(std::shared_ptr<Program> current,
+                                  std::vector<std::shared_ptr<Program>> next)
+{
+    QByteArray ba;
+    QTextStream ts(&ba);
+    ts <<__FUNCTION__<< endl;
+    QJsonDocument doc;
+    QJsonObject root = toJson(current, next);
+    doc.setObject(root);
+    ts << doc.toJson();
+    broadCastTextMessage(QString::fromLocal8Bit(ba));
 }
 
 
 void WebsockServer::currentSong(QString currentSong) {
-    broadCastTextMessage(QString(__FUNCTION__) + '\n' + currentSong);
+    QByteArray ba;
+    QTextStream ts(&ba);
+    ts <<__FUNCTION__<<endl;
+    ts << currentSong <<endl;
+    broadCastTextMessage(QString::fromLocal8Bit(ba));
 }
 
 void WebsockServer::nextSong(QString nextSong) {
-    broadCastTextMessage(QString(__FUNCTION__) + '\n' + nextSong);
-
+    QByteArray ba;
+    QTextStream ts(&ba);
+    ts <<__FUNCTION__<<endl;
+    ts << nextSong;
+    broadCastTextMessage(QString::fromLocal8Bit(ba));
 }
 
 void WebsockServer::currentPos(float pos, float length) {
     //    qDebug() << __FUNCTION__ << pos;
-    broadCastTextMessage(QString(__FUNCTION__)
-                         +' ' + QString::number(pos)
-                         + ' ' + QString::number(length));
+    QByteArray ba;
+    QTextStream ts(&ba);
+    ts << __FUNCTION__<<endl;
+    ts << pos<<endl;
+    ts << length <<endl;
+    broadCastTextMessage(QString::fromLocal8Bit(ba));
 }
 
 

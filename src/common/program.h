@@ -1,9 +1,11 @@
 #pragma once
 
 #include <QDateTime>
+#include <QJsonObject>
+
+#include <memory>
 
 typedef uint64_t rowid_t;
-class SoundSource;
 
 class Program {
 public:
@@ -13,9 +15,11 @@ public:
     QString name;
     Program(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
         id(id), dow(dow), ts(ts), name(name) {
+
     }
     Program(const Program&) = default;
     virtual ~Program() {}
+    bool operator==(const Program &other) const;
 };
 
 
@@ -33,9 +37,6 @@ public:
         Program(id, dow, ts, name) {
 
     }
-    int play() {
-
-    }
 };
 
 class PodcastProgram : public Program {
@@ -51,6 +52,20 @@ public:
 class FolderProgram : public Program {
 public:
     FolderProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name);
-
-
 };
+
+std::shared_ptr<Program> readProgram(const QJsonObject &json);
+bool setProgram(QJsonObject &o, QString key, const Program& program);
+
+
+
+
+
+QJsonObject toJson(Program p) ;
+
+std::shared_ptr<Program> programFromJson(const QJsonObject obj);
+QJsonObject toJson(std::shared_ptr<Program> current, std::vector<std::shared_ptr<Program>> next) ;
+
+QDebug operator<<(QDebug dbg, const Program &program);
+
+QList<std::shared_ptr<Program>> programListFromJson(const QJsonArray &array);

@@ -5,6 +5,7 @@
 #include <QtWebSockets/QtWebSockets>
 
 #include "common/common.h"
+#include "common/program.h"
 
 class RadioStub : public QObject
 {
@@ -12,7 +13,7 @@ class RadioStub : public QObject
 public:
     explicit RadioStub(const QUrl &url,
                        QObject *parent = 0);
-    bool startProgram(int id);
+    bool startProgram(Program program, QString title, int delay);
     bool endProgram();
     bool pause();
     bool resume();
@@ -24,7 +25,8 @@ signals:
     void connectionClosed();
     void vuMeterUpdate(int channel, int value);
     void programListReady(QStringList programs);
-    void newProgram(QString current, QStringList nextPrograms);
+    void newProgram(std::shared_ptr<Program> current,
+                    QList<std::shared_ptr<Program>> nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString currentSong);
     void currentPos(float pos, float length);
@@ -33,6 +35,7 @@ public slots:
     void onConnected();
     void disconnected();
     void onTextMessageReceived(QString message);
+    void onBinaryMessageReceived(QByteArray message);
 
 private:
     QWebSocket m_websocket;
