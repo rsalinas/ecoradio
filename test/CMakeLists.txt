@@ -6,6 +6,13 @@ add_subdirectory(/usr/src/gtest gtest)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+function(add_gmock_test target)
+    add_executable(${target} ${ARGN})
+    target_link_libraries(${target} gmock)
+
+    add_test(${target} ${target})
+endfunction()
+
 find_package(Qt5Core REQUIRED)
 
 include_directories(../src)
@@ -15,11 +22,9 @@ add_executable(sound_playback sound_playback.cpp)
 add_executable(test-sched test-sched.cpp)
 add_executable(test-rss test-rss.cpp )
 add_executable(test-fifo test-fifo.cpp )
-
-
 add_executable(ao_example ao_example.c)
-
 add_executable(alsa-record-example alsa-record-example.c)
+add_executable(test-wsstub test-wsstub.cpp)
 target_link_libraries(alsa-record-example asound)
 
 target_link_libraries(test-files gtest ecoradio_snd ecoradio_util ecoradio_core)
@@ -28,6 +33,7 @@ target_link_libraries(sound_playback asound)
 target_link_libraries(test-sched ecoradio_snd gtest ecoradio_core)
 target_link_libraries(test-rss gtest  Qt5::Core ecoradio_snd ecoradio_util)
 target_link_libraries(test-fifo gtest   gtest_main Qt5::Core ecoradio_snd ecoradio_util)
+target_link_libraries(test-wsstub gtest  Qt5::Core wsstub ecoradio_core)
 target_link_libraries(ao_example ao dl m)
 
 add_test(NAME AllTestsInFifo COMMAND test-fifo)

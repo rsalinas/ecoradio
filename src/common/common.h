@@ -11,3 +11,6 @@ signals:
 public slots:
 
 };
+
+
+static const int c_ecoRadioWsPort = 1234;
