@@ -29,9 +29,9 @@ private:
     bool startElement(const QString & namespaceURI, const QString & localName,
                       const QString & qName, const QXmlAttributes & atts ) override;
     bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName) override;
-    int indent = 0;
+
     QString printIndent() {
-        return QString::fromStdString(std::string(indent*4, ' '));
+        return QString::fromStdString(std::string(std::max(stack.size()-1, 0)*4, ' '));
     }
     QStack<QString> stack;
     QStringList m_streams;
