@@ -6,9 +6,14 @@
 #include <QtXml/QtXml>
 
 
-class RssParser : private QXmlDefaultHandler
+class RssParser : private QObject, private QXmlDefaultHandler
 {
 public:
+
+    RssParser(QIODevice *dev, QObject * parent=nullptr);
+    RssParser(const QString &filename, QObject * parent=nullptr);
+    QStringList getStreams();
+
     class RssException : public std::exception {
     public:
         RssException(const QString &cause) : m_cause(cause.toStdString()) {
@@ -21,14 +26,16 @@ public:
     private:
         std::string m_cause;
     };
+    ~RssParser();
 
-    RssParser(const QString &filename);
-    QStringList getStreams();
+
 
 private:
     bool startElement(const QString & namespaceURI, const QString & localName,
                       const QString & qName, const QXmlAttributes & atts ) override;
     bool endElement(const QString & namespaceURI, const QString & localName, const QString & qName) override;
+
+    QIODevice * m_file;
 
     QString printIndent() {
         return QString::fromStdString(std::string(std::max(stack.size()-1, 0)*4, ' '));

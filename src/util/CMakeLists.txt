@@ -10,6 +10,7 @@ add_library(ecoradio_util SHARED
     rssparser.cpp
     util.cpp
     streamsrc.cpp
+    http.cpp
      )
 
 target_link_libraries(ecoradio_util Qt5::Core Qt5Sql ao asound shout

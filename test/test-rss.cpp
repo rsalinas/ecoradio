@@ -5,26 +5,11 @@
 #include <QDir>
 #include <QTextStream>
 #include <QTimer>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
+#include <QBuffer>
 
 #include "snd/sources/mpg123wrap.h"
 #include "util/rssparser.h"
-
-class HttpReader {
-public:
-    QString readAll(const QUrl &url) {
-        QNetworkAccessManager NAManager;
-        QNetworkRequest request(url);
-        QNetworkReply *reply = NAManager.get(request);
-        QEventLoop eventLoop;
-//        QObject::connect(reply, SIGNAL()
-//        QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-        eventLoop.exec();
-        std::cout << "finished" << std::endl; //request finished here
-    }
-};
-
+#include "util/http.h"
 
 TEST(TestRss, TestRssFromFiles)
 {
@@ -41,9 +26,16 @@ TEST(TestRss, TestRssFromFiles)
         }
     }
 }
-QString getUrl(QUrl url) {
-//    abort();
-    return "";
+
+TEST(TestRss, HttpTestGood) {
+    HttpReader hr(QUrl("http://www.google.com"));
+    auto result = hr.readAll();
+    ASSERT_NE(0, result.size());
+}
+TEST(TestRss, HttpTestBad) {
+    HttpReader hr(QUrl("http://localhost/MISSING"));
+    auto result = hr.readAll();
+    ASSERT_EQ(0, result.size());
 }
 
 TEST(TestRss, TestRssFromUrl)
@@ -56,24 +48,30 @@ TEST(TestRss, TestRssFromUrl)
         if (!l.size())
             continue;
         qDebug() << "LINEA" << l;
-        RssParser rp(getUrl(QUrl(l)));
+        QByteArray ba = (HttpReader((l))).readAll().toLocal8Bit();
+        RssParser rp(new QBuffer(&ba));
         auto streams = rp.getStreams();
         qDebug() << streams;
-//        auto src = std::make_shared<Mpg123>(l);
+        ASSERT_NE(0, streams.size());
+        auto src = std::make_shared<Mpg123>(QUrl(streams.front()));
+        char buf[4096];
+        int n;
+        do {
+            QCoreApplication::instance()->processEvents();
+            n = src->readPcm(buf, sizeof(buf));
+            qDebug() << n;
+            usleep(500*1000);
+        } while (n == 0);
 
-
-
+        break;
     }
 }
-
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
-    int ret = RUN_ALL_TESTS();
-
-    return app.exec();
+    return RUN_ALL_TESTS();
 }
 
-
+#include "test-rss.moc"
