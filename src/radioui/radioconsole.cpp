@@ -21,10 +21,12 @@ RadioConsole::RadioConsole(QWidget *parent) :
     QObject::connect(&m_stub, SIGNAL(newProgram(QString,QStringList)), this, SLOT(newProgram(QString,QStringList)));
     QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString)));
     QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString)));
-    QObject::connect(&m_stub, SIGNAL(currentPos(float)), this, SLOT(currentPos(float)));
+    QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float)));
     ui->vumMain->setMaximum(255);
     ui->vumMain->setMinimum(0);
     ui->vumMain->setFormat("");
+
+    ui->currentPosSlider->setTickInterval(100);
 }
 
 RadioConsole::~RadioConsole()
@@ -109,8 +111,10 @@ void RadioConsole::nextSong(QString nextSong) {
     ui->nextSongEdit->setText(nextSong);
 }
 
-void RadioConsole::currentPos(float pos) {
-    qDebug() << "current pos client: "<< pos;
+void RadioConsole::currentPos(float pos, float total) {
 
+    auto value = int(pos*100/total);
+    qDebug() << "current pos client: "<< pos << value;
+    ui->currentPosSlider->setValue(value);
 //    ui->
 }
