@@ -13,6 +13,7 @@ function(add_gmock_test target)
     add_test(${target} ${target})
 endfunction()
 
+find_package(Qt5Widgets)
 find_package(Qt5Core REQUIRED)
 
 include_directories(../src)
@@ -36,7 +37,7 @@ target_link_libraries(test-rss gtest  Qt5::Core ecoradio_snd ecoradio_util)
 target_link_libraries(test-fifo gtest   gtest_main Qt5::Core ecoradio_snd ecoradio_util)
 target_link_libraries(test-wsstub gtest  Qt5::Core wsstub ecoradio_core)
 target_link_libraries(ao_example ao dl m)
-target_link_libraries(coreandui gtest_main)
+target_link_libraries(coreandui gtest_main radioui ecoradio_core)
 
 add_test(NAME AllTestsInFifo COMMAND test-fifo)
 add_test(NAME AllTestsInRss COMMAND test-rss WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

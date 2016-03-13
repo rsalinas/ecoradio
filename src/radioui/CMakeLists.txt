@@ -16,17 +16,25 @@ include_directories(..)
 #QT5_WRAP_CPP(Cmake_hdr_moc radioconsole.h  newprogramdialog.h)
 QT5_WRAP_UI(Cmake_form_hdr radioconsole.ui newprogramdialog.ui)
 
-
-# Tell CMake to create the helloworld executable
-add_executable(radioui
-    main.cpp
+add_library(${PROJECT_NAME}
     radioconsole.cpp
     newprogramdialog.cpp
     radioconsole.ui
     newprogramdialog.ui
     ${Cmake_form_hdr}
 )
-#    ${Cmake_hdr_moc} ${Cmake_form_hdr})
+#    ${Cmake_hdr_moc} ${Cmake_form_hdr
 
-# Use the Widgets module from Qt 5.
-target_link_libraries(radioui Qt5::Widgets wsstub)
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Widgets
+    wsstub
+)
+
+
+add_executable(radioui_main
+    main.cpp
+)
+
+target_link_libraries(radioui_main ${PROJECT_NAME})
+
+
