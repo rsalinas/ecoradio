@@ -10,7 +10,7 @@ public:
 };
 
 
-class MyXmlContentHandler :public QXmlDefaultHandler
+class MyXmlContentHandler : public QXmlDefaultHandler
 {
     int indent = 0;
     QStack<QString> stack;
@@ -21,11 +21,11 @@ public:
     }
     MyXmlContentHandler(RssParser &parent) : m_parent(parent)
     {
-    };
+    }
+
     ~MyXmlContentHandler()
     {
-
-    };
+    }
 
     bool startElement(const QString & namespaceURI, const QString & localName,
                       const QString & qName, const QXmlAttributes & atts ) override
@@ -48,7 +48,7 @@ public:
             }
         }
         if (url.size()) {
-//            qDebug() << "MP3: " << url << size;
+            //            qDebug() << "MP3: " << url << size;
             //            m_stream
             m_parent.m_streams.push_back(url);
         }
@@ -67,7 +67,6 @@ public:
 
 RssParser::RssParser(const QString &filename)
 {
-
     QXmlSimpleReader parser;
     MyXmlContentHandler handler(*this);
     
@@ -79,8 +78,6 @@ RssParser::RssParser(const QString &filename)
         qDebug() <<"Parsing Failed..."; //FIXME
     }
 }
-
-
 
 
 QStringList RssParser::getStreams() {

@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QStringList>
+#include <QtXml/QtXml>
 
-class RssParser
+class RssParser : private QXmlDefaultHandler
 {
 public:
     RssParser(const QString &filename);

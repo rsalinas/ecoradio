@@ -1,45 +1,71 @@
 #include "gtest/gtest.h"
 
-#include "util/rssparser.h"
-#include <QDir>
-#include "util/streamsrc.h"
-#include <QDebug>
 #include <QCoreApplication>
+#include <QDebug>
+#include <QDir>
+#include <QTextStream>
 #include <QTimer>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
 
-void hallo() {
-    qDebug() << __FUNCTION__<< 2;
-}
+#include "snd/sources/mpg123wrap.h"
+#include "util/rssparser.h"
+
+class HttpReader {
+public:
+    QString readAll(const QUrl &url) {
+        QNetworkAccessManager NAManager;
+        QNetworkRequest request(url);
+        QNetworkReply *reply = NAManager.get(request);
+        QEventLoop eventLoop;
+//        QObject::connect(reply, SIGNAL()
+//        QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+        std::cout << "finished" << std::endl; //request finished here
+    }
+};
 
 
-TEST(TestSched, TestSched)
+TEST(TestRss, TestRssFromFiles)
 {
-    QEventLoop loop;
     QDir dir("rss/");
-    std::unique_ptr<StreamSrc> ss;
-    for (auto f : dir.entryList(QStringList() << "*.xml")) {
+    auto xmlFiles = dir.entryList(QStringList() << "*.xml");
+    ASSERT_NE(0, xmlFiles.size());
+    for (auto f : xmlFiles) {
         qDebug() << "Processing " << f;
         RssParser rp(dir.absoluteFilePath(f));
-        QTimer::singleShot(0, 0, &hallo);
-
         auto streams = rp.getStreams();
+        ASSERT_NE(0, streams.size());
         for (auto url : streams) {
             qDebug() << "  "<< url;
-            ss.reset(new StreamSrc (url, nullptr));
-//ss.reset(new StreamSrc ("http://www.upv.es"));
-            break;
         }
-        break;
-
     }
-
-    qDebug() << "pre loop exec";
-    while (loop.exec()) {
-        qDebug() << "running events";
-    }
-    qDebug() << "fin";
-//    QCoreApplication::instance()->exec();
 }
+QString getUrl(QUrl url) {
+//    abort();
+    return "";
+}
+
+TEST(TestRss, TestRssFromUrl)
+{
+    QFile list("samples/rss-list.txt");
+    ASSERT_TRUE(list.open(QFile::ReadOnly));
+    QTextStream s(&list);
+    while (!s.atEnd()) {
+        QString l = s.readLine();
+        if (!l.size())
+            continue;
+        qDebug() << "LINEA" << l;
+        RssParser rp(getUrl(QUrl(l)));
+        auto streams = rp.getStreams();
+        qDebug() << streams;
+//        auto src = std::make_shared<Mpg123>(l);
+
+
+
+    }
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -49,4 +75,5 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
+
 
