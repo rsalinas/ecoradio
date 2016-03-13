@@ -31,7 +31,7 @@ target_link_libraries(test-fifo gtest   gtest_main Qt5::Core ecoradio_snd ecorad
 target_link_libraries(ao_example ao dl m)
 
 add_test(NAME AllTestsInFifo COMMAND test-fifo)
-add_test(NAME AllTestsInRss COMMAND test-rss)
+add_test(NAME AllTestsInRss COMMAND test-rss WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 add_test(NAME AllTestsInSched COMMAND test-sched)
 add_test(NAME AllTestsInSnd COMMAND test-snd)
 add_test(NAME AllTestsInFiles COMMAND test-files)
