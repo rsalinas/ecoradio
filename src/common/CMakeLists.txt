@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(ecoradio_common)
+find_package(Qt5Core)
 
-find_package(Qt5WebSockets REQUIRED)
-find_package(Qt5Network REQUIRED)
+
+project(ecoradio_common)
 
 add_library(${PROJECT_NAME} SHARED
 	common.h

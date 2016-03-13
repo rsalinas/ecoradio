@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(ecoradio_core)
 
-find_package(Qt5WebSockets REQUIRED)
+#find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Network REQUIRED)
 
 include_directories(..)

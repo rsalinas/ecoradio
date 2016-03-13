@@ -133,7 +133,6 @@ void Ecoradio::clientConnected() {
         everySecond();
     } else {
         emit m_wss.currentSong("?");
-
     }
 
     if (m_nextStream) {

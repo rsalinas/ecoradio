@@ -111,4 +111,6 @@ void RadioConsole::nextSong(QString nextSong) {
 
 void RadioConsole::currentPos(float pos) {
     qDebug() << "current pos client: "<< pos;
+
+//    ui->
 }

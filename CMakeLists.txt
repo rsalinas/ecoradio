@@ -5,11 +5,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_compile_options(-std=c++11)
-
-
 enable_testing()
-
-
 add_subdirectory(src)
 add_subdirectory(test)
 
