@@ -60,6 +60,9 @@ void RadioStub::onTextMessageReceived(QString message)
         emit nextSong(lsplit[1]);
     } else if (split[0] == "currentSong") {
         emit currentSong(lsplit[1]);
+    } else if (split[0] == "currentPos") {                
+        qDebug() << "CURRENT POS" << message;
+        emit currentPos(split[1].toFloat(), split[2].toFloat());
     } else {
         qWarning () << "BAD MESSAGE RECEIVED: "<< message;
     }

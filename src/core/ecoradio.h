@@ -33,6 +33,7 @@ private slots:
     void songFinishing(std::shared_ptr<SoundSource> s);
     void songFinished(std::shared_ptr<SoundSource> s);
     void cmd_ptt(bool);
+    void everySecond();
 
 public slots:
     void clientConnected();
@@ -53,5 +54,6 @@ private:
     std::vector<std::shared_ptr<Program>> m_nextPrograms;
     std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
     std::shared_ptr<SoundSource> m_linein;
+    QTimer m_posTimer;
 };
 

@@ -32,6 +32,7 @@ private slots:
     void nextSong(QString nextSong);
     void startProgram(int id);
     void vuMeterUpdate(int channel, int value);
+    void currentPos(float);
 
 private:
     Ui::RadioConsole *ui;

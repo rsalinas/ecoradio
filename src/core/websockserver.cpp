@@ -9,8 +9,8 @@
 QT_USE_NAMESPACE
 
 WebsockServer::WebsockServer(Ecoradio &ecoradio, quint16 port, QObject *parent)
-    : m_ecoradio(ecoradio)
-    , QObject(parent)
+    : QObject(parent)
+    , m_ecoradio(ecoradio)
     , m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Ecoradio Server"),
                                               QWebSocketServer::NonSecureMode, this))
     , m_clients()
@@ -62,6 +62,8 @@ void WebsockServer::processTextMessage(QString message)
         pClient->sendTextMessage(msg);
     } else if (split[0] == "skipSong") {
         m_ecoradio.skipSong();
+    } else {
+        qWarning() << "SERVER IGNORED MESSAGE" << message;
     }
 }
 
@@ -87,27 +89,34 @@ void WebsockServer::socketDisconnected()
 
 
 void WebsockServer::vumeter(int channel, int value) {
-    for (auto c : m_clients) {
-        c->sendTextMessage(QString("VU ") + QString::number(channel)+ " "+ QString::number(value));
-    }
+    broadCastTextMessage(QString("VU ") + QString::number(channel)+ " "+ QString::number(value));
 }
 
 
 void WebsockServer::programChange(QString program, QStringList nextPrograms) {   
-    for (auto c : m_clients) {
-        c->sendTextMessage("SET_PROGRAM\n"+program+"\n"+nextPrograms.join('\n'));
-    }
+    broadCastTextMessage("SET_PROGRAM\n"+program+"\n"+nextPrograms.join('\n'));
 }
 
 
 void WebsockServer::currentSong(QString currentSong) {
-    for (auto c : m_clients) {
-        c->sendTextMessage(QString(__FUNCTION__) + '\n' + currentSong);
-    }
+    broadCastTextMessage(QString(__FUNCTION__) + '\n' + currentSong);
 }
 
 void WebsockServer::nextSong(QString nextSong) {
+    broadCastTextMessage(QString(__FUNCTION__) + '\n' + nextSong);
+
+}
+
+void WebsockServer::currentPos(float pos, float length) {
+    //    qDebug() << __FUNCTION__ << pos;
+    broadCastTextMessage(QString(__FUNCTION__)
+                         +' ' + QString::number(pos)
+                         + ' ' + QString::number(length));
+}
+
+
+void WebsockServer::broadCastTextMessage(const QString &msg) {
     for (auto c : m_clients) {
-        c->sendTextMessage(QString(__FUNCTION__) + '\n' + nextSong);
+        c->sendTextMessage(msg);
     }
 }

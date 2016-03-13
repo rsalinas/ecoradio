@@ -27,6 +27,7 @@ signals:
     void newProgram(QString current, QStringList nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString currentSong);
+    void currentPos(float pos, float length);
 
 public slots:
     void onConnected();

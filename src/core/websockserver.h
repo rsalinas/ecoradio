@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <memory>
+#include "common/common.h"
 
 class Ecoradio;
 
@@ -31,13 +32,15 @@ private slots:
     void processTextMessage(QString message);
     void processBinaryMessage(QByteArray message);
     void socketDisconnected();
-    void vumeter(int channel, int value);
 
 public slots:
+    void vumeter(int channel, int value);
+    void currentPos(float pos, float length);
     void currentSong(QString currentSong);
     void nextSong(QString currentSong);
 
 private:
+    void broadCastTextMessage(const QString &msg);
     Ecoradio &m_ecoradio;
     std::unique_ptr<QWebSocketServer> m_pWebSocketServer;
     QList<QWebSocket *> m_clients;
