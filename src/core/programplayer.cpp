@@ -42,3 +42,17 @@ StreamProgramPlayer::StreamProgramPlayer(const StreamProgram &p) :
     m_program(p)
 {
 }
+
+
+std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p) {
+    if (dynamic_cast<const FolderProgram*>(&p)) {
+        return std::make_shared<FolderProgramPlayer>(*dynamic_cast<const FolderProgram*>(&p));
+    } else if (dynamic_cast<const PodcastProgram*>(&p)) {
+        return std::make_shared<PodcastProgramPlayer>(*dynamic_cast<const PodcastProgram*>(&p));
+    } else if (dynamic_cast<const LiveProgram*>(&p)) {
+        return std::make_shared<LiveProgramPlayer>(*dynamic_cast<const LiveProgram*>(&p));
+    } else if (dynamic_cast<const StreamProgram*>(&p)) {
+        return std::make_shared<StreamProgramPlayer>(*dynamic_cast<const StreamProgram*>(&p));
+    } else
+        return nullptr;
+}

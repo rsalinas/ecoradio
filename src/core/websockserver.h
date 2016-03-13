@@ -22,12 +22,16 @@ signals:
     void closed();
     void cmd_ptt(bool on);
 
-private Q_SLOTS:
+private slots:
     void onNewConnection();
     void processTextMessage(QString message);
     void processBinaryMessage(QByteArray message);
     void socketDisconnected();
     void vumeter(int channel, int value);
+
+public slots:
+    void currentSong(QString currentSong);
+    void nextSong(QString currentSong);
 
 private:
     Ecoradio &m_ecoradio;

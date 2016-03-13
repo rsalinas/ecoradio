@@ -114,7 +114,7 @@
      <item row="3" column="0" colspan="3">
       <widget class="QLineEdit" name="currentSongEdit">
        <property name="text">
-        <string>Current song</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -128,7 +128,7 @@
      <item row="5" column="0" colspan="3">
       <widget class="QLineEdit" name="nextSongEdit">
        <property name="text">
-        <string>Next song</string>
+        <string/>
        </property>
       </widget>
      </item>

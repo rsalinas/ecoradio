@@ -95,3 +95,16 @@ void WebsockServer::programChange(QString program, QStringList nextPrograms) {
         c->sendTextMessage("SET_PROGRAM\n"+program+"\n"+nextPrograms.join('\n'));
     }
 }
+
+
+void WebsockServer::currentSong(QString currentSong) {
+    for (auto c : m_clients) {
+        c->sendTextMessage(QString(__FUNCTION__) + '\n' + currentSong);
+    }
+}
+
+void WebsockServer::nextSong(QString nextSong) {
+    for (auto c : m_clients) {
+        c->sendTextMessage(QString(__FUNCTION__) + '\n' + nextSong);
+    }
+}

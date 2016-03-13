@@ -36,7 +36,7 @@ void RadioStub::onTextMessageReceived(QString message)
     QStringList lsplit = message.split('\n');
     QStringList split(lsplit[0].split(' '));
     if (split[0] == "VU") {
-        qDebug() << "vumeter";
+        //        qDebug() << "vumeter";
         int channel = split[1].toInt();
         int value = split[2].toInt();
         emit vuMeterUpdate(channel, value);
@@ -56,6 +56,12 @@ void RadioStub::onTextMessageReceived(QString message)
             programs.push_back(lsplit[i]);
         }
         emit newProgram(current, programs);
+    } else if (split[0] == "nextSong") {
+        emit nextSong(lsplit[1]);
+    } else if (split[0] == "currentSong") {
+        emit currentSong(lsplit[1]);
+    } else {
+        qWarning () << "BAD MESSAGE RECEIVED: "<< message;
     }
 
 }
@@ -86,16 +92,12 @@ bool RadioStub::getPrograms() {
     return true;
 }
 
-
 bool RadioStub::ptt(bool onair) {
     m_websocket.sendTextMessage(QStringLiteral("PTT ")+QString::number(onair));
     return true;
 }
 
-
 bool RadioStub::skipSong() {
     m_websocket.sendTextMessage(__FUNCTION__);
     return true;
 }
-
-

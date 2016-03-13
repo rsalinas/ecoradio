@@ -50,3 +50,5 @@ private:
     PodcastProgram m_program;
 };
 
+
+std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p);

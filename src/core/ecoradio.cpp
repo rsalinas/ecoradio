@@ -7,36 +7,34 @@
 #include "snd/sinks/aosink.h"
 #include "snd/sinks/sink.h"
 #include "snd/sources/mpg123wrap.h"
-#include "util/streamsrc.h"
 
-
-std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p) {
-    if (dynamic_cast<const FolderProgram*>(&p)) {
-        return std::make_shared<FolderProgramPlayer>(*dynamic_cast<const FolderProgram*>(&p));
-    } else if (dynamic_cast<const PodcastProgram*>(&p)) {
-        return std::make_shared<PodcastProgramPlayer>(*dynamic_cast<const PodcastProgram*>(&p));
-    } else if (dynamic_cast<const LiveProgram*>(&p)) {
-        return std::make_shared<LiveProgramPlayer>(*dynamic_cast<const LiveProgram*>(&p));
-    } else if (dynamic_cast<const StreamProgram*>(&p)) {
-        return std::make_shared<StreamProgramPlayer>(*dynamic_cast<const StreamProgram*>(&p));
-    } else
-        return nullptr;
-}
 
 Ecoradio::Ecoradio(QObject *parent) :
     QObject(parent),
     m_settings("ecoradio.ini", QSettings::Format::NativeFormat),
-    m_ao(std::make_shared<AoSink>(SndFormat())),
-    m_ogg(std::make_shared<OggEncoder>(std::unique_ptr<OggFwd>(new OggFwd(OggFwd::Config(m_settings))))),
+
     m_sched("radio.sqlite"),
     m_current(m_sched.getCurrent()),
     m_currentPlayer(getProgramPlayer(*m_current)),
     m_nextPrograms(m_sched.getNext()),
     m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
 {
-    m_linein = std::make_shared<Mpg123>(QStringLiteral("/home/rsalinas/Sync/mp3/01 - Llover sobre mojado.mp3"));
-    m_mixer.addSink(m_ao);
-    m_mixer.addSink(m_ogg);
+    try {
+        m_ao = std::make_shared<AoSink>(SndFormat());
+        m_mixer.addSink(m_ao);
+    } catch (std::exception &e) {
+        qWarning() << "Cannot open ogg output";
+    }
+
+    try {
+        m_ogg = std::make_shared<OggEncoder>(std::unique_ptr<OggFwd>(new OggFwd(OggFwd::Config(m_settings))));
+        m_mixer.addSink(m_ogg);
+    } catch (std::exception &e) {
+        qWarning() << "Cannot open ogg output";
+    }
+
+    m_linein = std::make_shared<Mpg123>(QStringLiteral("samples/long.mp3"));
+
     m_mixer.start();
     QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<Program>)), this, SLOT(newProgram(std::shared_ptr<Program>)));
     QObject::connect(&m_mixer, SIGNAL(songFinishing(std::shared_ptr<SoundSource>)), this, SLOT(songFinishing(std::shared_ptr<SoundSource>)));
@@ -47,6 +45,11 @@ Ecoradio::Ecoradio(QObject *parent) :
     if (m_current) {
         qDebug() << "current: "<< *m_current;
         m_currentStream  = m_currentPlayer->getNextSong();
+        if (m_currentStream) {
+            emit m_currentStream->name();
+        } else {
+            emit "?";
+        }
         m_nextStream = m_currentPlayer->getNextSong();
 
         if (m_currentStream) {
@@ -82,6 +85,11 @@ void Ecoradio::songFinishing(std::shared_ptr<SoundSource> s) {
 void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
     qDebug() << __FUNCTION__;
     m_currentStream = m_nextStream;
+    if (m_currentStream) {
+        emit m_currentStream->name();
+    } else {
+        emit "?";
+    }
     //    m_currentStream->stopFadeOut(10);
     m_mixer.addSource(m_currentStream);
     if (m_current) {
@@ -110,6 +118,12 @@ void Ecoradio::cmd_ptt(bool on) {
 void Ecoradio::clientConnected() {
     qDebug() << __FUNCTION__;
     emit m_wss.programChange(m_current->name, m_sched.getPrograms());
+    if (m_currentStream) {
+        emit m_wss.currentSong(m_currentStream->name());
+    } else {
+        emit m_wss.currentSong("?");
+    }
+
 }
 
 void Ecoradio::clientDisconnected() {

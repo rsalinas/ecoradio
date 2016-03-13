@@ -30,6 +30,8 @@ private slots:
     void on_pttButton_released();
     void on_skipButton_clicked();
     void newProgram(QString current, QStringList nextPrograms);
+    void currentSong(QString currentSong);
+    void nextSong(QString nextSong);
 
 public slots:
     void startProgram(int id);

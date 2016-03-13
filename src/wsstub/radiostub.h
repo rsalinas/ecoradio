@@ -25,6 +25,8 @@ signals:
     void vuMeterUpdate(int channel, int value);
     void programListReady(QStringList programs);
     void newProgram(QString current, QStringList nextPrograms);
+    void currentSong(QString currentSong);
+    void nextSong(QString currentSong);
 
 public slots:
     void onConnected();
