@@ -47,6 +47,15 @@ void RadioStub::onTextMessageReceived(QString message)
             programs.push_back(lsplit[i]);
         }
         emit programListReady(programs);
+    } else if (split[0]  == "SET_PROGRAM") {
+        QStringList programs;
+        if (lsplit.size()<2 )
+            return;
+        auto current = lsplit[1];
+        for (size_t i = 2; i < lsplit.size(); ++i) {
+            programs.push_back(lsplit[i]);
+        }
+        emit newProgram(current, programs);
     }
 
 }
@@ -88,3 +97,5 @@ bool RadioStub::skipSong() {
     m_websocket.sendTextMessage(__FUNCTION__);
     return true;
 }
+
+

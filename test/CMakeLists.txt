@@ -1,13 +1,13 @@
 project(test)
-cmake_minimum_required(VERSION 2.8.2)
-add_subdirectory(/usr/src/gtest gtest)
 
+cmake_minimum_required(VERSION 2.8.2)
+include (CTest)
+add_subdirectory(/usr/src/gtest gtest)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Core REQUIRED)
 
-enable_testing()
 include_directories(../src)
 add_executable(test-files test.cpp testutil.cpp)
 add_executable(test-snd test-snd.cpp )
@@ -30,8 +30,8 @@ target_link_libraries(test-rss gtest  Qt5::Core ecoradio_snd ecoradio_util)
 target_link_libraries(test-fifo gtest   gtest_main Qt5::Core ecoradio_snd ecoradio_util)
 target_link_libraries(ao_example ao dl m)
 
-add_test(AllTestsInFoo test)
-add_test(AllTestsInFoo test-snd)
-add_test(AllTestsInFoo test-sched)
-#add_test(AllTestsInFoo test-rss)
-
+add_test(NAME AllTestsInFifo COMMAND test-fifo)
+add_test(NAME AllTestsInRss COMMAND test-rss)
+add_test(NAME AllTestsInSched COMMAND test-sched)
+add_test(NAME AllTestsInSnd COMMAND test-snd)
+add_test(NAME AllTestsInFiles COMMAND test-files)

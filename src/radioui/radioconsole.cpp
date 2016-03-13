@@ -18,6 +18,7 @@ RadioConsole::RadioConsole(QWidget *parent) :
     QObject::connect(m_wallclockTimer, SIGNAL(timeout()), this, SLOT(updateClock()));
     m_wallclockTimer->start(1000);
     QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int)));
+    QObject::connect(&m_stub, SIGNAL(newProgram(QString,QStringList)), this, SLOT(newProgram(QString,QStringList)));
     ui->vumMain->setMaximum(255);
     ui->vumMain->setMinimum(0);
     ui->vumMain->setFormat("");
@@ -84,5 +85,17 @@ void RadioConsole::on_skipButton_clicked()
 
 void RadioConsole::vuMeterUpdate(int channel, int value) {
     qDebug() << "vumeter update" << channel<< value;
-    ui->vumMain->setValue(value*100/SHRT_MAX);
+    ui->vumMain->setValue(value*100/SHRT_MAX);    
+}
+
+
+void RadioConsole::newProgram(QString current, QStringList nextPrograms) {
+    qDebug() << __FUNCTION__;
+    ui->statusBar->showMessage(current);
+    ui->programList->clear();
+    for (auto s : nextPrograms) {
+        ui->programList->addItem(s);
+    }
+
+
 }

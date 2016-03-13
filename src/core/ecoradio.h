@@ -1,14 +1,14 @@
 #pragma once
 
+#include <memory>
 #include <QObject>
+#include <QSettings>
 
 #include "scheduler.h"
 #include "snd/mixer.h"
-#include "websockserver.h"
 #include "snd/oggfwd.h"
-#include <QSettings>
-#include <memory>
 #include "snd/sources/soundsource.h"
+#include "websockserver.h"
 
 class SndSink;
 class Program;
@@ -19,19 +19,23 @@ class Ecoradio : public QObject
     Q_OBJECT
 public:
     Ecoradio(QObject *parent = 0);
-    Scheduler &getScheduler() {
+    Scheduler &getScheduler()
+    {
         return m_sched;
     }
 
+    void skipSong();
+
 private slots:
     void run();
-
     void newProgram(std::shared_ptr<Program>);
     void songFinishing(std::shared_ptr<SoundSource> s);
     void songFinished(std::shared_ptr<SoundSource> s);
     void cmd_ptt(bool);
 
 public slots:
+    void clientConnected();
+    void clientDisconnected();
 
 signals:
     void finished();

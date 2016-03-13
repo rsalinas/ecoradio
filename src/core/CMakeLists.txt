@@ -5,11 +5,11 @@ find_package(Qt5Network REQUIRED)
 
 include_directories(..)
 
-add_executable(main
+add_executable(ecoradio
     main.cpp
     )
 
-target_link_libraries(main
+target_link_libraries(ecoradio
     Qt5::Core
     ecoradio_core
     ecoradio_util
@@ -25,10 +25,7 @@ add_library(ecoradio_core
     websockserver.cpp
 )
 
-
 target_link_libraries(ecoradio_core
     Qt5::Core
     ecoradio_snd
 )
-
-

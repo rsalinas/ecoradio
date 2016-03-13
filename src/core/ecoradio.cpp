@@ -56,6 +56,8 @@ void Ecoradio::run()
 void Ecoradio::newProgram(std::shared_ptr<Program> p)
 {
     qDebug() << "Ecoradio::programChanged: " << *p;
+    QStringList nextProgramNames = m_sched.getPrograms();
+    m_wss.programChange(p->name, nextProgramNames);
 }
 
 
@@ -88,4 +90,19 @@ void Ecoradio::cmd_ptt(bool on) {
         m_linein->fadeOut(2000, SoundSource::FadeAction::Silence);
         m_currentStream->setFadeIn(2000);
     }
+}
+
+
+void Ecoradio::clientConnected() {
+    qDebug() << __FUNCTION__;
+    emit m_wss.programChange(m_current->name, m_sched.getPrograms());
+}
+
+void Ecoradio::clientDisconnected() {
+    qDebug() << __FUNCTION__;
+}
+
+
+void Ecoradio::skipSong() {
+    songFinished(std::shared_ptr<SoundSource> ());
 }

@@ -53,7 +53,7 @@
     <property name="checkable">
      <bool>false</bool>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>40</x>
@@ -87,7 +87,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -97,9 +97,6 @@
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0" colspan="3">
-      <widget class="QListView" name="programList"/>
-     </item>
      <item row="1" column="0" colspan="3">
       <widget class="QProgressBar" name="vumMain">
        <property name="value">
@@ -115,7 +112,7 @@
       </widget>
      </item>
      <item row="3" column="0" colspan="3">
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="currentSongEdit">
        <property name="text">
         <string>Current song</string>
        </property>
@@ -129,7 +126,7 @@
       </widget>
      </item>
      <item row="5" column="0" colspan="3">
-      <widget class="QLineEdit" name="lineEdit_2">
+      <widget class="QLineEdit" name="nextSongEdit">
        <property name="text">
         <string>Next song</string>
        </property>
@@ -155,6 +152,9 @@
         <string>Skip song</string>
        </property>
       </widget>
+     </item>
+     <item row="0" column="0" colspan="3">
+      <widget class="QListWidget" name="programList"/>
      </item>
     </layout>
    </widget>

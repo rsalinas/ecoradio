@@ -27,10 +27,9 @@ private slots:
     void on_pauseButton_clicked();
     void on_resumeButton_clicked();
     void on_pttButton_pressed();
-
     void on_pttButton_released();
-
     void on_skipButton_clicked();
+    void newProgram(QString current, QStringList nextPrograms);
 
 public slots:
     void startProgram(int id);

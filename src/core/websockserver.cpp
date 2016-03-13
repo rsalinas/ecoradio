@@ -8,21 +8,11 @@
 
 QT_USE_NAMESPACE
 
-/*
- *
- * - Start new program:
- *   - Open window
- *   - Show list of programs
- *   - Start or cancel
- *   - Start
-
-*/
-
 WebsockServer::WebsockServer(Ecoradio &ecoradio, quint16 port, QObject *parent)
     : m_ecoradio(ecoradio)
     , QObject(parent)
-    , m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
-                                                 QWebSocketServer::NonSecureMode, this))
+    , m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Ecoradio Server"),
+                                              QWebSocketServer::NonSecureMode, this))
     , m_clients()
 {
     if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
@@ -47,8 +37,8 @@ void WebsockServer::onNewConnection()
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &WebsockServer::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &WebsockServer::socketDisconnected);
     pSocket->sendTextMessage("VU 0 50");
-
     m_clients << pSocket;
+    m_ecoradio.clientConnected();
 }
 
 void WebsockServer::processTextMessage(QString message)
@@ -67,6 +57,8 @@ void WebsockServer::processTextMessage(QString message)
             msg.append("\n").append(s);
         }
         pClient->sendTextMessage(msg);
+    } else if (split[0] == "skipSong") {
+        m_ecoradio.skipSong();
     }
 }
 
@@ -87,11 +79,20 @@ void WebsockServer::socketDisconnected()
         m_clients.removeAll(pClient);
         pClient->deleteLater();
     }
+    emit m_ecoradio.clientDisconnected();
 }
 
 
 void WebsockServer::vumeter(int channel, int value) {
-    for (auto c : m_clients)     {
+    for (auto c : m_clients) {
         c->sendTextMessage(QString("VU ") + QString::number(channel)+ " "+ QString::number(value));
+    }
+}
+
+
+void WebsockServer::programChange(QString program, QStringList nextPrograms) {   
+    for (auto c : m_clients) {
+        c->sendTextMessage("SET_PROGRAM\n"+program+"\n"+nextPrograms.join('\n'));
+
     }
 }

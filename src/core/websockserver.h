@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 #include <memory>
 
@@ -14,7 +15,10 @@ public:
     WebsockServer(Ecoradio &m_ecoradio, quint16 port, QObject * parent = nullptr);
     ~WebsockServer();
 
-Q_SIGNALS:
+public slots:
+    void programChange(QString program, QStringList nextPrograms);
+
+signals:
     void closed();
     void cmd_ptt(bool on);
 

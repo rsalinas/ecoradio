@@ -20,7 +20,3 @@ add_library(ecoradio_snd SHARED
 
 target_link_libraries(ecoradio_snd Qt5::Core Qt5Sql ao asound shout
     mpg123 vorbisenc Qt5::WebSockets Qt5Xml Qt5::Network ecoradio_util)
-
-
-#add_executable(myogg123 ogg123.c)
-#target_link_libraries(myogg123 ogg)

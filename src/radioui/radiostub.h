@@ -4,7 +4,7 @@
 #include <QUrl>
 #include <QtWebSockets/QtWebSockets>
 
-#include "../interfaces/common.h"
+#include "common/common.h"
 
 class RadioStub : public QObject
 {
@@ -24,6 +24,7 @@ signals:
     void connectionClosed();
     void vuMeterUpdate(int channel, int value);
     void programListReady(QStringList programs);
+    void newProgram(QString current, QStringList nextPrograms);
 
 public slots:
     void onConnected();
