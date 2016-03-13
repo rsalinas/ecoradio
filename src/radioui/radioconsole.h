@@ -5,7 +5,7 @@
 
 #include <QTimer>
 
-#include "radiostub.h"
+#include "wsstub/radiostub.h"
 
 namespace Ui {
 class RadioConsole;

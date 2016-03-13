@@ -93,6 +93,5 @@ void WebsockServer::vumeter(int channel, int value) {
 void WebsockServer::programChange(QString program, QStringList nextPrograms) {   
     for (auto c : m_clients) {
         c->sendTextMessage("SET_PROGRAM\n"+program+"\n"+nextPrograms.join('\n'));
-
     }
 }

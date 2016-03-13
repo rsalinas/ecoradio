@@ -8,3 +8,5 @@ add_subdirectory(snd)
 add_subdirectory(util)
 add_subdirectory(antenna)
 add_subdirectory(common)
+add_subdirectory(wsstub)
+

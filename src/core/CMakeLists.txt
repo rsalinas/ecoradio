@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+project(ecoradio_core)
+
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Network REQUIRED)
 
@@ -15,7 +17,7 @@ target_link_libraries(ecoradio
     ecoradio_util
 )
 
-add_library(ecoradio_core
+add_library(${PROJECT_NAME}
     alarm.cpp
     ecoradio.cpp
     file_scan.cpp
@@ -25,7 +27,7 @@ add_library(ecoradio_core
     programplayer.cpp
 )
 
-target_link_libraries(ecoradio_core
+target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     ecoradio_snd
     ecoradio_common

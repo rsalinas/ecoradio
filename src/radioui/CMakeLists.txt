@@ -22,7 +22,6 @@ add_executable(radioui
     main.cpp
     radioconsole.cpp
     newprogramdialog.cpp
-    radiostub.cpp
     radioconsole.ui
     newprogramdialog.ui
     ${Cmake_form_hdr}
@@ -30,4 +29,4 @@ add_executable(radioui
 #    ${Cmake_hdr_moc} ${Cmake_form_hdr})
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(radioui Qt5::Widgets Qt5::WebSockets  Qt5::Network)
+target_link_libraries(radioui Qt5::Widgets wsstub)

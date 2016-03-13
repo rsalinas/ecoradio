@@ -1,7 +1,7 @@
 #include "newprogramdialog.h"
 #include "ui_newprogramdialog.h"
 
-#include "radiostub.h"
+#include "wsstub/radiostub.h"
 
 NewProgramDialog::NewProgramDialog(RadioStub &stub, QWidget *parent) :
     QDialog(parent),
