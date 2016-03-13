@@ -87,76 +87,142 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QSlider" name="currentPosSlider">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>269</width>
-      <height>370</height>
+      <x>40</x>
+      <y>230</y>
+      <width>231</width>
+      <height>18</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0" colspan="3">
-      <widget class="QProgressBar" name="vumMain">
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Current song:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="3">
-      <widget class="QLineEdit" name="currentSongEdit">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Next song:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="3">
-      <widget class="QLineEdit" name="nextSongEdit">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QPushButton" name="pauseButton">
-       <property name="text">
-        <string>Pause</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QPushButton" name="resumeButton">
-       <property name="text">
-        <string>Resume</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2">
-      <widget class="QPushButton" name="skipButton">
-       <property name="text">
-        <string>Skip song</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="3">
-      <widget class="QListWidget" name="programList"/>
-     </item>
-    </layout>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="currentPosEdit">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>390</y>
+      <width>113</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="resumeButton">
+    <property name="geometry">
+     <rect>
+      <x>122</x>
+      <y>413</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Resume</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="nextSongEdit">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>380</y>
+      <width>251</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>301</y>
+      <width>81</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current song:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="currentSongEdit">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>324</y>
+      <width>251</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>357</y>
+      <width>64</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Next song:</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="vumMain">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>270</y>
+      <width>251</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="skipButton">
+    <property name="geometry">
+     <rect>
+      <x>213</x>
+      <y>413</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Skip song</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="programList">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>31</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pauseButton">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>413</y>
+      <width>85</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pause</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
