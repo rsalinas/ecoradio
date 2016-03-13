@@ -3,10 +3,21 @@
 #include "core/scheduler.h"
 #include <QCoreApplication>
 
-Scheduler sched("/home/rsalinas/Sync/Projects/ecoradio2/radio.sqlite");
+Scheduler sched("radio.sqlite");
 
 TEST(TestSched, TestSched)
 {
-    sched.getCurrent();
-    sched.getNext();
+    auto current = sched.getCurrent();
+    ASSERT_NE(nullptr, current.get());
+    qDebug() << *current;
+    auto next = sched.getNext();
+    qDebug() << next.size();
+}
+
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
