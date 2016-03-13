@@ -14,6 +14,10 @@ class WebsockServer : public QObject
 public:
     WebsockServer(Ecoradio &m_ecoradio, quint16 port, QObject * parent = nullptr);
     ~WebsockServer();
+    class WebsockServerException : public std::exception {
+    public:
+    };
+
 
 public slots:
     void programChange(QString program, QStringList nextPrograms);

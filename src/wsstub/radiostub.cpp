@@ -31,7 +31,7 @@ void RadioStub::onConnected()
 
 void RadioStub::onTextMessageReceived(QString message)
 {
-    qDebug() << "Message received:" << message;
+//    qDebug() << "Message received:" << message;
     //    m_webSocket.close();
     QStringList lsplit = message.split('\n');
     QStringList split(lsplit[0].split(' '));

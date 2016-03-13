@@ -20,6 +20,9 @@ WebsockServer::WebsockServer(Ecoradio &ecoradio, quint16 port, QObject *parent)
         connect(m_pWebSocketServer.get(), &QWebSocketServer::newConnection,
                 this, &WebsockServer::onNewConnection);
         connect(m_pWebSocketServer.get(), &QWebSocketServer::closed, this, &WebsockServer::closed);
+    } else {
+        qWarning() << "Cannot open port" << port;
+        throw WebsockServerException();
     }
 }
 

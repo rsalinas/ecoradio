@@ -84,11 +84,14 @@ void Ecoradio::songFinishing(std::shared_ptr<SoundSource> s) {
 
 void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
     qDebug() << __FUNCTION__;
+    if (finishedSource) {
+        finishedSource->close();
+    }
     m_currentStream = m_nextStream;
     if (m_currentStream) {
-        emit m_currentStream->name();
+        emit m_wss.currentSong(m_currentStream->name());
     } else {
-        emit "?";
+        emit m_wss.currentSong("?");
     }
     //    m_currentStream->stopFadeOut(10);
     m_mixer.addSource(m_currentStream);
@@ -97,6 +100,9 @@ void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
         m_nextStream = m_currentPlayer->getNextSong();
         if (!m_nextStream) {
             qWarning() << "could not get song from current stream" << *m_current;
+            emit m_wss.nextSong("??");
+        } else {
+            emit m_wss.nextSong(m_nextStream->name());
         }
     }
 }
@@ -124,6 +130,12 @@ void Ecoradio::clientConnected() {
         emit m_wss.currentSong("?");
     }
 
+    if (m_nextStream) {
+        emit m_wss.nextSong(m_nextStream->name());
+    } else {
+        emit m_wss.nextSong("?");
+    }
+
 }
 
 void Ecoradio::clientDisconnected() {
@@ -132,5 +144,6 @@ void Ecoradio::clientDisconnected() {
 
 
 void Ecoradio::skipSong() {
-    songFinished(std::shared_ptr<SoundSource> ());
+
+    songFinished(m_currentStream);
 }

@@ -2,7 +2,6 @@
 #define RADIOCONSOLE_H
 
 #include <QMainWindow>
-
 #include <QTimer>
 
 #include "wsstub/radiostub.h"
@@ -19,8 +18,7 @@ public:
     explicit RadioConsole(QWidget *parent = 0);
     ~RadioConsole();
 
-private slots:    
-
+private slots:
     void on_startProgramButton_clicked();
     void on_endProgramButton_clicked();
     void updateClock();
@@ -32,8 +30,6 @@ private slots:
     void newProgram(QString current, QStringList nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString nextSong);
-
-public slots:
     void startProgram(int id);
     void vuMeterUpdate(int channel, int value);
 
