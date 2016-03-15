@@ -17,12 +17,12 @@ public:
     explicit NewProgramDialog(RadioStub &stub, RadioConsole &main, QWidget *parent = 0);
     ~NewProgramDialog();
 
-
 signals:
     void startProgram(int id);
 
 private slots:
     void on_buttonBox_accepted();
+
 public slots:
 
     void programListReady(QStringList list);

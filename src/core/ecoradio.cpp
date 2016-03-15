@@ -7,6 +7,7 @@
 #include "snd/sinks/aosink.h"
 #include "snd/sinks/sink.h"
 #include "snd/sources/mpg123wrap.h"
+#include "core/liverecord.h"
 
 
 Ecoradio::Ecoradio(QObject *parent) :
@@ -22,7 +23,7 @@ Ecoradio::Ecoradio(QObject *parent) :
 {
         m_posTimer.start(1000);
     try {
-        m_ao = std::make_shared<AoSink>(SndFormat());
+        m_ao = std::make_shared<AoSink>(m_format);
         m_mixer.addSink(m_ao);
     } catch (std::exception &e) {
         qWarning() << "Cannot open ogg output";
@@ -43,7 +44,6 @@ Ecoradio::Ecoradio(QObject *parent) :
     QObject::connect(&m_mixer, SIGNAL(sourceFinished(std::shared_ptr<SoundSource>)), this, SLOT(mixerSongFinished(std::shared_ptr<SoundSource>)));
     QObject::connect(&m_mixer, SIGNAL(vumeter(int,int)), &m_wss, SLOT(vumeter(int,int)));
     QObject::connect(&m_posTimer, SIGNAL(timeout()), this, SLOT(everySecond()));
-
     QObject::connect(&m_wss, SIGNAL(cmd_ptt(bool)), this, SLOT(cmd_ptt(bool)));
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
@@ -133,7 +133,7 @@ void Ecoradio::cmd_ptt(bool on) {
 }
 
 
-void Ecoradio::clientConnected() {
+void Ecoradio::clientConnected(QWebSocket *client) {
     qDebug() << __FUNCTION__;
     qDebug() << *m_current ;
     qDebug() << "next: " << m_nextPrograms.size();
@@ -153,7 +153,7 @@ void Ecoradio::clientConnected() {
 
 }
 
-void Ecoradio::clientDisconnected() {
+void Ecoradio::clientDisconnected(QWebSocket *client) {
     qDebug() << __FUNCTION__;
 }
 
@@ -170,4 +170,9 @@ void Ecoradio::everySecond() {
         emit m_wss.currentPos(m_currentStream->currentMillis()/1000.0,
                               m_currentStream->lengthMillis()/1000.0);
     }
+}
+
+
+bool Ecoradio::startProgram(const LiveProgram &p, const QString &title, const QDateTime &when) {
+    m_currentLiveProgram = std::make_shared<LiveProgramRecording>(p);
 }

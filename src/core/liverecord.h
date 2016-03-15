@@ -9,7 +9,7 @@ public:
     LiveProgramRecording(const LiveProgram &p);
     ~LiveProgramRecording();
 
-    void compress();
+    bool compress();
 
 private:
     std::shared_ptr<WavWriter> m_wavWriter;

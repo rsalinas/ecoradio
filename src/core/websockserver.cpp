@@ -41,7 +41,7 @@ void WebsockServer::onNewConnection()
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &WebsockServer::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &WebsockServer::socketDisconnected);
     m_clients << pSocket;
-    m_ecoradio.clientConnected();
+    m_ecoradio.clientConnected(pSocket);
 }
 
 void WebsockServer::processTextMessage(QString message)
@@ -84,7 +84,7 @@ void WebsockServer::socketDisconnected()
         m_clients.removeAll(pClient);
         pClient->deleteLater();
     }
-    emit m_ecoradio.clientDisconnected();
+    emit m_ecoradio.clientDisconnected(pClient);
 }
 
 
@@ -125,8 +125,8 @@ void WebsockServer::nextSong(QString nextSong) {
     QTextStream ts(&ba);
     ts <<__FUNCTION__<<endl;
     ts << nextSong;
-ts.flush();
-     broadCastTextMessage(ba);
+    ts.flush();
+    broadCastTextMessage(ba);
 }
 
 void WebsockServer::currentPos(float pos, float length) {

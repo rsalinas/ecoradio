@@ -11,6 +11,8 @@
 #include "websockserver.h"
 #include "programplayer.h"
 
+
+class LiveProgramRecording;
 class SndSink;
 class Program;
 
@@ -30,6 +32,8 @@ public:
     }
 
     void skipSong();
+    bool startProgram(const LiveProgram &p, const QString &title,
+                      const QDateTime &when);
 
 
 private slots:
@@ -41,18 +45,17 @@ private slots:
     void everySecond();
 
 public slots:
-    void clientConnected();
-    void clientDisconnected();
-
+    void clientConnected(QWebSocket *client);
+    void clientDisconnected(QWebSocket *client);
 
 signals:
     void finished();
     void songFinishing(std::shared_ptr<SoundSource> s);
     void songFinished(std::shared_ptr<SoundSource> s);
 
-
 private:
     QSettings m_settings;
+    SndFormat m_format; //FIXME (m_settings)
     Mixer m_mixer;
     std::shared_ptr<SndSink> m_ao;
     std::shared_ptr<SndSink> m_ogg;
@@ -63,7 +66,6 @@ private:
     std::vector<std::shared_ptr<Program>> m_nextPrograms;
     std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
     std::shared_ptr<SoundSource> m_linein;
+    std::shared_ptr<LiveProgramRecording> m_currentLiveProgram;
     QTimer m_posTimer;
 };
-
-
