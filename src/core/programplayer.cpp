@@ -62,8 +62,3 @@ std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p) {
 }
 
 
-class LiveProgramRecording {
-public:
-    LiveProgramRecording(const LiveProgram &p);
-    ~LiveProgramRecording();
-};

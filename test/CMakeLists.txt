@@ -28,6 +28,7 @@ add_executable(alsa-record-example alsa-record-example.c)
 add_executable(test-wsstub test-wsstub.cpp)
 add_executable(coreandui coreandui.cpp)
 add_executable(test-json test-json.cpp)
+add_executable(test-wavwriter test-wavwriter.cpp)
 target_link_libraries(alsa-record-example asound)
 
 target_link_libraries(test-files gtest ecoradio_snd ecoradio_util ecoradio_core)
@@ -40,6 +41,7 @@ target_link_libraries(test-wsstub gtest  Qt5::Core wsstub ecoradio_core ecoradio
 target_link_libraries(ao_example ao dl m)
 target_link_libraries(coreandui gtest_main radioui ecoradio_core)
 target_link_libraries(test-json ecoradio_core ecoradio_common gtest)
+target_link_libraries(test-wavwriter ecoradio_snd gtest_main)
 
 add_test(NAME AllTestsInFifo COMMAND test-fifo)
 add_test(NAME AllTestsInRss COMMAND test-rss WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

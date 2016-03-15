@@ -5,6 +5,7 @@
 #include "common/program.h"
 #include "file_scan.h"
 #include <snd/sources/soundsource.h>
+#include <snd/sinks/wavwriter.h>
 
 class ProgramPlayer  {
 public:
@@ -53,3 +54,4 @@ private:
 
 
 std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p);
+

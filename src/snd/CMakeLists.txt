@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} SHARED
     sinks/aosink.cpp
     sinks/ogg_encoder.cpp
     sinks/sink.h
+    sinks/wavwriter.cpp
     mixer.cpp
     wavwriter.cpp
     oggfwd.cpp
@@ -20,4 +21,4 @@ add_library(${PROJECT_NAME} SHARED
      )
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5Sql ao asound shout
-    mpg123 vorbisenc Qt5::WebSockets Qt5Xml Qt5::Network ecoradio_util)
+    mpg123 vorbisenc Qt5::WebSockets Qt5Xml Qt5::Network ecoradio_util sndfile)
