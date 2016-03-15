@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QtGlobal>
+#include <QAbstractTableModel>
 
 #include "newprogramdialog.h"
 
@@ -26,9 +27,9 @@ RadioConsole::RadioConsole(QWidget *parent) :
     (QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int))));
 
     (QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<Program> ,
-                                                QList<std::shared_ptr<Program>>)),
-                     this, SLOT(newProgram(std::shared_ptr<Program>,
-                                           QList<std::shared_ptr<Program>>))));
+                                                 QList<std::shared_ptr<Program>>)),
+                      this, SLOT(newProgram(std::shared_ptr<Program>,
+                                            QList<std::shared_ptr<Program>>))));
     (QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString))));
     (QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString))));
     (QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float))));
@@ -105,6 +106,8 @@ void RadioConsole::vuMeterUpdate(int channel, int value) {
 }
 
 
+
+
 void RadioConsole::newProgram(const std::shared_ptr<Program> current,
                               const QList<std::shared_ptr<Program>> nextPrograms) {
     qDebug() << __FUNCTION__ << "!!!"<< *current << nextPrograms.size();
@@ -128,12 +131,12 @@ void RadioConsole::nextSong(QString nextSong) {
 void RadioConsole::currentPos(float pos, float total) {
 
     auto value = int(pos*100/total);
-//    qDebug() << "current pos client: "<< pos << value;
+    //    qDebug() << "current pos client: "<< pos << value;
     ui->currentPosSlider->setValue(value);
     QTime postime = QTime::fromMSecsSinceStartOfDay(int(pos*1000));
     QTime totaltime = QTime::fromMSecsSinceStartOfDay(int(total*1000));
-       ui->currentPosEdit->setText(postime.toString("hh:mm:ss")
-                                   + "/" + totaltime.toString("hh:mm:ss"));
+    ui->currentPosEdit->setText(postime.toString("hh:mm:ss")
+                                + "/" + totaltime.toString("hh:mm:ss"));
 }
 
 
@@ -142,6 +145,10 @@ QList<Program> RadioConsole::getPrograms() {
     for (auto p : m_nextPrograms) {
         ret.push_back(*p);
     }
+    qDebug() << "programasn" << ret.size();
 
     return ret;
 }
+
+
+#include "radioconsole.moc"

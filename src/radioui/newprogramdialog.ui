@@ -29,16 +29,6 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QListWidget" name="programList">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>50</y>
-     <width>341</width>
-     <height>192</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
@@ -106,6 +96,19 @@
    <attribute name="buttonGroup">
     <string notr="true">startMomGroup</string>
    </attribute>
+  </widget>
+  <widget class="QTableView" name="programTableView">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>50</y>
+     <width>521</width>
+     <height>192</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>abc</string>
+   </property>
   </widget>
  </widget>
  <resources/>

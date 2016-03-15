@@ -5,6 +5,7 @@ find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Widgets)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories (${CMAKE_CURRENT_BINARY_DIR})
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -13,8 +14,6 @@ set(CMAKE_AUTOUIC ON)
 include_directories(.)
 include_directories(..)
 
-include_directories (${CMAKE_CURRENT_BINARY_DIR})
-message("include: " ${CMAKE_CURRENT_BINARY_DIR})
 
 
 QT5_WRAP_CPP(Cmake_hdr_moc radioconsole.h  newprogramdialog.h)

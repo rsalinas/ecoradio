@@ -201,16 +201,6 @@
      <string>Skip song</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="programList">
-    <property name="geometry">
-     <rect>
-      <x>31</x>
-      <y>31</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pauseButton">
     <property name="geometry">
      <rect>
@@ -222,6 +212,16 @@
     </property>
     <property name="text">
      <string>Pause</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="programList">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
     </property>
    </widget>
   </widget>
