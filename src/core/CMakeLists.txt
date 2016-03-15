@@ -25,6 +25,7 @@ add_library(${PROJECT_NAME}
     scheduler.cpp
     websockserver.cpp
     programplayer.cpp
+    liverecord.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
