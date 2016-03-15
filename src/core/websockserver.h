@@ -43,7 +43,8 @@ public slots:
     void nextSong(QString currentSong);
 
 private:
-    void broadCastTextMessage(const QString &msg);
+    void broadCastTextMessage(const QString &s);
+    void broadCastTextMessage(const QByteArray &ba);
     Ecoradio &m_ecoradio;
     std::unique_ptr<QWebSocketServer> m_pWebSocketServer;
     QList<QWebSocket *> m_clients;

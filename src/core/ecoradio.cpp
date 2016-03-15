@@ -39,8 +39,8 @@ Ecoradio::Ecoradio(QObject *parent) :
 
     m_mixer.start();
     QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<Program>)), this, SLOT(newProgram(std::shared_ptr<Program>)));
-    QObject::connect(&m_mixer, SIGNAL(songFinishing(std::shared_ptr<SoundSource>)), this, SLOT(songFinishing(std::shared_ptr<SoundSource>)));
-    QObject::connect(&m_mixer, SIGNAL(songFinished(std::shared_ptr<SoundSource>)), this, SLOT(songFinished(std::shared_ptr<SoundSource>)));
+    QObject::connect(&m_mixer, SIGNAL(sourceFinishing(std::shared_ptr<SoundSource>)), this, SLOT(mixerSongFinishing(std::shared_ptr<SoundSource>)));
+    QObject::connect(&m_mixer, SIGNAL(sourceFinished(std::shared_ptr<SoundSource>)), this, SLOT(mixerSongFinished(std::shared_ptr<SoundSource>)));
     QObject::connect(&m_mixer, SIGNAL(vumeter(int,int)), &m_wss, SLOT(vumeter(int,int)));
     QObject::connect(&m_posTimer, SIGNAL(timeout()), this, SLOT(everySecond()));
 
@@ -55,6 +55,11 @@ Ecoradio::Ecoradio(QObject *parent) :
             emit "?";
         }
         m_nextStream = m_currentPlayer->getNextSong();
+        if (m_nextStream) {
+            emit m_wss.nextSong(m_nextStream->name());
+        } else {
+            emit "?";
+        }
 
         if (m_currentStream) {
             m_mixer.addSource(m_currentStream);
@@ -76,17 +81,19 @@ void Ecoradio::run()
 
 void Ecoradio::newProgram(std::shared_ptr<Program> p)
 {
+    m_current = p;
     qDebug() << "Ecoradio::programChanged: " << *p;
-    QStringList nextProgramNames = m_sched.getPrograms();
+    m_nextPrograms = m_sched.getNext();
+    qDebug() << "next programs: " << m_nextPrograms.size();
     m_wss.programChange(m_current, m_nextPrograms);
 }
 
 
-void Ecoradio::songFinishing(std::shared_ptr<SoundSource> s) {
-    qDebug() << __FUNCTION__;
+void Ecoradio::mixerSongFinishing(std::shared_ptr<SoundSource> s) {
+    qDebug() << __FUNCTION__ << s->name();
 }
 
-void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
+void Ecoradio::mixerSongFinished(std::shared_ptr<SoundSource> finishedSource) {
     qDebug() << __FUNCTION__;
     if (finishedSource) {
         finishedSource->close();
@@ -106,6 +113,7 @@ void Ecoradio::songFinished(std::shared_ptr<SoundSource> finishedSource) {
             qWarning() << "could not get song from current stream" << *m_current;
             emit m_wss.nextSong("??");
         } else {
+
             emit m_wss.nextSong(m_nextStream->name());
         }
     }
@@ -127,6 +135,8 @@ void Ecoradio::cmd_ptt(bool on) {
 
 void Ecoradio::clientConnected() {
     qDebug() << __FUNCTION__;
+    qDebug() << *m_current ;
+    qDebug() << "next: " << m_nextPrograms.size();
     emit m_wss.programChange(m_current, m_nextPrograms);
     if (m_currentStream) {
         emit m_wss.currentSong(m_currentStream->name());
@@ -149,8 +159,8 @@ void Ecoradio::clientDisconnected() {
 
 
 void Ecoradio::skipSong() {
-
-    songFinished(m_currentStream);
+    qDebug() << __FUNCTION__;
+    mixerSongFinished(m_currentStream);
 }
 
 

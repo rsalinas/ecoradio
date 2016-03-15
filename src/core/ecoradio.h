@@ -14,11 +14,15 @@
 class SndSink;
 class Program;
 
-
 class Ecoradio : public QObject
 {
     Q_OBJECT
 public:
+    enum CoreState {
+        Silence, InProgram, ProgramWaitingToLive, Live
+    };
+    CoreState  state = Silence;
+
     Ecoradio(QObject *parent = 0);
     Scheduler &getScheduler()
     {
@@ -27,11 +31,12 @@ public:
 
     void skipSong();
 
+
 private slots:
     void run();
     void newProgram(std::shared_ptr<Program>);
-    void songFinishing(std::shared_ptr<SoundSource> s);
-    void songFinished(std::shared_ptr<SoundSource> s);
+    void mixerSongFinishing(std::shared_ptr<SoundSource> s);
+    void mixerSongFinished(std::shared_ptr<SoundSource> s);
     void cmd_ptt(bool);
     void everySecond();
 
@@ -39,8 +44,12 @@ public slots:
     void clientConnected();
     void clientDisconnected();
 
+
 signals:
     void finished();
+    void songFinishing(std::shared_ptr<SoundSource> s);
+    void songFinished(std::shared_ptr<SoundSource> s);
+
 
 private:
     QSettings m_settings;
@@ -56,4 +65,5 @@ private:
     std::shared_ptr<SoundSource> m_linein;
     QTimer m_posTimer;
 };
+
 

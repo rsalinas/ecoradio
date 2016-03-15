@@ -36,6 +36,18 @@ private slots:
     void vuMeterUpdate(int channel, int value);
     void currentPos(float pos, float total);
 
+
+    /* test */
+signals:
+    void test0signal(QList<std::shared_ptr<Program>> p);
+    void test1signal(int);
+public slots:
+    void test0slot(QList<std::shared_ptr<Program>> p) {}
+    void test1slot(int) {}
+
+    /* end test */
+
+
 private:
     Ui::RadioConsole *ui;
     QTimer * m_wallclockTimer;

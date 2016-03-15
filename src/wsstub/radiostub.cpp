@@ -4,12 +4,11 @@
 
 #include <QStringList>
 
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Program>>)
-
 RadioStub::RadioStub(const QUrl &url, QObject *parent) :
     QObject(parent), m_websocket()
 {
     qDebug() << __FUNCTION__ << url;
+    qRegisterMetaType<std::shared_ptr<Program> >();
     qRegisterMetaType<QList<std::shared_ptr<Program>> >();
     connect(&m_websocket, &QWebSocket::connected, this, &RadioStub::onConnected);
     connect(&m_websocket, &QWebSocket::disconnected, this, &RadioStub::disconnected);
@@ -71,18 +70,8 @@ void RadioStub::onTextMessageReceived(QString message)
     } else if (cmd  == "programChange") {
         auto rest = ts.readAll().toLocal8Bit();
         auto doc = QJsonDocument::fromJson(rest);
-        qDebug().noquote() <<  "REST: " <<rest;
-        qDebug().noquote() <<  "DOC: " << doc;
         auto current = programFromJson(doc.object()["current"].toObject());
-        auto next = programListFromJson(doc.object()["current"].toArray());
-        qDebug() << "parsed: " << *current;
-//        QStringList programs;
-//        if (lsplit.size()<2 )
-//            return;
-//        auto current =  lsplit[1];
-//        for (size_t i = 2; i < lsplit.size(); ++i) {
-//            programs.push_back(lsplit[i]);
-//        }
+        auto next = programListFromJson(doc.object()["next"].toArray());
         emit newProgram(current, next);
     } else if (cmd == "nextSong") {
         emit nextSong(ts.readLine());

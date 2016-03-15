@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QDateTime>
 #include <QJsonObject>
 
@@ -13,14 +14,18 @@ public:
     int dow;
     QDateTime ts;
     QString name;
-    Program(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
-        id(id), dow(dow), ts(ts), name(name) {
-
-    }
+    Program();
+    Program(rowid_t id, int dow, const QDateTime &ts, const QString &name);
     Program(const Program&) = default;
+
     virtual ~Program() {}
     bool operator==(const Program &other) const;
 };
+
+Q_DECLARE_METATYPE(Program)
+Q_DECLARE_METATYPE(std::shared_ptr<Program>)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<Program>>)
+
 
 
 class LiveProgram : public Program {

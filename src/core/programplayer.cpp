@@ -2,10 +2,12 @@
 
 #include "snd/sources/mpg123wrap.h"
 
-std::shared_ptr<SoundSource> LiveProgramPlayer::getNextSong() {
+std::shared_ptr<SoundSource> LiveProgramPlayer::getNextSong()
+{
     return nullptr;
 }
-std::shared_ptr<SoundSource> StreamProgramPlayer::getNextSong() {
+std::shared_ptr<SoundSource> StreamProgramPlayer::getNextSong()
+{
     return nullptr;
 }
 
@@ -14,14 +16,16 @@ FolderProgramPlayer::FolderProgramPlayer(const FolderProgram &p) :
     traverse("/home/rsalinas/Sync/mp3", "/tmp/vistos", "/tmp/catalog") {
 }
 
-std::shared_ptr<SoundSource> FolderProgramPlayer::getNextSong() {
+std::shared_ptr<SoundSource> FolderProgramPlayer::getNextSong()
+{
 
     auto ret = std::make_shared<Mpg123>(traverse.basedir()+"/"+traverse.getRandom());
     //    ret->stopFadeOut(1000);
     return ret;
 }
 
-std::shared_ptr<SoundSource> PodcastProgramPlayer::getNextSong() {
+std::shared_ptr<SoundSource> PodcastProgramPlayer::getNextSong()
+{
     return nullptr;
 }
 
@@ -56,3 +60,10 @@ std::shared_ptr<ProgramPlayer> getProgramPlayer(const Program &p) {
     } else
         return nullptr;
 }
+
+
+class LiveProgramRecording {
+public:
+    LiveProgramRecording(const LiveProgram &p);
+    ~LiveProgramRecording();
+};

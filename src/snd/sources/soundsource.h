@@ -80,6 +80,8 @@ signals:
     void finished();
 };
 
+Q_DECLARE_METATYPE(std::shared_ptr<SoundSource>)
+
 
 class ProcessDecoder : public SoundSource {
 public:

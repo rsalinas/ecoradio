@@ -4,11 +4,9 @@
 
 #include <QDebug>
 #include <QDateTime>
+#include <QtGlobal>
 
 #include "newprogramdialog.h"
-
-Q_DECLARE_METATYPE(std::shared_ptr<Program>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Program>>)
 
 RadioConsole::RadioConsole(QWidget *parent) :
     QMainWindow(parent),
@@ -16,21 +14,24 @@ RadioConsole::RadioConsole(QWidget *parent) :
     m_wallclockTimer(new QTimer(this)),
     m_stub(QUrl("ws://localhost:1234")) //FIXME
 {
-    qRegisterMetaType<std::shared_ptr<Program> >();
-    qRegisterMetaType<QList<std::shared_ptr<Program>> >();
+
+    qDebug() << qRegisterMetaType<Program>();
+    qDebug() << qRegisterMetaType<std::shared_ptr<Program> >();
+    qDebug() << qRegisterMetaType<QList<std::shared_ptr<Program>> >();
 
     ui->setupUi(this);
     updateClock();
-    QObject::connect(m_wallclockTimer, SIGNAL(timeout()), this, SLOT(updateClock()));
+    (connect(m_wallclockTimer, SIGNAL(timeout()), this, SLOT(updateClock())));
     m_wallclockTimer->start(1000);
-    QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int)));
-    QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<Program> current,
-                                                QList<std::shared_ptr<Program>> nextPrograms)),
-                     this, SLOT(newProgram(std::shared_ptr<Program> current,
-                                           QList<std::shared_ptr<Program>> nextPrograms)));
-    QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString)));
-    QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString)));
-    QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float)));
+    (QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int))));
+
+    (QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<Program> ,
+                                                QList<std::shared_ptr<Program>>)),
+                     this, SLOT(newProgram(std::shared_ptr<Program>,
+                                           QList<std::shared_ptr<Program>>))));
+    (QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString))));
+    (QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString))));
+    (QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float))));
     ui->vumMain->setMaximum(255);
     ui->vumMain->setMinimum(0);
     ui->vumMain->setFormat("");
@@ -104,9 +105,9 @@ void RadioConsole::vuMeterUpdate(int channel, int value) {
 }
 
 
-void RadioConsole::newProgram(std::shared_ptr<Program> current,
-                              QList<std::shared_ptr<Program>> nextPrograms) {
-    qDebug() << __FUNCTION__;
+void RadioConsole::newProgram(const std::shared_ptr<Program> current,
+                              const QList<std::shared_ptr<Program>> nextPrograms) {
+    qDebug() << __FUNCTION__ << "!!!"<< *current << nextPrograms.size();
     ui->statusBar->showMessage(current->ts.toString("hh:mm:ss ")+ current->name);
     ui->programList->clear();
     for (auto s : nextPrograms) {

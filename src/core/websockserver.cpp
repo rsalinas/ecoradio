@@ -96,6 +96,7 @@ void WebsockServer::vumeter(int channel, int value) {
 void WebsockServer::programChange(std::shared_ptr<Program> current,
                                   std::vector<std::shared_ptr<Program>> next)
 {
+    assert(current.get());
     QByteArray ba;
     QTextStream ts(&ba);
     ts <<__FUNCTION__<< endl;
@@ -103,7 +104,9 @@ void WebsockServer::programChange(std::shared_ptr<Program> current,
     QJsonObject root = toJson(current, next);
     doc.setObject(root);
     ts << doc.toJson();
-    broadCastTextMessage(QString::fromLocal8Bit(ba));
+    ts.flush();
+    broadCastTextMessage(ba);
+    qDebug() << "server sent programChange";
 }
 
 
@@ -112,15 +115,18 @@ void WebsockServer::currentSong(QString currentSong) {
     QTextStream ts(&ba);
     ts <<__FUNCTION__<<endl;
     ts << currentSong <<endl;
-    broadCastTextMessage(QString::fromLocal8Bit(ba));
+    ts.flush();
+    broadCastTextMessage(ba);
 }
 
 void WebsockServer::nextSong(QString nextSong) {
+    qDebug() << "server sets nextSong" << nextSong;
     QByteArray ba;
     QTextStream ts(&ba);
     ts <<__FUNCTION__<<endl;
     ts << nextSong;
-    broadCastTextMessage(QString::fromLocal8Bit(ba));
+ts.flush();
+     broadCastTextMessage(ba);
 }
 
 void WebsockServer::currentPos(float pos, float length) {
@@ -130,12 +136,16 @@ void WebsockServer::currentPos(float pos, float length) {
     ts << __FUNCTION__<<endl;
     ts << pos<<endl;
     ts << length <<endl;
-    broadCastTextMessage(QString::fromLocal8Bit(ba));
+    ts.flush();
+    broadCastTextMessage(ba);
 }
-
 
 void WebsockServer::broadCastTextMessage(const QString &msg) {
     for (auto c : m_clients) {
         c->sendTextMessage(msg);
     }
+}
+
+void WebsockServer::broadCastTextMessage(const QByteArray &ba) {
+    broadCastTextMessage(QString::fromLocal8Bit(ba));
 }

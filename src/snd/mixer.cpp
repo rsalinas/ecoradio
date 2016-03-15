@@ -7,13 +7,11 @@
 #include "sources/soundsource.h"
 
 
-
-
-
 Mixer::Mixer(const SndFormat &format) :
     m_format(format), buf_size(format.bufferSize)
 {
-    qRegisterMetaType<std::shared_ptr<SoundSource> >();    
+    qDebug() << "qRegisterMetaType<std::shared_ptr<SoundSource> >()";
+    qRegisterMetaType<std::shared_ptr<SoundSource> >();
 }
 
 void Mixer::run() {
