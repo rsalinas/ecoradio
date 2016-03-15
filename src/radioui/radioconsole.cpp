@@ -54,7 +54,7 @@ void RadioConsole::startProgram(int id) {
 void RadioConsole::on_startProgramButton_clicked()
 {
     qDebug() << __FUNCTION__;
-    NewProgramDialog * d = new NewProgramDialog(m_stub, this);
+    NewProgramDialog * d = new NewProgramDialog(m_stub, *this, this);
     QObject::connect(d, SIGNAL(startProgram(int)), this, SLOT(startProgram(int)));
     d->setModal(true);
     d->show();
@@ -108,6 +108,8 @@ void RadioConsole::vuMeterUpdate(int channel, int value) {
 void RadioConsole::newProgram(const std::shared_ptr<Program> current,
                               const QList<std::shared_ptr<Program>> nextPrograms) {
     qDebug() << __FUNCTION__ << "!!!"<< *current << nextPrograms.size();
+    m_current = current;
+    m_nextPrograms = nextPrograms;
     ui->statusBar->showMessage(current->ts.toString("hh:mm:ss ")+ current->name);
     ui->programList->clear();
     for (auto s : nextPrograms) {
@@ -126,7 +128,20 @@ void RadioConsole::nextSong(QString nextSong) {
 void RadioConsole::currentPos(float pos, float total) {
 
     auto value = int(pos*100/total);
-    qDebug() << "current pos client: "<< pos << value;
+//    qDebug() << "current pos client: "<< pos << value;
     ui->currentPosSlider->setValue(value);
-    //    ui->
+    QTime postime = QTime::fromMSecsSinceStartOfDay(int(pos*1000));
+    QTime totaltime = QTime::fromMSecsSinceStartOfDay(int(total*1000));
+       ui->currentPosEdit->setText(postime.toString("hh:mm:ss")
+                                   + "/" + totaltime.toString("hh:mm:ss"));
+}
+
+
+QList<Program> RadioConsole::getPrograms() {
+    QList<Program> ret;
+    for (auto p : m_nextPrograms) {
+        ret.push_back(*p);
+    }
+
+    return ret;
 }

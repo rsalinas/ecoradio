@@ -165,7 +165,7 @@ void Ecoradio::skipSong() {
 
 
 void Ecoradio::everySecond() {
-    qDebug() << __FUNCTION__;
+//    qDebug() << __FUNCTION__;
     if (m_currentStream) {
         emit m_wss.currentPos(m_currentStream->currentMillis()/1000.0,
                               m_currentStream->lengthMillis()/1000.0);

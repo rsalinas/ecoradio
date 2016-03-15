@@ -2,16 +2,23 @@
 #include "ui_newprogramdialog.h"
 
 #include "wsstub/radiostub.h"
+#include "radioconsole.h"
 
-NewProgramDialog::NewProgramDialog(RadioStub &stub, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NewProgramDialog),
-    m_stub(stub)
+NewProgramDialog::NewProgramDialog(RadioStub &stub, RadioConsole &main, QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::NewProgramDialog)
+    , m_stub(stub)
+    , m_main(main)
 {
     ui->setupUi(this);
-    QObject::connect(&m_stub, SIGNAL(programListReady(QStringList)),
-                     this, SLOT(programListReady(QStringList)));
-    m_stub.getPrograms();
+
+//    ui->programList->clear();
+    for (const auto &l : main.getPrograms()) {
+        ui->programList->addItem(l.name);
+    }
+//    QObject::connect(&m_stub, SIGNAL(programListReady(QStringList)),
+//                     this, SLOT(programListReady(QStringList)));
+//    m_stub.getPrograms();
 
 }
 

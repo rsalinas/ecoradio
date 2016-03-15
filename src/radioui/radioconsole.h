@@ -19,6 +19,8 @@ public:
     explicit RadioConsole(QWidget *parent = 0);
     ~RadioConsole();
 
+    QList<Program> getPrograms();
+
 private slots:
     void on_startProgramButton_clicked();
     void on_endProgramButton_clicked();
@@ -52,6 +54,8 @@ private:
     Ui::RadioConsole *ui;
     QTimer * m_wallclockTimer;
     RadioStub m_stub;
+    std::shared_ptr<Program> m_current;
+    QList<std::shared_ptr<Program>> m_nextPrograms;
 };
 
 #endif // RADIOCONSOLE_H

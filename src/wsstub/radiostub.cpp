@@ -50,15 +50,11 @@ void RadioStub::onTextMessageReceived(QString message)
     QTextStream ts(&message);
     QString cmd = ts.readLine();
 
-    qDebug() << "Message received:" << message << cmd;
-//    //    m_webSocket.close();
-//    QStringList lsplit = message.split('\n');
-//    QStringList split(lsplit[0].split(' '));
+//    qDebug() << "Message received:" << message << cmd;
     if (cmd == "VU") {
-
         int channel = ts.readLine().toInt();
         int value = ts.readLine().toInt();
-        qDebug() << "vumeter" << channel << value;
+//        qDebug() << "vumeter" << channel << value;
         emit vuMeterUpdate(channel, value);
     } else if (cmd == "PRGLIST") {
 //        qDebug() << "program list!";
@@ -78,7 +74,7 @@ void RadioStub::onTextMessageReceived(QString message)
     } else if (cmd == "currentSong") {
         emit currentSong(ts.readLine());
     } else if (cmd == "currentPos") {
-        qDebug() << "CURRENT POS" << message;
+//        qDebug() << "CURRENT POS" << message;
         auto pos = ts.readLine().toFloat();
         auto total = ts.readLine().toFloat();
         emit currentPos(pos, total);

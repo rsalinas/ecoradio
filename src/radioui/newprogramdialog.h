@@ -1,8 +1,9 @@
-#ifndef NEWPROGRAMDIALOG_H
-#define NEWPROGRAMDIALOG_H
+#pragma once
 
 #include <QDialog>
+
 class RadioStub ;
+class RadioConsole;
 
 namespace Ui {
 class NewProgramDialog;
@@ -13,7 +14,7 @@ class NewProgramDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewProgramDialog(RadioStub &stub, QWidget *parent = 0);
+    explicit NewProgramDialog(RadioStub &stub, RadioConsole &main, QWidget *parent = 0);
     ~NewProgramDialog();
 
 
@@ -29,6 +30,5 @@ public slots:
 private:
     Ui::NewProgramDialog *ui;
     RadioStub &m_stub;
+    RadioConsole &m_main;
 };
-
-#endif // NEWPROGRAMDIALOG_H
