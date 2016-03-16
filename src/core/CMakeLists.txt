@@ -26,6 +26,7 @@ add_library(${PROJECT_NAME}
     websockserver.cpp
     programplayer.cpp
     liverecord.cpp
+    database.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

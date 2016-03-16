@@ -10,11 +10,12 @@
 #include "snd/sources/soundsource.h"
 #include "websockserver.h"
 #include "programplayer.h"
-
+#include "core/database.h"
 
 class LiveProgramRecording;
 class SndSink;
 class ProgramTime;
+class RadioDb;
 
 class Ecoradio : public QObject
 {
@@ -29,6 +30,10 @@ public:
     Scheduler &getScheduler()
     {
         return m_sched;
+    }
+
+    RadioDb &getDatabase() {
+        return m_db;
     }
 
     void skipSong();
@@ -60,6 +65,7 @@ private:
     std::shared_ptr<SndSink> m_ao;
     std::shared_ptr<SndSink> m_ogg;
     Scheduler m_sched;
+    RadioDb m_db;
     WebsockServer m_wss;
     std::shared_ptr<ProgramTime> m_current, m_currentFallback;
     std::shared_ptr<ProgramPlayer> m_currentPlayer;

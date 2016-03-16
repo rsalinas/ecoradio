@@ -54,10 +54,10 @@ void WebsockServer::processTextMessage(QString message)
         int value = split[1].toInt();
         emit cmd_ptt(value != 0);
     } else if (split[0] == "GET_PROGRAMS") {
-        auto list = m_ecoradio.getScheduler().getPrograms();
+        auto list = m_ecoradio.getDatabase().getPrograms();
         QString msg("PRGLIST");
         for (const auto &s : list) {
-            msg.append("\n").append(s);
+            msg.append("\n").append(s->name);
         }
         pClient->sendTextMessage(msg);
     } else if (split[0] == "skipSong") {

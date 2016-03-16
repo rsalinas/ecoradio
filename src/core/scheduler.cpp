@@ -1,8 +1,10 @@
 #include "scheduler.h"
+
 #include <QtSql/QtSql>
 #include <QDebug>
 #include <QDateTime>
 #include <memory>
+
 #include "util/util.h"
 
 Scheduler::Scheduler(const QString &filename) : m_db(QSqlDatabase::addDatabase("QSQLITE"))
@@ -25,20 +27,23 @@ std::shared_ptr<ProgramTime> Scheduler::getCurrent(const QDateTime &ts) {
 static QString makeQuery() {
 }
 
+static int minOfTheDay(const QDateTime &now) {
+    return now.date().dayOfWeek()*60*24
+            +now.time().hour()*60
+            +now.time().minute();
+}
 
 std::vector<std::shared_ptr<ProgramTime>>
 Scheduler::getPlan(bool current,
-                   const QDateTime &ts) {
+                   const QDateTime &now) {
     QSqlQuery query(m_db);
-    QDateTime now = QDateTime::currentDateTime();
-    auto dow = now.date().dayOfWeek();
-    auto minOfTheDay = dow*60*24+now.time().hour()*60+now.time().minute();
+
     auto sql = QString("select program.rowid as program_rowid, * from program_time"
                        " inner join program on program.rowid = program_id"
                        " where dow*60*24+hour*60+minute %1 %2"
                        " order by dow*60*24+hour*60+minute %3").
             arg(current ? "<" : ">",
-                QString::number(minOfTheDay),
+                QString::number(minOfTheDay(now)),
                 current ? "desc limit 1" : "asc"  );
     qDebug() << sql;
     if (!query.exec(sql)) {
@@ -58,19 +63,11 @@ Scheduler::getPlan(bool current,
         auto rowid = query.value("program_rowid").toULongLong();
         std::shared_ptr<ProgramTime> p;
         type = "folder"; //FIXME
-        if (type == "live") {
-            p = std::make_shared<LiveProgram>(rowid, lineDow, dt, query.value("name").toString());
-        } else if (type == "stream") {
-            p = std::make_shared<StreamProgram>(rowid, lineDow, dt, query.value("name").toString());
-        } else if (type == "podcast") {
-            p = std::make_shared<PodcastProgram>(rowid, lineDow, dt, query.value("name").toString());
-        } else if (type == "folder") {
-            p = std::make_shared<FolderProgram>(rowid, lineDow, dt, query.value("name").toString());
-        } else {
-            qWarning() << "Bad program found, ignoring. " << type;
-        }
-        l.push_back(p);
-//        qDebug() << *p;
+
+        l.push_back(instantiateProgramTime(
+                        type, rowid, lineDow, dt, query.value("name").toString()));
+        if (false)
+            qDebug() << *p;
     }
 
     if (!current && l.size()) {
@@ -78,36 +75,19 @@ Scheduler::getPlan(bool current,
         auto ms = now.msecsTo(nextProgram->ts);
         qDebug() << "next is" << *nextProgram << " in " << (ms/1000);
         QTimer::singleShot(ms, this, SLOT(programTimerExpired()));
-        //        qDebug() << "time started";
-        //        QTimer::singleShot(2000, this, SLOT(programTimerExpired()));
     }
-    return l;
 
+    return l;
 }
 
-std::vector<std::shared_ptr<ProgramTime>> Scheduler::getNext(const QDateTime &ts) {
+std::vector<std::shared_ptr<ProgramTime>> Scheduler::getNext(const QDateTime &ts)
+{
     return getPlan(false, ts);
 }
 
-
-
-
-void Scheduler::programTimerExpired() {
+void Scheduler::programTimerExpired()
+{
     qDebug() << "Program changed: ";
     emit programChanged(getCurrent());
     getNext();
-}
-
-
-QStringList Scheduler::getPrograms() {
-    QStringList ret;
-    QSqlQuery query(m_db)    ;
-    //FIXME only active programs
-    if (query.exec("Select name from program order by name")) {
-        while (query.next())  {
-            ret.push_back(query.value("name").toString());
-        }
-    }
-    qDebug() << __FUNCTION__ << ret;
-    return ret;
 }

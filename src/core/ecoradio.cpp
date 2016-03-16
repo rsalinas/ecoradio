@@ -8,17 +8,17 @@
 #include "snd/sinks/sink.h"
 #include "snd/sources/mpg123wrap.h"
 #include "core/liverecord.h"
+#include "core/database.h"
 
-
-Ecoradio::Ecoradio(QObject *parent) :
-    QObject(parent),
-    m_settings("ecoradio.ini", QSettings::Format::NativeFormat),
-
-    m_sched("radio.sqlite"),
-    m_current(m_sched.getCurrent()),
-    m_currentPlayer(getProgramPlayer(*m_current)),
-    m_nextPrograms(m_sched.getNext()),
-    m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
+Ecoradio::Ecoradio(QObject *parent)
+    : QObject(parent)
+    , m_settings("ecoradio.ini", QSettings::Format::NativeFormat)
+    , m_sched("radio.sqlite")
+    , m_db("radio.sqlite")
+    , m_current(m_sched.getCurrent())
+    , m_currentPlayer(getProgramPlayer(*m_current))
+    , m_nextPrograms(m_sched.getNext())
+    , m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
 
 {
         m_posTimer.start(1000);
@@ -67,7 +67,9 @@ Ecoradio::Ecoradio(QObject *parent) :
             qWarning() << "could not get song from current stream" << *m_current;
         }
     }
-    qDebug() << "progs" << m_sched.getPrograms();
+    qDebug() << "progs";
+    for (auto p : m_db.getPrograms())
+        qDebug().nospace().noquote() << "  " << p->name;
     //    m_mixer.addSource(std::make_shared<StreamSrc>("http://stream.freefm.de:8100/"));
 }
 

@@ -7,7 +7,7 @@
 
 
 ProgramTime::ProgramTime(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
-    id(id), dow(dow), ts(ts), name(name) {
+    pt_id(id), dow(dow), ts(ts), name(name) {
 }
 
 ProgramTime::ProgramTime() {
@@ -46,7 +46,7 @@ bool setProgram(QJsonObject &o, QString key, const ProgramTime& program) {
 }
 
 bool ProgramTime::operator==(const ProgramTime &other) const {
-    return id == other.id
+    return pt_id == other.pt_id
             && dow == other.dow
             && ts == other.ts
             && name == other.name;
@@ -55,7 +55,7 @@ bool ProgramTime::operator==(const ProgramTime &other) const {
 
 QJsonObject toJson(ProgramTime p) {
     QJsonObject o;
-    o.insert("id", QJsonValue(qint64(p.id)));
+    o.insert("id", QJsonValue(qint64(p.pt_id)));
     o.insert("name", QJsonValue(p.name));
     o.insert("ts", QJsonValue(p.ts.toMSecsSinceEpoch()));
     o.insert("dow", QJsonValue(p.dow));
@@ -75,7 +75,7 @@ std::shared_ptr<ProgramTime> programFromJson(const QJsonObject obj) {
 QList<std::shared_ptr<ProgramTime>> programListFromJson(const QJsonArray &array) {
     QList<std::shared_ptr<ProgramTime>>  ret;
     for (int i=0; i < array.size(); i++) {
-           ret.push_back(programFromJson(array.at(i).toObject()));
+        ret.push_back(programFromJson(array.at(i).toObject()));
     }
 
     return ret;
@@ -106,3 +106,26 @@ QDebug operator<<(QDebug dbg, const ProgramTime &program)
     return dbg;
 }
 
+std::shared_ptr<ProgramTime> instantiateProgramTime(QString type,
+        rowid_t rowid, int lineDow, QDateTime dt, QString name)
+{
+
+    if (type == LiveProgram::programType()) {
+        return std::make_shared<LiveProgram>(rowid, lineDow, dt, name);
+    } else if (type == "stream") {
+        return std::make_shared<StreamProgram>(rowid, lineDow, dt, name);
+    } else if (type == "podcast") {
+        return  std::make_shared<PodcastProgram>(rowid, lineDow, dt, name);
+    } else if (type == "folder") {
+        return std::make_shared<FolderProgram>(rowid, lineDow, dt, name);
+    } else {
+        qWarning() << "Bad program found, ignoring. " << type;
+        return nullptr;
+    }
+}
+
+Program::Program(rowid_t id, const QString &name)
+    : id(id)
+    , name(name) {
+
+}
