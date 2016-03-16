@@ -23,3 +23,10 @@ AutoTimeMeter::~AutoTimeMeter()
     if (ellapsedTime >= m_threshold)
         qDebug() << "Finished " << m_name << ellapsedTime;
 }
+
+void SynSleep::finish()
+{
+    qDebug() << "FINISHED!";
+    needRunning=0;
+    loop.exit();
+}

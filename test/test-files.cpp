@@ -12,6 +12,8 @@
 #include <QBitArray>
 
 
+#include "snd/sources/process_src.h"
+
 static const QDir repositoryDir("/home/rsalinas/Sync/enconstruccio");
 static const QString vistosFile = "/tmp/vistos.txt";
 static const QString indexFile = "/tmp/all";

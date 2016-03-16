@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} SHARED
     sources/alsarec.cpp
     sources/mpg123wrap.cpp
     sources/soundsource.cpp
+    sources/process_src.cpp
     sinks/aosink.cpp
     sinks/ogg_encoder.cpp
     sinks/sink.h

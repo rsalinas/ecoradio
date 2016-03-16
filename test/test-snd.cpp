@@ -14,122 +14,129 @@
 #include "snd/sources/alsarec.h"
 #include "snd/sources/mpg123wrap.h"
 #include "snd/sources/soundsource.h"
+#include "snd/sources/process_src.h"
 #include "util/rssparser.h"
-#include "util/streamsrc.h"
 #include "util/util.h"
-
 
 //https://www.xiph.org/vorbis/doc/v-comment.html
 
+const SndFormat c_format;
 
-TEST(OggEncTest, DISABLED_OggEncTest)
-{
-    std::unique_ptr<QFile> file(new QFile("salida.ogg"));
-    ASSERT_TRUE(file->open(QFile::WriteOnly));
-    OggEncoder encoder(std::move(file));
-    Mpg123 decoder("test.mp3");
-
-    while (true) {
-        char buffer[4096];
-        int n = decoder.readPcm(buffer, sizeof(buffer));
-        if (n <= 0)
-            break;
-        encoder.writePcm(buffer, n);
-    }
-
-    qDebug() << "Finished writing";
-}
-
-TEST(OggEncTest, DISABLED_OggEncSendTest)
-{
-    OggFwd::Config fwdConfig;
+OggFwd::Config getIcecastConfig() {
+    OggFwd::Config  fwdConfig;
     fwdConfig.hostName = "vps66370.ovh.net";
     fwdConfig.port = 8000;
     fwdConfig.mount = "/tests.ogg";
     fwdConfig.passwd = "ecoradio";
+    return fwdConfig;
+}
 
-    std::unique_ptr<OggFwd> output(new OggFwd(fwdConfig));
+
+
+TEST(OggEncTest, OggEncTest)
+{
+    std::unique_ptr<QFile> file(new QFile("salida.ogg"));
+    ASSERT_TRUE(file->open(QFile::WriteOnly));
+    OggEncoder encoder(std::move(file));
+    Mpg123 decoder("samples/long.mp3");
+    TimeMeter tm;
+
+    size_t bytes = 0;
+
+    while (true) {
+        char buffer[4096];
+        int n = decoder.readPcm(buffer, sizeof(buffer));
+        bytes +=n;
+        //        ASSERT_GE(n, 0);
+        if (n <= 0)
+            break;
+        ASSERT_TRUE(encoder.writePcm(buffer, n));
+    }
+    qDebug() << "Finished writing"  <<
+                decoder.lengthMillis()/tm.ellapsed() << "x";
+}
+
+TEST(OggEncTest, OggEncSendTest)
+{
+    std::unique_ptr<OggFwd> output(new OggFwd(getIcecastConfig()));
     ASSERT_TRUE(output->open(QFile::WriteOnly));
     OggFwd::Metadata metadata;
     metadata.add("ARTIST", "Artist");
     metadata.add("TITLE", "Title");
     output->setMetadata(metadata);
     OggEncoder encoder(std::move(output));
-    Mpg123 decoder("test.mp3");
-
-
+    Mpg123 decoder("samples/beep.mp3");
 
     while (true) {
         char buffer[4096];
         int n = decoder.readPcm(buffer, sizeof(buffer));
         if (n <= 0)
             break;
-        encoder.writePcm(buffer, n);
+        ASSERT_TRUE(encoder.writePcm(buffer, n));
     }
-
-
-    qDebug() << "Finished writing";
 }
 
 
 
-TEST(OggFwdTest, DISABLED_OggFwdTest)
+TEST(OggFwdTest, OggFwdTest)
 {
-    OggFwd::Config fwdConfig;
-    fwdConfig.hostName = "vps66370.ovh.net";
-    fwdConfig.port = 8000;
-    fwdConfig.mount = "/tests.ogg";
-    fwdConfig.passwd = "ecoradio";
-
-    OggFwd fwd(fwdConfig);
+    OggFwd fwd(getIcecastConfig());
     OggFwd::Metadata metadata;
     metadata.add("ARTIST", "Artist");
     metadata.add("TITLE", "Title");
     fwd.setMetadata(metadata);
     sleep (5);
 
-    QFile file("test.ogg");
+    QFile file("samples/system-ready.ogg");
     ASSERT_TRUE(file.open(QFile::ReadOnly));
-    char buffer[65536];
-    while (file.seek(0)) {
-
+    char buffer[64*1024];
+    if (file.seek(0)) {
         qint64 n;
         while (n = file.read(buffer, sizeof(buffer)), n > 0) {
             ASSERT_EQ(n, fwd.write(buffer, n));
         }
     }
-
-
-    qDebug() << "all right";
 }
 
-TEST (DecoderTest, DISABLED_Decoder0) {
-    Mp3Decoder d("test.mp3");
+TEST (DecoderTest, Decoder0) {
+    Mp3Decoder d("samples/beep.mp3");
     SinWave swg(440.0);
     SinWave swg2(340.0);
     Mixer player;
-    char buffer[player.buf_size];
-    char buffer2[player.buf_size];
+    char buffer[player.getBufferSize()];
+    char buffer2[player.getBufferSize()];
     size_t n = swg.readPcm(buffer, sizeof(buffer));
     size_t n2 = swg2.readPcm(buffer2, sizeof(buffer2));
-    ASSERT_GT(n, 0);
+    ASSERT_EQ(n, sizeof(buffer));
+    ASSERT_EQ(n2, sizeof(buffer2));
 }
 
 
-TEST (DecoderTest, DISABLED_Mp3) {
-    Mp3Decoder d("beep.mp3");
-    Mixer player;
-    SinWave swg2(440.0);
+TEST (DecoderTest, Mp3PlusSin) {
+    auto mp3 = std::make_shared<Mp3Decoder>("samples/beep.mp3");
+    ASSERT_TRUE(mp3->waitForReadyReady(1000));
+    Mixer mixer;
+    mixer.addSink(std::make_shared<AoSink>(c_format));
+    auto sin = std::make_shared<SinWave>(440.0);
+    mixer.addSource(mp3);
+    mixer.addSource(sin);
+    mixer.start();
+    sleep(3);
+    mp3->stopFadeOut(1000);
+    sleep(2);
+    sin->stopFadeOut(1000);
 }
 
 
-TEST(PlayerThread, DISABLED_PlayerThread ){
-    Mixer player;
+TEST(PlayerThread, PlayerThread ){
+    Mixer mixer;
     std::shared_ptr<SoundSource> sin = std::make_shared<SinWave>(440.0);
     sin->setFadeIn(1000);
-    player.addSource(sin);
-    std::shared_ptr<SoundSource> d = std::make_shared<Mp3Decoder>("test.mp3");
-    player.addSource(d);
+    mixer.addSink(std::make_shared<AoSink>(c_format));
+    mixer.start();
+    mixer.addSource(sin);
+    std::shared_ptr<SoundSource> d = std::make_shared<Mp3Decoder>("samples/long.mp3");
+    mixer.addSource(d);
     sleep(3);
     sin->stopFadeOut(1000);
     sin->waitEnd();
@@ -138,10 +145,10 @@ TEST(PlayerThread, DISABLED_PlayerThread ){
     sleep(2);
     d->stopFadeOut(1000);
     d->waitEnd();
-    player.addSource(sin);
+    mixer.addSource(sin);
     sleep(2);
     sin->stopFadeOut(1000);
-    player.waitEnd();
+    mixer.waitEnd();
 }
 
 
@@ -202,43 +209,9 @@ TEST(Mp3, DISABLED_Mp3Qfile) {
 }
 
 
-class SynSleep: public QObject {
-    Q_OBJECT
-public:
-    SynSleep(){
-        needRunning=1;
-    }
-
-public slots:
-
-    void sleep(const QObject *sender, const char *signal){
-        QObject::connect(sender, signal, this   , SLOT(finish()));
-        if (needRunning==1)
-            loop.exec();
-    }
-    void sleep(){
-        if (needRunning==1)
-            loop.exec();
-    }
-
-    void reset(){
-        needRunning=1;
-    }
-
-    virtual void finish(){
-        qDebug() << "FINISHED!";
-        needRunning=0;
-        loop.exit();
-    }
-
-private:
-    QEventLoop loop;
-    int needRunning;
-
-};
 
 
-TEST_F(PlayerFixture, ArecordPlayerThread ){
+TEST_F(PlayerFixture, DISABLED_ArecordPlayerThread ){
     try {
         SndFormat format;
         Mixer player(format);

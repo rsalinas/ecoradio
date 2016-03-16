@@ -7,20 +7,26 @@
 #include "sources/soundsource.h"
 
 
-Mixer::Mixer(const SndFormat &format) :
-    m_format(format), buf_size(format.bufferSize)
+Mixer::Mixer(const SndFormat &format)
+    : m_format(format)
+    , buf_size(format.bufferSize)
+    , buffer(new char[buf_size])
+    , zeros(new char[buf_size])
 {
-    qDebug() << "qRegisterMetaType<std::shared_ptr<SoundSource> >()";
+
     qRegisterMetaType<std::shared_ptr<SoundSource> >();
 }
 
 void Mixer::run() {
-    char zeros[buf_size];
-    char buffer[buf_size];
+    if (m_sinks.empty()) {
+        qWarning() << "Refusing to start mixer without sinks";
+        return;
+    }
+
     char newBuffer[buf_size];
-    memset(zeros, 0, sizeof(buffer));
-    memset(buffer, 0, sizeof(buffer));
-    memset(newBuffer, 0, sizeof(buffer));
+    memset(zeros, 0, buf_size);
+    memset(buffer, 0, buf_size);
+    memset(newBuffer, 0, buf_size);
     qDebug() << __FUNCTION__;
     bool silence = true;
 
@@ -31,9 +37,9 @@ void Mixer::run() {
             QMutexLocker lock(&mutex);
             sourcesNow = m_sources;
         }
-        int i=0;
+        int actualSourceCount = 0;
         for (auto source : sourcesNow) {
-            int n = source->readFading(i==0 ? buffer: newBuffer, sizeof(buffer));
+            int n = source->readFading(actualSourceCount==0 ? buffer: newBuffer, buf_size);
             switch (n) {
             case 0:
                 qDebug() << "raro: zero" << source->name();
@@ -48,13 +54,13 @@ void Mixer::run() {
                 continue;
             }
             default:
-                if (sizeof(buffer) != n)
-                    memset((i==0 ? buffer: newBuffer)+n, 0, sizeof(buffer)-n);
+                if (buf_size != n)
+                    memset((actualSourceCount==0 ? buffer: newBuffer)+n, 0, buf_size-n);
 
-                if (i >= 1) {
+                if (actualSourceCount >= 1) {
                     auto b = reinterpret_cast<signed short int *>(buffer);
                     auto b1 = reinterpret_cast<signed short int *>(newBuffer);
-                    for (int i=0; i < sizeof(buffer)/ (m_format.sampleSizeBits/8 ); i++) {
+                    for (int i=0; i < buf_size/ (m_format.sampleSizeBits/8 ); i++) {
                         int sample = b[i] + b1[i];
                         if (sample > SHRT_MAX)
                             sample=SHRT_MAX;
@@ -65,45 +71,45 @@ void Mixer::run() {
                 }
             }
 
-            i++;
+            actualSourceCount++;
 
         }
         auto ellapsed = tm.ellapsed();
 
-
-        if (i) {
+        if (m_sinks.empty()) {
+            usleep(buf_size*1000/44100/2/2);
+        } else
             for (auto sink : m_sinks) {
-                sink->writePcm(buffer, sizeof(buffer));
+                sink->writePcm(actualSourceCount ? buffer : zeros, buf_size);
             }
+
+        if (actualSourceCount) {
             if (silence)  {
                 silence = false;
                 emit silenceFinished();
             }
-
         } else {
-            for (auto sink : m_sinks) {
-                sink->writePcm(zeros, sizeof(zeros));
-
-            }
             if (!silence) {
                 silence = true;
                 emit silenceStarted();
             }
         }
 
-        quint64 sqSum = 0;
-        auto b = reinterpret_cast<signed short int *>(buffer);
-        for (int pos=0; pos < sizeof(buffer)/ (m_format.sampleSizeBits/8 ); ++pos) {
-            sqSum += b[pos] * b[pos];
-        }
-        float asp = std::sqrt(float(sqSum) / sizeof(buffer)/2);
-        emit vumeter(0, asp * 255.0);
-
-
+        calculateVuMeter();
         if (ellapsed > 100)
             qDebug() << "In main: "  << ellapsed;
     }
     qDebug() << __FUNCTION__ << " finished properly";
+}
+
+void Mixer::calculateVuMeter() {
+    quint64 sqSum = 0;
+    auto b = reinterpret_cast<signed short int *>(buffer);
+    for (int pos=0; pos < buf_size/ (m_format.sampleSizeBits/8 ); ++pos) {
+        sqSum += b[pos] * b[pos];
+    }
+    float asp = std::sqrt(float(sqSum) / buf_size/2);
+    emit vumeter(0, asp * 255.0);
 }
 
 size_t Mixer::activeSourceCount() {
@@ -113,7 +119,7 @@ size_t Mixer::activeSourceCount() {
 void Mixer:: waitEnd() {
     QMutexLocker lock(&mutex);
     while (m_sources.size()) {
-        qDebug() << "Waiting for finish. Sources: " << m_sources.size();       
+        qDebug() << "Waiting for finish. Sources: " << m_sources.size();
         condition.wait(&mutex);
     }
 }
@@ -121,6 +127,12 @@ void Mixer:: waitEnd() {
 int Mixer::addSource(std::shared_ptr<SoundSource> source) {
     QMutexLocker lock(&mutex);
     m_sources.push_back(source);
+    if (m_sinks.empty()) {
+        qWarning() << "Mixer has no sinks";
+    }
+    if(!isRunning()) {
+        qWarning() << "Mixer is not started";
+    }
 }
 
 int Mixer::addSink(std::shared_ptr<SndSink> sink) {
@@ -137,4 +149,6 @@ Mixer::~Mixer() {
     condition.wakeAll();
     mutex.unlock();
     wait();
+    delete [] buffer;
+    delete [] zeros;
 }

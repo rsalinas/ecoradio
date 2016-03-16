@@ -22,32 +22,20 @@ class Mixer : public QThread
 public:
     class PcmPlayerException : public std::exception
     {
-
     };
 
     Mixer(const SndFormat &format = SndFormat() /*FIXME*/);
     virtual ~Mixer();
-
     int addSource(std::shared_ptr<SoundSource> s);
     int addSink(std::shared_ptr<SndSink> s);
-
     void run() override;
-
     void waitEnd();
-
-    const int buf_size;
     size_t activeSourceCount();
+    size_t getBufferSize() {
+        return buf_size;
+    }
 
-private:
-    const SndFormat m_format;
-    std::list<std::shared_ptr<SndSink>> m_sinks;
-    std::list<std::shared_ptr<SoundSource>> m_sources;
-
-    QMutex mutex;
-    QWaitCondition condition;
-    bool abort = false;
-
-signals:   
+signals:
     void silenceFinished();
     void silenceStarted();
     void sourceFinished(std::shared_ptr<SoundSource> s);
@@ -56,6 +44,19 @@ signals:
 
 public slots:
 
+
+private:
+    const SndFormat m_format;
+    const int buf_size;
+    char * const buffer;
+    char * const zeros;
+    std::list<std::shared_ptr<SndSink>> m_sinks;
+    std::list<std::shared_ptr<SoundSource>> m_sources;
+
+    void calculateVuMeter();
+    QMutex mutex;
+    QWaitCondition condition;
+    bool abort = false;
 };
 
 

@@ -17,7 +17,7 @@ find_package(Qt5Widgets)
 find_package(Qt5Core REQUIRED)
 
 include_directories(../src)
-add_executable(test-files test.cpp testutil.cpp)
+add_executable(test-files test-files.cpp testutil.cpp)
 add_executable(test-snd test-snd.cpp )
 add_executable(sound_playback sound_playback.cpp)
 add_executable(test-sched test-sched.cpp)
