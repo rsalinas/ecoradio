@@ -15,10 +15,10 @@ Ecoradio::Ecoradio(QObject *parent)
     , m_settings("ecoradio.ini", QSettings::Format::NativeFormat)
     , m_sched("radio.sqlite")
     , m_db("radio.sqlite")
+    , m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
     , m_current(m_sched.getCurrent())
     , m_currentPlayer(getProgramPlayer(*m_current))
     , m_nextPrograms(m_sched.getNext())
-    , m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
 
 {
         m_posTimer.start(1000);
@@ -37,6 +37,9 @@ Ecoradio::Ecoradio(QObject *parent)
     }
 
     m_linein = std::make_shared<Mpg123>(QStringLiteral("samples/long.mp3"));
+    m_linein->setSilence();
+    m_mixer.addSource(m_linein);
+
 
     m_mixer.start();
     QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<ProgramTime>)), this, SLOT(newProgram(std::shared_ptr<ProgramTime>)));
@@ -52,13 +55,13 @@ Ecoradio::Ecoradio(QObject *parent)
         if (m_currentStream) {
             emit m_wss.currentSong(m_currentStream->name());
         } else {
-            emit "?";
+            emit m_wss.currentSong("");
         }
         m_nextStream = m_currentPlayer->getNextSong();
         if (m_nextStream) {
             emit m_wss.nextSong(m_nextStream->name());
         } else {
-            emit "?";
+            emit m_wss.currentSong("");
         }
 
         if (m_currentStream) {
@@ -126,11 +129,13 @@ void Ecoradio::mixerSongFinished(std::shared_ptr<SoundSource> finishedSource) {
 void Ecoradio::cmd_ptt(bool on) {
     qDebug() << "PTT " << on;
     if (on) {
-        m_currentStream->fadeOut(2000, SoundSource::FadeAction::Silence);
-        m_linein->setFadeIn(2000);
+        m_currentStream->fadeOut(1000, SoundSource::FadeAction::WillSilence);
+        m_linein->setFadeIn(1000);
+        qDebug() << m_linein->currentMillis();
     } else {
-        m_linein->fadeOut(2000, SoundSource::FadeAction::Silence);
-        m_currentStream->setFadeIn(2000);
+        m_linein->fadeOut(1000, SoundSource::FadeAction::WillSilence);
+        m_currentStream->setFadeIn(1000);
+        qDebug() << m_linein->currentMillis();
     }
 }
 
@@ -177,4 +182,5 @@ void Ecoradio::everySecond() {
 
 bool Ecoradio::startProgram(const LiveProgram &p, const QString &title, const QDateTime &when) {
     m_currentLiveProgram = std::make_shared<LiveProgramRecording>(p);
+    return true;
 }

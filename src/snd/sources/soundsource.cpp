@@ -38,13 +38,13 @@ int SoundSource::readFading(char * buf, const size_t length)  {
                 m_fading = 0;
                 volume = 0;
                 switch (m_fadeAction) {
-                case Stop:
+                case WillStop:
                     close();
                     break;
-                case Pause:
+                case WillPause:
                     pause();
                     break;
-                case Silence:
+                case WillSilence:
                     break;
                 }
 

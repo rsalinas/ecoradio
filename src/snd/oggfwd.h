@@ -31,8 +31,8 @@ public:
     {
         QString hostName;
         int port;
-        QString passwd;
         QString mount;
+        QString passwd;
         QString description;
         QString genre;
         QString name;

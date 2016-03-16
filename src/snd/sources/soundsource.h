@@ -18,10 +18,10 @@ class SoundSource : public QThread
     Q_OBJECT
 public:
     enum FadeAction {
-        Stop, Pause, Silence
+        WillStop, WillPause, WillSilence
     };
     enum Status {
-        Initial, Playing, Paused, Finished
+        Initial, Playing, Paused, Silence, Finished
     };
 
     SoundSource(const QString &name);
@@ -45,7 +45,7 @@ public:
     int setFadeIn(int millis);
     int fadeOut(int millis, FadeAction);
     int stopFadeOut(int millis) {
-        return fadeOut(millis, FadeAction::Stop);
+        return fadeOut(millis, FadeAction::WillStop);
     }
 
     QString name() {
@@ -55,12 +55,15 @@ public:
     void play();
     void pause();
     void close();
+    void setSilence() {
+        m_status = Status::Silence;
+    }
 
     unsigned char m_mastervolume = 255;
     size_t m_bytes = 0;
     size_t fadingEndBytes;
     int m_fading = 0;
-    FadeAction m_fadeAction = FadeAction::Stop;
+    FadeAction m_fadeAction = FadeAction::WillStop;
 
     void waitEnd();
     class Exception : public std::exception
