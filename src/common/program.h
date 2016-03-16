@@ -8,28 +8,26 @@
 
 typedef uint64_t rowid_t;
 
-class Program
+class ProgramTime
 {
 public:
     rowid_t id;
     int dow;
     QDateTime ts;
     QString name;
-    Program();
-    Program(rowid_t id, int dow, const QDateTime &ts, const QString &name);
-    Program(const Program&) = default;
+    ProgramTime();
+    ProgramTime(rowid_t id, int dow, const QDateTime &ts, const QString &name);
+    ProgramTime(const ProgramTime&) = default;
 
-    virtual ~Program() = default;
-    bool operator==(const Program &other) const;
+    virtual ~ProgramTime() = default;
+    bool operator==(const ProgramTime &other) const;
 };
 
-Q_DECLARE_METATYPE(Program)
-Q_DECLARE_METATYPE(std::shared_ptr<Program>)
-Q_DECLARE_METATYPE(QList<std::shared_ptr<Program>>)
+Q_DECLARE_METATYPE(ProgramTime)
+Q_DECLARE_METATYPE(std::shared_ptr<ProgramTime>)
+Q_DECLARE_METATYPE(QList<std::shared_ptr<ProgramTime>>)
 
-
-
-class LiveProgram : public Program
+class LiveProgram : public ProgramTime
 {
 public:
     int lengthSeconds;
@@ -38,27 +36,27 @@ public:
 };
 
 
-class StreamProgram : public Program
+class StreamProgram : public ProgramTime
 {
 public:
     StreamProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
-        Program(id, dow, ts, name) {
+        ProgramTime(id, dow, ts, name) {
 
     }
 };
 
-class PodcastProgram : public Program
+class PodcastProgram : public ProgramTime
 {
 public:
     PodcastProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
-        Program(id, dow, ts, name) {
+        ProgramTime(id, dow, ts, name) {
 
     }
 };
 
 
 
-class FolderProgram : public Program
+class FolderProgram : public ProgramTime
 {
 public:
     FolderProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name);
@@ -66,10 +64,10 @@ public:
 
 
 //FIXME: organize this:
-std::shared_ptr<Program> readProgram(const QJsonObject &json);
-bool setProgram(QJsonObject &o, QString key, const Program& program);
-QJsonObject toJson(Program p) ;
-std::shared_ptr<Program> programFromJson(const QJsonObject obj);
-QJsonObject toJson(std::shared_ptr<Program> current, std::vector<std::shared_ptr<Program>> next) ;
-QDebug operator<<(QDebug dbg, const Program &program);
-QList<std::shared_ptr<Program>> programListFromJson(const QJsonArray &array);
+std::shared_ptr<ProgramTime> readProgram(const QJsonObject &json);
+bool setProgram(QJsonObject &o, QString key, const ProgramTime& program);
+QJsonObject toJson(ProgramTime p) ;
+std::shared_ptr<ProgramTime> programFromJson(const QJsonObject obj);
+QJsonObject toJson(std::shared_ptr<ProgramTime> current, std::vector<std::shared_ptr<ProgramTime>> next) ;
+QDebug operator<<(QDebug dbg, const ProgramTime &program);
+QList<std::shared_ptr<ProgramTime>> programListFromJson(const QJsonArray &array);

@@ -19,18 +19,18 @@ class Scheduler : public QObject
 public:
     Scheduler(const QString &filename);
 
-    std::shared_ptr<Program> getCurrent(const QDateTime &ts = QDateTime::currentDateTime());
-    std::vector<std::shared_ptr<Program>> getNext(const QDateTime &ts = QDateTime::currentDateTime());
+    std::shared_ptr<ProgramTime> getCurrent(const QDateTime &ts = QDateTime::currentDateTime());
+    std::vector<std::shared_ptr<ProgramTime>> getNext(const QDateTime &ts = QDateTime::currentDateTime());
     QStringList getPrograms();
 
 private:
-    std::vector<std::shared_ptr<Program>>  getPlan(bool current, const QDateTime &ts);
+    std::vector<std::shared_ptr<ProgramTime>>  getPlan(bool current, const QDateTime &ts);
     QSqlDatabase m_db;
-    std::vector<Program> puntual;
+    std::vector<ProgramTime> puntual;
     QTimer m_timer;
 
 signals:
-    void programChanged(std::shared_ptr<Program>);
+    void programChanged(std::shared_ptr<ProgramTime>);
 
 public slots:
     void programTimerExpired();

@@ -8,7 +8,7 @@
 class MyModel : public QAbstractTableModel {
     Q_OBJECT
 public:
-    MyModel(const QList<Program> &programs,
+    MyModel(const QList<ProgramTime> &programs,
             QObject *parent);
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -16,7 +16,7 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-    const QList<Program> m_programs;
+    const QList<ProgramTime> m_programs;
 };
 
 
@@ -61,7 +61,7 @@ void NewProgramDialog::programListReady(QStringList list)
 
 
 
-MyModel::MyModel(const QList<Program> &programs,
+MyModel::MyModel(const QList<ProgramTime> &programs,
                  QObject *parent)
     : QAbstractTableModel(parent)
     , m_programs(programs)

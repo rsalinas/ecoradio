@@ -13,7 +13,7 @@ Scheduler::Scheduler(const QString &filename) : m_db(QSqlDatabase::addDatabase("
     }
 }
 
-std::shared_ptr<Program> Scheduler::getCurrent(const QDateTime &ts) {
+std::shared_ptr<ProgramTime> Scheduler::getCurrent(const QDateTime &ts) {
     auto l = getPlan(true, ts);
     if (l.size()) {
         return l.front();
@@ -26,7 +26,7 @@ static QString makeQuery() {
 }
 
 
-std::vector<std::shared_ptr<Program>>
+std::vector<std::shared_ptr<ProgramTime>>
 Scheduler::getPlan(bool current,
                    const QDateTime &ts) {
     QSqlQuery query(m_db);
@@ -45,7 +45,7 @@ Scheduler::getPlan(bool current,
         qWarning() << QStringLiteral("error querying database: ")+  m_db.lastError().text();
         throw SqlException();
     }
-    std::vector<std::shared_ptr<Program>> l;
+    std::vector<std::shared_ptr<ProgramTime>> l;
     while (query.next()) {
         auto lineDow = query.value("dow").toInt();
         auto nowDow = QDate().currentDate().dayOfWeek();
@@ -56,7 +56,7 @@ Scheduler::getPlan(bool current,
                              ((lineDow-nowDow+7)%7)), time);
         auto type = query.value("ptype").toString();
         auto rowid = query.value("program_rowid").toULongLong();
-        std::shared_ptr<Program> p;
+        std::shared_ptr<ProgramTime> p;
         type = "folder"; //FIXME
         if (type == "live") {
             p = std::make_shared<LiveProgram>(rowid, lineDow, dt, query.value("name").toString());
@@ -85,7 +85,7 @@ Scheduler::getPlan(bool current,
 
 }
 
-std::vector<std::shared_ptr<Program>> Scheduler::getNext(const QDateTime &ts) {
+std::vector<std::shared_ptr<ProgramTime>> Scheduler::getNext(const QDateTime &ts) {
     return getPlan(false, ts);
 }
 

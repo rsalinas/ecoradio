@@ -16,9 +16,9 @@ RadioConsole::RadioConsole(QWidget *parent) :
     m_stub(QUrl("ws://localhost:1234")) //FIXME
 {
 
-    qDebug() << qRegisterMetaType<Program>();
-    qDebug() << qRegisterMetaType<std::shared_ptr<Program> >();
-    qDebug() << qRegisterMetaType<QList<std::shared_ptr<Program>> >();
+    qDebug() << qRegisterMetaType<ProgramTime>();
+    qDebug() << qRegisterMetaType<std::shared_ptr<ProgramTime> >();
+    qDebug() << qRegisterMetaType<QList<std::shared_ptr<ProgramTime>> >();
 
     ui->setupUi(this);
     updateClock();
@@ -26,10 +26,10 @@ RadioConsole::RadioConsole(QWidget *parent) :
     m_wallclockTimer->start(1000);
     (QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int))));
 
-    (QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<Program> ,
-                                                 QList<std::shared_ptr<Program>>)),
-                      this, SLOT(newProgram(std::shared_ptr<Program>,
-                                            QList<std::shared_ptr<Program>>))));
+    (QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<ProgramTime> ,
+                                                 QList<std::shared_ptr<ProgramTime>>)),
+                      this, SLOT(newProgram(std::shared_ptr<ProgramTime>,
+                                            QList<std::shared_ptr<ProgramTime>>))));
     (QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString))));
     (QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString))));
     (QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float))));
@@ -108,8 +108,8 @@ void RadioConsole::vuMeterUpdate(int channel, int value) {
 
 
 
-void RadioConsole::newProgram(const std::shared_ptr<Program> current,
-                              const QList<std::shared_ptr<Program>> nextPrograms) {
+void RadioConsole::newProgram(const std::shared_ptr<ProgramTime> current,
+                              const QList<std::shared_ptr<ProgramTime>> nextPrograms) {
     qDebug() << __FUNCTION__ << "!!!"<< *current << nextPrograms.size();
     m_current = current;
     m_nextPrograms = nextPrograms;
@@ -140,8 +140,8 @@ void RadioConsole::currentPos(float pos, float total) {
 }
 
 
-QList<Program> RadioConsole::getPrograms() {
-    QList<Program> ret;
+QList<ProgramTime> RadioConsole::getPrograms() {
+    QList<ProgramTime> ret;
     for (auto p : m_nextPrograms) {
         ret.push_back(*p);
     }

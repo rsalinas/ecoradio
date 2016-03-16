@@ -4,7 +4,7 @@
 #include <memory>
 #include "common/common.h"
 
-class Program;
+class ProgramTime;
 
 class Ecoradio;
 
@@ -23,8 +23,8 @@ public:
 
 
 public slots:
-    void programChange(std::shared_ptr<Program> current,
-                       std::vector<std::shared_ptr<Program>> next);
+    void programChange(std::shared_ptr<ProgramTime> current,
+                       std::vector<std::shared_ptr<ProgramTime>> next);
 
 signals:
     void closed();

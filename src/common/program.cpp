@@ -6,29 +6,29 @@
 #include <QDebug>
 
 
-Program::Program(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
+ProgramTime::ProgramTime(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
     id(id), dow(dow), ts(ts), name(name) {
 }
 
-Program::Program() {
+ProgramTime::ProgramTime() {
     qDebug() << "STRANGE:" << __FUNCTION__;
 }
 
 
 LiveProgram::LiveProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
-    Program(id, dow, ts, name)
+    ProgramTime(id, dow, ts, name)
 {    
 }
 
 
 FolderProgram::FolderProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name) :
-    Program(id, dow, ts, name)
+    ProgramTime(id, dow, ts, name)
 
 {
 }
 
 
-std::shared_ptr<Program> readProgram(const QJsonObject &json) {
+std::shared_ptr<ProgramTime> readProgram(const QJsonObject &json) {
     auto type = json.value("type").toString();
 
     if (type == "folder") {
@@ -40,12 +40,12 @@ std::shared_ptr<Program> readProgram(const QJsonObject &json) {
 }
 
 
-bool setProgram(QJsonObject &o, QString key, const Program& program) {
+bool setProgram(QJsonObject &o, QString key, const ProgramTime& program) {
 
 
 }
 
-bool Program::operator==(const Program &other) const {
+bool ProgramTime::operator==(const ProgramTime &other) const {
     return id == other.id
             && dow == other.dow
             && ts == other.ts
@@ -53,7 +53,7 @@ bool Program::operator==(const Program &other) const {
 }
 
 
-QJsonObject toJson(Program p) {
+QJsonObject toJson(ProgramTime p) {
     QJsonObject o;
     o.insert("id", QJsonValue(qint64(p.id)));
     o.insert("name", QJsonValue(p.name));
@@ -62,18 +62,18 @@ QJsonObject toJson(Program p) {
     return o;
 }
 
-std::shared_ptr<Program> programFromJson(const QJsonObject obj) {
+std::shared_ptr<ProgramTime> programFromJson(const QJsonObject obj) {
     auto id = obj["id"].toInt();
     auto dow = obj["dow"].toInt();
     auto ts = obj["ts"].toVariant().toLongLong();
     auto name = obj["name"].toString();
-    auto ret = std::make_shared<Program>(id, dow, QDateTime::fromMSecsSinceEpoch(ts), name);
+    auto ret = std::make_shared<ProgramTime>(id, dow, QDateTime::fromMSecsSinceEpoch(ts), name);
     return ret;
 }
 
 
-QList<std::shared_ptr<Program>> programListFromJson(const QJsonArray &array) {
-    QList<std::shared_ptr<Program>>  ret;
+QList<std::shared_ptr<ProgramTime>> programListFromJson(const QJsonArray &array) {
+    QList<std::shared_ptr<ProgramTime>>  ret;
     for (int i=0; i < array.size(); i++) {
            ret.push_back(programFromJson(array.at(i).toObject()));
     }
@@ -81,7 +81,7 @@ QList<std::shared_ptr<Program>> programListFromJson(const QJsonArray &array) {
     return ret;
 }
 
-QJsonObject toJson(std::shared_ptr<Program> current, std::vector<std::shared_ptr<Program>> next) {
+QJsonObject toJson(std::shared_ptr<ProgramTime> current, std::vector<std::shared_ptr<ProgramTime>> next) {
     QJsonObject o;
     o.insert("current", toJson(*current));
     QJsonArray a;
@@ -93,7 +93,7 @@ QJsonObject toJson(std::shared_ptr<Program> current, std::vector<std::shared_ptr
 }
 
 
-QDebug operator<<(QDebug dbg, const Program &program)
+QDebug operator<<(QDebug dbg, const ProgramTime &program)
 {
     dbg.noquote() << QDate::longDayName(program.dow) << program.ts.toString() << program.name;
     auto now = QDateTime::currentDateTime();

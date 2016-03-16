@@ -8,8 +8,8 @@ RadioStub::RadioStub(const QUrl &url, QObject *parent) :
     QObject(parent), m_websocket()
 {
     qDebug() << __FUNCTION__ << url;
-    qRegisterMetaType<std::shared_ptr<Program> >();
-    qRegisterMetaType<QList<std::shared_ptr<Program>> >();
+    qRegisterMetaType<std::shared_ptr<ProgramTime> >();
+    qRegisterMetaType<QList<std::shared_ptr<ProgramTime>> >();
     connect(&m_websocket, &QWebSocket::connected, this, &RadioStub::onConnected);
     connect(&m_websocket, &QWebSocket::disconnected, this, &RadioStub::disconnected);
     m_websocket.open(url);
@@ -85,7 +85,7 @@ void RadioStub::onTextMessageReceived(QString message)
 }
 
 
-bool RadioStub::startProgram(Program program, QString title, int delay) {
+bool RadioStub::startProgram(ProgramTime program, QString title, int delay) {
     m_websocket.sendTextMessage(QStringLiteral("START_PROGRAM ")+QString::number(0)); //FIXME
     return true;
 }

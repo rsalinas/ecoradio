@@ -19,7 +19,7 @@ public:
     explicit RadioConsole(QWidget *parent = 0);
     ~RadioConsole();
 
-    QList<Program> getPrograms();
+    QList<ProgramTime> getPrograms();
 
 private slots:
     void on_startProgramButton_clicked();
@@ -30,8 +30,8 @@ private slots:
     void on_pttButton_pressed();
     void on_pttButton_released();
     void on_skipButton_clicked();
-    void newProgram(std::shared_ptr<Program> current,
-                    QList<std::shared_ptr<Program>> nextPrograms);
+    void newProgram(std::shared_ptr<ProgramTime> current,
+                    QList<std::shared_ptr<ProgramTime>> nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString nextSong);
     void startProgram(int id);
@@ -41,10 +41,10 @@ private slots:
 
     /* test */
 signals:
-    void test0signal(QList<std::shared_ptr<Program>> p);
+    void test0signal(QList<std::shared_ptr<ProgramTime>> p);
     void test1signal(int);
 public slots:
-    void test0slot(QList<std::shared_ptr<Program>> p) {}
+    void test0slot(QList<std::shared_ptr<ProgramTime>> p) {}
     void test1slot(int) {}
 
     /* end test */
@@ -54,8 +54,8 @@ private:
     Ui::RadioConsole *ui;
     QTimer * m_wallclockTimer;
     RadioStub m_stub;
-    std::shared_ptr<Program> m_current;
-    QList<std::shared_ptr<Program>> m_nextPrograms;
+    std::shared_ptr<ProgramTime> m_current;
+    QList<std::shared_ptr<ProgramTime>> m_nextPrograms;
 };
 
 #endif // RADIOCONSOLE_H

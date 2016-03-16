@@ -14,7 +14,7 @@
 
 class LiveProgramRecording;
 class SndSink;
-class Program;
+class ProgramTime;
 
 class Ecoradio : public QObject
 {
@@ -38,7 +38,7 @@ public:
 
 private slots:
     void run();
-    void newProgram(std::shared_ptr<Program>);
+    void newProgram(std::shared_ptr<ProgramTime>);
     void mixerSongFinishing(std::shared_ptr<SoundSource> s);
     void mixerSongFinished(std::shared_ptr<SoundSource> s);
     void cmd_ptt(bool);
@@ -61,9 +61,9 @@ private:
     std::shared_ptr<SndSink> m_ogg;
     Scheduler m_sched;
     WebsockServer m_wss;
-    std::shared_ptr<Program> m_current, m_currentFallback;
+    std::shared_ptr<ProgramTime> m_current, m_currentFallback;
     std::shared_ptr<ProgramPlayer> m_currentPlayer;
-    std::vector<std::shared_ptr<Program>> m_nextPrograms;
+    std::vector<std::shared_ptr<ProgramTime>> m_nextPrograms;
     std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
     std::shared_ptr<SoundSource> m_linein;
     std::shared_ptr<LiveProgramRecording> m_currentLiveProgram;

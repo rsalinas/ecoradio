@@ -93,8 +93,8 @@ void WebsockServer::vumeter(int channel, int value) {
 }
 
 
-void WebsockServer::programChange(std::shared_ptr<Program> current,
-                                  std::vector<std::shared_ptr<Program>> next)
+void WebsockServer::programChange(std::shared_ptr<ProgramTime> current,
+                                  std::vector<std::shared_ptr<ProgramTime>> next)
 {
     assert(current.get());
     QByteArray ba;

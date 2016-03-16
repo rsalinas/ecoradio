@@ -13,7 +13,7 @@ class RadioStub : public QObject
 public:
     explicit RadioStub(const QUrl &url,
                        QObject *parent = 0);
-    bool startProgram(Program program, QString title, int delay);
+    bool startProgram(ProgramTime program, QString title, int delay);
     bool endProgram();
     bool pause();
     bool resume();
@@ -25,8 +25,8 @@ signals:
     void connectionClosed();
     void vuMeterUpdate(int channel, int value);
     void programListReady(QStringList programs);
-    void newProgram(std::shared_ptr<Program> current,
-                    QList<std::shared_ptr<Program>> nextPrograms);
+    void newProgram(std::shared_ptr<ProgramTime> current,
+                    QList<std::shared_ptr<ProgramTime>> nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString currentSong);
     void currentPos(float pos, float length);

@@ -39,7 +39,7 @@ Ecoradio::Ecoradio(QObject *parent) :
     m_linein = std::make_shared<Mpg123>(QStringLiteral("samples/long.mp3"));
 
     m_mixer.start();
-    QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<Program>)), this, SLOT(newProgram(std::shared_ptr<Program>)));
+    QObject::connect(&m_sched, SIGNAL(programChanged(std::shared_ptr<ProgramTime>)), this, SLOT(newProgram(std::shared_ptr<ProgramTime>)));
     QObject::connect(&m_mixer, SIGNAL(sourceFinishing(std::shared_ptr<SoundSource>)), this, SLOT(mixerSongFinishing(std::shared_ptr<SoundSource>)));
     QObject::connect(&m_mixer, SIGNAL(sourceFinished(std::shared_ptr<SoundSource>)), this, SLOT(mixerSongFinished(std::shared_ptr<SoundSource>)));
     QObject::connect(&m_mixer, SIGNAL(vumeter(int,int)), &m_wss, SLOT(vumeter(int,int)));
@@ -79,7 +79,7 @@ void Ecoradio::run()
 }
 
 
-void Ecoradio::newProgram(std::shared_ptr<Program> p)
+void Ecoradio::newProgram(std::shared_ptr<ProgramTime> p)
 {
     m_current = p;
     qDebug() << "Ecoradio::programChanged: " << *p;
