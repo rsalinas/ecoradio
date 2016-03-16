@@ -23,7 +23,7 @@ void StreamSrc::streamReadyRead() {
     char buffer[bytes];
     qint64 n = m_reply->peek(buffer, bytes);
     if (n>0) {
-        int n = m_fifo->write(buffer, n);
+        n = m_fifo->write(buffer, n);
         qDebug() << "m_fifo->write(buffer, n) -> " << n;
         if (n > 0) {
             qDebug() << __FUNCTION__ << "Confirm write to fifo" << n;

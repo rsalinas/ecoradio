@@ -26,6 +26,8 @@
 
 #define PCM_DEVICE "default"
 
+
+
 int main(int argc, char **argv) {
 	unsigned int pcm, tmp, dir;
     unsigned int rate;

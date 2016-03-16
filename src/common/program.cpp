@@ -28,22 +28,9 @@ FolderProgram::FolderProgram(rowid_t id, int dow, const QDateTime &ts, const QSt
 }
 
 
-std::shared_ptr<ProgramTime> readProgram(const QJsonObject &json) {
-    auto type = json.value("type").toString();
-
-    if (type == "folder") {
-        int id =  json.value("id").toInt();
-        int dow = json.value("dow").toInt();
-        QDateTime ts = QDateTime::fromMSecsSinceEpoch(json.value("ts").toString().toLongLong());
-        auto name = json.value("name").toString();
-    }
-}
 
 
-bool setProgram(QJsonObject &o, QString key, const ProgramTime& program) {
 
-
-}
 
 bool ProgramTime::operator==(const ProgramTime &other) const {
     return pt_id == other.pt_id

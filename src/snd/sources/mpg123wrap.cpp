@@ -102,7 +102,7 @@ mpg123_handle *commonInit() {
     size_t rate_count;
     int enc = MPG123_ENC_SIGNED_16;
     mpg123_rates(&rates, &rate_count);
-    for(int i=0; i<rate_count; ++i) {
+    for(decltype(rate_count) i = 0; i<rate_count; ++i) {
         qDebug() << "rate: " << rates[i];
         mpg123_format(mh, rates[i], MPG123_MONO|MPG123_STEREO, enc);
     }
@@ -291,5 +291,5 @@ int Mpg123::lengthMillis() {
 
 
 int Mpg123::goTo(int millis) {
-    mpg123_seek(mh, 44100*millis / 1000, 0);
+    return mpg123_seek(mh, 44100*millis / 1000, 0) >= 0;
 }

@@ -111,11 +111,11 @@ bool RadioStub::getPrograms() {
 }
 
 bool RadioStub::ptt(bool onair) {
-    m_websocket.sendTextMessage(QStringLiteral("PTT ")+QString::number(onair));
-    return true;
+    QString msg(QStringLiteral("PTT ")+QString::number(onair));
+    return m_websocket.sendTextMessage(msg) == msg.size();
 }
 
 bool RadioStub::skipSong() {
-    m_websocket.sendTextMessage(__FUNCTION__);
-    return true;
+    QString msg(__FUNCTION__);
+    return m_websocket.sendTextMessage(msg) == msg.size();
 }

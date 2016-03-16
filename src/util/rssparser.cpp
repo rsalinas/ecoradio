@@ -49,15 +49,19 @@ bool RssParser::startElement(const QString & namespaceURI, const QString & local
         }
     }
     if (url.size()) {
+        (void) size;
         m_streams.push_back(url);
     }
     return true;
 }
-bool RssParser::endElement(const QString & namespaceURI, const QString & localName, const QString & qName) {
+
+bool RssParser::endElement(const QString & namespaceURI, const QString & localName, const QString & qName)
+{
     stack.pop();
     return true;
 }
 
-RssParser::~RssParser() {
+RssParser::~RssParser()
+{
     qDebug() << __FUNCTION__;
 }

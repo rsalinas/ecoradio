@@ -81,7 +81,6 @@ public:
 
 
 //FIXME: organize this:
-std::shared_ptr<ProgramTime> readProgram(const QJsonObject &json);
 bool setProgram(QJsonObject &o, QString key, const ProgramTime& program);
 QJsonObject toJson(ProgramTime p) ;
 std::shared_ptr<ProgramTime> programFromJson(const QJsonObject obj);

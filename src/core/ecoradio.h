@@ -67,11 +67,12 @@ private:
     Scheduler m_sched;
     RadioDb m_db;
     WebsockServer m_wss;
+    QTimer m_posTimer;
+
     std::shared_ptr<ProgramTime> m_current, m_currentFallback;
     std::shared_ptr<ProgramPlayer> m_currentPlayer;
     std::vector<std::shared_ptr<ProgramTime>> m_nextPrograms;
     std::shared_ptr<SoundSource> m_currentStream, m_nextStream;
     std::shared_ptr<SoundSource> m_linein;
     std::shared_ptr<LiveProgramRecording> m_currentLiveProgram;
-    QTimer m_posTimer;
 };

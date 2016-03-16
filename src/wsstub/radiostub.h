@@ -18,7 +18,7 @@ public:
     bool pause();
     bool resume();
     bool getPrograms();
-    bool ptt(bool);
+    bool ptt(bool) __attribute_warn_unused_result__;
     bool skipSong();
 
 signals:

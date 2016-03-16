@@ -127,7 +127,7 @@ int OggEncoder::commit()
             }
         }
     }
-
+    return 0; //?
 }
 
 bool OggEncoder::writePcm(char * readbuffer, int length) {

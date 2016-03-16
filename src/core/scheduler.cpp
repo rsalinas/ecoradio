@@ -24,9 +24,6 @@ std::shared_ptr<ProgramTime> Scheduler::getCurrent(const QDateTime &ts) {
         return nullptr;
 }
 
-static QString makeQuery() {
-}
-
 static int minOfTheDay(const QDateTime &now) {
     return now.date().dayOfWeek()*60*24
             +now.time().hour()*60

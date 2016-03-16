@@ -28,7 +28,7 @@ int SoundSource::readFading(char * buf, const size_t length)  {
 
     double volume;
     auto b = reinterpret_cast<signed short int *>(buf);
-    for (int i = 0; i < length/ 2; i++) {
+    for (size_t i = 0; i < length/ 2; i++) {
         size_t here = m_bytes + i*2;
         if (here >= fadingEndBytes) {
             if (m_fading == 1 ){
@@ -69,7 +69,10 @@ int SoundSource::readFading(char * buf, const size_t length)  {
 }
 
 
-SinWave::SinWave(float freq, int rate) : SoundSource("sin"+QString::number(freq)), m_freq(freq), m_rate(rate)
+SinWave::SinWave(float freq, int rate)
+    : SoundSource("sin"+QString::number(freq))
+    , m_rate(rate)
+    , m_freq(freq)
 {
 
 }
@@ -78,7 +81,7 @@ int SinWave::readPcm(char * buffer, const size_t length) {
     if (m_status == Finished) {
         return -1;
     }
-    for (int i=0; i < length/4; i++) {
+    for (size_t i=0; i < length/4; i++) {
         int sample = (int)(0.75 * 32768.0 *
                            sin(2 * M_PI * m_freq * ((float) (i+m_base)/m_rate)));
 
@@ -143,6 +146,7 @@ int SoundSource::fadeOut(int millis, FadeAction fadeAction) {
     m_fading = -1;
     m_fadeAction = fadeAction;
     qDebug() << "fading " << m_fading << fadingEndBytes;
+    return 0;
 }
 
 
@@ -152,7 +156,6 @@ void SoundSource::run() {
 
     //        }
 }
-
 
 void SoundSource::waitEnd() {
     QMutexLocker lock(&m_mutex);
