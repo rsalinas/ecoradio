@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} SHARED
     util.cpp
     streamsrc.cpp
     http.cpp
+    telegram.cpp
      )
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5Sql ao asound shout
