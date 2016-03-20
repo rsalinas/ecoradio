@@ -22,7 +22,8 @@ SoundSource::~SoundSource()
 
 
 int SoundSource::readFading(char * buf, const size_t length)  {
-    qDebug() << name() << m_status;
+    if (false)
+        qDebug() << name() << m_status;
     AutoTimeMeter atm("readFading");
     if (m_status == Finished)
         return -1;

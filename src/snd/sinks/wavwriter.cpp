@@ -3,7 +3,7 @@
 #include <QDebug>
 
 WavWriter::WavWriter(const QString &filename)
-    : m_sf(filename.toStdString().c_str(),
+    : m_sf((filename+"."+getExtension()).toStdString().c_str(),
            SFM_WRITE,
            SF_FORMAT_WAV | SF_FORMAT_PCM_16,
            2,

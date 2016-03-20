@@ -11,6 +11,9 @@ public:
     WavWriter(const QString &filename);
     bool writePcm(char *buffer, int length);
     ~WavWriter();
+    static QString getExtension() {
+        return "wav";
+    }
 
 private:
     SndfileHandle m_sf;
