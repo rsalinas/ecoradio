@@ -112,7 +112,7 @@ QList<std::shared_ptr<Program>> RadioDb::getPrograms()
     QList<std::shared_ptr<Program>>  ret;
     QSqlQuery query(m_db);
     //FIXME only active programs
-    if (query.exec("SELECT name FROM program ORDER BY name")) {
+    if (query.exec("SELECT rowid id, name FROM program ORDER BY name")) {
         while (query.next())  {
             ret.push_back(std::make_shared<Program>(query.value("id").toLongLong(),
                               query.value("name").toString()));

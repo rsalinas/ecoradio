@@ -3,10 +3,10 @@
 #include <snd/sinks/wavwriter.h>
 
 
-LiveProgramRecording::LiveProgramRecording(const LiveProgram &p)
+LiveProgramRecording::LiveProgramRecording(const LiveProgram &p,
+                                           const QString &filename)
+    : m_wavWriter(std::make_shared<WavWriter>(filename))
 {
-    QString file = "directo.wav"; // FIXME
-    m_wavWriter = std::make_shared<WavWriter>(file);
 }
 
 LiveProgramRecording::~LiveProgramRecording()

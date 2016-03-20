@@ -21,7 +21,7 @@ Ecoradio::Ecoradio(QObject *parent)
     , m_nextPrograms(m_sched.getNext())
 
 {
-        m_posTimer.start(1000);
+    m_posTimer.start(1000);
     try {
         m_ao = std::make_shared<AoSink>(m_format);
         m_mixer.addSink(m_ao);
@@ -172,7 +172,7 @@ void Ecoradio::skipSong() {
 
 
 void Ecoradio::everySecond() {
-//    qDebug() << __FUNCTION__;
+    //    qDebug() << __FUNCTION__;
     if (m_currentStream) {
         emit m_wss.currentPos(m_currentStream->currentMillis()/1000.0,
                               m_currentStream->lengthMillis()/1000.0);
@@ -181,6 +181,13 @@ void Ecoradio::everySecond() {
 
 
 bool Ecoradio::startProgram(const LiveProgram &p, const QString &title, const QDateTime &when) {
-    m_currentLiveProgram = std::make_shared<LiveProgramRecording>(p);
+    qDebug() << __FUNCTION__;
+    auto fn = p.name;
+    QDir programDir((m_settings.value("live.dir", ".").toString()));
+
+    m_currentLiveProgram = std::make_shared<LiveProgramRecording>(
+                p,
+                programDir.absoluteFilePath(fn));
+    m_linein->addSink(m_currentLiveProgram->getWriter());
     return true;
 }

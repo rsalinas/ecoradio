@@ -69,6 +69,7 @@ QList<std::shared_ptr<ProgramTime>> programListFromJson(const QJsonArray &array)
 }
 
 QJsonObject toJson(std::shared_ptr<ProgramTime> current, std::vector<std::shared_ptr<ProgramTime>> next) {
+    qDebug() << __FUNCTION__ << next.size();
     QJsonObject o;
     o.insert("current", toJson(*current));
     QJsonArray a;

@@ -2,6 +2,7 @@
 #include <QApplication>
 
 #include "radioui/radioconsole.h"
+#include "radioui/connectdialog.h"
 #include "core/ecoradio.h"
 
 int main(int argc, char *argv[])
@@ -17,9 +18,10 @@ int main(int argc, char *argv[])
     // This will run the task from the application event loop.
     QTimer::singleShot(0, ecoradio, SLOT(run()));
 
-
     RadioConsole w;
+//    ConnectDialog cd;
     w.show();
+//    cd.show();
 
     return app.exec();
 }

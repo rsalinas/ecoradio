@@ -64,10 +64,14 @@ void RadioStub::onTextMessageReceived(QString message)
 //        }
 //        emit programListReady(programs);
     } else if (cmd  == "programChange") {
+        qDebug() << cmd;
         auto rest = ts.readAll().toLocal8Bit();
+        qDebug() << cmd << rest;
         auto doc = QJsonDocument::fromJson(rest);
+
         auto current = programFromJson(doc.object()["current"].toObject());
         auto next = programListFromJson(doc.object()["next"].toArray());
+        qDebug() << cmd << *current << next.size();
         emit newProgram(current, next);
     } else if (cmd == "nextSong") {
         emit nextSong(ts.readLine());
