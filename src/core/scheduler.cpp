@@ -34,14 +34,22 @@ std::vector<std::shared_ptr<ProgramTime>>
 Scheduler::getPlan(bool current,
                    const QDateTime &now) {
     QSqlQuery query(m_db);
-
-    auto sql = QString("select program.rowid as program_rowid, * from program_time"
+    QString sql;
+    if (current) {
+        QString what = "select program.rowid as program_rowid, dow*60*24+hour*60+minute as ts2, * from program_time"
                        " inner join program on program.rowid = program_id"
-                       " where dow*60*24+hour*60+minute %1 %2"
-                       " order by dow*60*24+hour*60+minute %3").
-            arg(current ? "<" : ">",
-                QString::number(minOfTheDay(now)),
-                current ? "desc limit 1" : "asc"  );
+                       " union all"
+                       " select program.rowid as program_rowid, (dow-7)*60*24+hour*60+minute as ts2, * from program_time"
+                       " inner join program on program.rowid = program_id";
+        sql = what + " WHERE ts2 <" + QString::number(minOfTheDay(now)) + " order by ts2 desc limit 1";
+    } else {
+        QString what = "select program.rowid as program_rowid, dow*60*24+hour*60+minute as ts2, * from program_time"
+                       " inner join program on program.rowid = program_id"
+                       " union all"
+                       " select program.rowid as program_rowid, (dow+7)*60*24+hour*60+minute as ts2, * from program_time"
+                       " inner join program on program.rowid = program_id";
+        sql = what + " WHERE ts2 >" + QString::number(minOfTheDay(now)) + " order by ts2 asc";
+    }
     qDebug() << sql;
     if (!query.exec(sql)) {
         qWarning() << QStringLiteral("error querying database: ")+  m_db.lastError().text();
@@ -79,7 +87,9 @@ Scheduler::getPlan(bool current,
 
 std::vector<std::shared_ptr<ProgramTime>> Scheduler::getNext(const QDateTime &ts)
 {
-    return getPlan(false, ts);
+    auto ret = getPlan(false, ts);
+    qDebug() << __FUNCTION__ << ret.size();
+    return ret;
 }
 
 void Scheduler::programTimerExpired()
