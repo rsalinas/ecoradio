@@ -12,11 +12,17 @@
 #include <QThread>
 #include <memory>
 
+class SndSink;
+
 
 class SoundSource : public QThread
 {
     Q_OBJECT
 public:
+    enum FadingDirection {
+        NoFading, FadingUp, FadingDown
+    };
+
     enum FadeAction {
         WillStop, WillPause, WillSilence
     };
@@ -42,7 +48,7 @@ public:
 
 
     virtual int skip(int millis);
-    int setFadeIn(int millis);
+    int fadeIn(int millis);
     int fadeOut(int millis, FadeAction);
     int stopFadeOut(int millis) {
         return fadeOut(millis, FadeAction::WillStop);
@@ -62,10 +68,19 @@ public:
     unsigned char m_mastervolume = 255;
     size_t m_bytes = 0;
     size_t fadingEndBytes;
-    int m_fading = 0;
+
+
+    FadingDirection m_fading = NoFading;
+
+//    int m_fading = 0;
     FadeAction m_fadeAction = FadeAction::WillStop;
 
     void waitEnd();
+
+    void addSink(std::shared_ptr<SndSink> sink);
+    void removeSink(std::shared_ptr<SndSink> sink);
+    std::list<std::shared_ptr<SndSink>> getSinks();
+
     class Exception : public std::exception
     {
 
@@ -78,6 +93,8 @@ private:
     QString m_name;
     QMutex m_mutex;
     QWaitCondition m_cv;
+
+    std::list<std::shared_ptr<SndSink>> m_sinks;
 
     //    std::vector<char*> buffers;
     bool m_abort = false;

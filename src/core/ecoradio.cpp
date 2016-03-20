@@ -130,11 +130,11 @@ void Ecoradio::cmd_ptt(bool on) {
     qDebug() << "PTT " << on;
     if (on) {
         m_currentStream->fadeOut(1000, SoundSource::FadeAction::WillSilence);
-        m_linein->setFadeIn(1000);
+        m_linein->fadeIn(1000);
         qDebug() << m_linein->currentMillis();
     } else {
         m_linein->fadeOut(1000, SoundSource::FadeAction::WillSilence);
-        m_currentStream->setFadeIn(1000);
+        m_currentStream->fadeIn(1000);
         qDebug() << m_linein->currentMillis();
     }
 }

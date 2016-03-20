@@ -46,6 +46,7 @@ public slots:
 
 
 private:
+    void removeSource(std::shared_ptr<SoundSource> source);
     const SndFormat m_format;
     const int buf_size;
     char * const buffer;

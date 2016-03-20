@@ -26,7 +26,7 @@ TEST(MixerTest, SimplePlayer) {
     while (true) {
         std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>(repositoryDir.absoluteFilePath(t.getRandom()));
 //        mp3->skip(2000);
-        mp3->setFadeIn(2000);
+        mp3->fadeIn(2000);
         player.addSource(mp3);
 
 //        mp3->stopFadeOut(2000);
@@ -46,7 +46,7 @@ TEST(MixerTest, DISABLED_BasicMixerTest) {
     QMap<QString, int> map;
     const int reps=3;
     for (int rep=0; rep < reps ; rep++) {
-        for (int i=0; i < n ; i++) {
+        for (decltype(n) i = 0; i < n ; i++) {
             if (i==1) {
                 t.reset();
                 t.reset(new Traverse(repositoryDir.absolutePath() , vistosFile , indexFile));

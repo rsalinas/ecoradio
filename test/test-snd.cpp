@@ -32,6 +32,63 @@ OggFwd::Config getIcecastConfig() {
 }
 
 
+TEST(SimpleMix, SimpleMix0) {
+    auto s0 = std::make_shared<SinWave>(440.0);
+    auto s1 = std::make_shared<SinWave>(840.0);
+
+    Mixer player;
+    player.addSink(std::make_shared<AoSink>(c_format));
+    player.start();
+    qDebug() << "fadein 440";
+    s0->setSilence();
+    player.addSource(s0);
+    s1->setSilence();
+    player.addSource(s1);
+
+    s0->fadeIn(1000);
+    for (int i = 0; i < 5 ; i++) {
+        sleep(2);
+        s0->fadeOut(1000, SoundSource::FadeAction::WillSilence);
+        s1->fadeIn(1000);
+        sleep(2);
+        s0->fadeIn(1000);
+        s1->fadeOut(1000, SoundSource::FadeAction::WillSilence);
+    }
+    s0->stopFadeOut(1000);
+    s1->stopFadeOut(1000);
+    player.waitEnd();
+    exit(69);
+}
+
+
+TEST(SimpleMix, SimpleMix) {
+    auto s0 = std::make_shared<SinWave>(440.0);
+    auto s1 = std::make_shared<SinWave>(840.0);
+
+    Mixer player;
+    player.addSink(std::make_shared<AoSink>(c_format));
+    player.start();
+    qDebug() << "fadein 440";
+    s0->fadeIn(1000);
+//    s1->setFadeIn(1000);
+    player.addSource(s0);
+    sleep(1);
+    qDebug() << "fadeout 440";
+    s0->fadeOut(1000, SoundSource::FadeAction::WillSilence);
+    sleep(2);
+    qDebug() << "fadein 840";
+    player.addSource(s1);
+    sleep(2);
+    qDebug() << "fadeout 840";
+    s1->fadeOut(1000, SoundSource::FadeAction::WillStop);
+    qDebug() << "fadein 440";
+    s0->fadeIn(1000);
+    sleep(2);
+    s0->fadeOut(1000, SoundSource::FadeAction::WillStop);
+//    s1->close();s
+    player.waitEnd();
+    exit(69);
+}
 
 TEST(OggEncTest, OggEncTest)
 {
@@ -131,7 +188,7 @@ TEST (DecoderTest, Mp3PlusSin) {
 TEST(PlayerThread, PlayerThread ){
     Mixer mixer;
     std::shared_ptr<SoundSource> sin = std::make_shared<SinWave>(440.0);
-    sin->setFadeIn(1000);
+    sin->fadeIn(1000);
     mixer.addSink(std::make_shared<AoSink>(c_format));
     mixer.start();
     mixer.addSource(sin);
@@ -141,7 +198,7 @@ TEST(PlayerThread, PlayerThread ){
     sin->stopFadeOut(1000);
     sin->waitEnd();
     sin = std::make_shared<SinWave>(2440.0);
-    sin->setFadeIn(500);
+    sin->fadeIn(500);
     sleep(2);
     d->stopFadeOut(1000);
     d->waitEnd();
@@ -156,12 +213,12 @@ TEST(PlayerThread, PlayerThread ){
 TEST(PlayerThread, DISABLED_RecordPlayerThread ){
     Mixer player;
     std::shared_ptr<SoundSource> line= std::make_shared<AlsaRec>("default");
-    line->setFadeIn(1000);   //empezará con un fundido
+    line->fadeIn(1000);   //empezará con un fundido
     player.addSource(line);
     std::shared_ptr<SoundSource> mp3 = std::make_shared<Mp3Decoder>("beep.mp3");
     sleep(3);  //con esto le damos tiempo al descompresor a ir trabajando
     line->stopFadeOut(1000);   //hará un fundido de bajada y parará
-    mp3->setFadeIn(1000);
+    mp3->fadeIn(1000);
     player.addSource(mp3);
 
     player.waitEnd();         //espera a que terminen todos los flujos
@@ -298,7 +355,7 @@ TEST_F(PlayerFixture, DISABLED_ArecordPlayerThread ){
                 line= std::make_shared<Arecord>();
             else
                 line= std::make_shared<AlsaRec>("default");
-            line->setFadeIn(1000);   //empezará con un fundido
+            line->fadeIn(1000);   //empezará con un fundido
             player.addSource(line);
             sleep(5);
             line->stopFadeOut(1000);
@@ -324,6 +381,8 @@ TEST_F(PlayerFixture, DISABLED_ArecordPlayerThread ){
 TEST(Mp3, DISABLED_Mp3) {
     Mpg123 m("test.mp3");
 }
+
+
 
 class TestWrapper : public QObject {
     Q_OBJECT

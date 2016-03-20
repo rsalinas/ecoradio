@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include "util/util.h"
+#include "snd/sinks/sink.h"
 
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {
@@ -21,9 +22,23 @@ SoundSource::~SoundSource()
 
 
 int SoundSource::readFading(char * buf, const size_t length)  {
+    qDebug() << name() << m_status;
     AutoTimeMeter atm("readFading");
+    if (m_status == Finished)
+        return -1;
+
+    if (m_status == Silence)
+        return 0;
+
     int n = readPcm(buf, length);
-    if (n <= 0 || m_fading == 0)
+
+    if (n > 0) {
+        for (auto sink : getSinks()) {
+            sink->writePcm(buf, n);
+        }
+    }
+
+    if (n <= 0 || m_fading == NoFading)
         return n;
 
     double volume;
@@ -31,11 +46,9 @@ int SoundSource::readFading(char * buf, const size_t length)  {
     for (size_t i = 0; i < length/ 2; i++) {
         size_t here = m_bytes + i*2;
         if (here >= fadingEndBytes) {
-            if (m_fading == 1 ){
-                m_fading = 0;
+            if (m_fading == FadingUp ){
                 volume = 1;
-            } else if (m_fading == -1 ){
-                m_fading = 0;
+            } else if (m_fading == FadingDown ){
                 volume = 0;
                 switch (m_fadeAction) {
                 case WillStop:
@@ -45,14 +58,14 @@ int SoundSource::readFading(char * buf, const size_t length)  {
                     pause();
                     break;
                 case WillSilence:
+                    setSilence();
                     break;
                 }
-
             }
+            m_fading = NoFading;
         } else {
-            if (m_fading == 1) {
+            if (m_fading == FadingUp) {
                 volume =  float(here) / fadingEndBytes;
-
             } else {
                 volume = 1 - float(here)  / fadingEndBytes;
             }
@@ -93,7 +106,8 @@ int SinWave::readPcm(char * buffer, const size_t length) {
     return length/4*4;
 }
 
-void SoundSource::close() {
+void SoundSource::close()
+{
     Status previousStatus;
     {
         QMutexLocker lock(&m_mutex);
@@ -105,20 +119,23 @@ void SoundSource::close() {
         emit finished();
 }
 
-void SoundSource::pause() {
-        QMutexLocker lock(&m_mutex);
-        m_status = Paused;
-        m_cv.wakeAll();
+void SoundSource::pause()
+{
+    QMutexLocker lock(&m_mutex);
+    m_status = Paused;
+    m_cv.wakeAll();
 }
 
-void SoundSource::play() {
-        QMutexLocker lock(&m_mutex);
-        m_status = Playing;
-        m_cv.wakeAll();
+void SoundSource::play()
+{
+    QMutexLocker lock(&m_mutex);
+    m_status = Playing;
+    m_cv.wakeAll();
 }
 
 
-int SoundSource::skip(int millis) {
+int SoundSource::skip(int millis)
+{
     char buffer[65536];
     size_t bytesToSkip = 44100 * 2 * 2 * millis / 1000;
     while (bytesToSkip) {
@@ -128,22 +145,29 @@ int SoundSource::skip(int millis) {
     }
     return 0;
 }
-int SoundSource::setFadeIn(int millis) {
+
+int SoundSource::fadeIn(int millis)
+{
+    qDebug() << __FUNCTION__ << name() << millis << m_fading;
+    assert(m_fading == NoFading);
     if (millis <= 0) {
-        m_fading =0;
+        m_fading = NoFading;
         return 0;
     }
     fadingEndBytes = m_bytes + (44100 * 2 * 2 * millis / 1000);
     m_bytes = 0;
-    m_fading = 1;
+    m_fading = FadingUp;
+    m_status = Playing;
     qDebug() << "Fading up " << m_fading << fadingEndBytes;
     return 1;
 }
 
 int SoundSource::fadeOut(int millis, FadeAction fadeAction) {
+    qDebug() << __FUNCTION__ << name() << millis << fadeAction << m_fading;
+    assert(m_fading == NoFading);
     fadingEndBytes = m_bytes + (44100 * 2 * 2 * millis / 1000);
     m_bytes = 0;
-    m_fading = -1;
+    m_fading = FadingDown;
     m_fadeAction = fadeAction;
     qDebug() << "fading " << m_fading << fadingEndBytes;
     return 0;
@@ -167,3 +191,22 @@ void SoundSource::waitEnd() {
 
 
 
+
+void SoundSource::addSink(std::shared_ptr<SndSink> sink)
+{
+    QMutexLocker lock(&m_mutex);
+    m_sinks.push_back(sink);
+}
+
+void SoundSource::removeSink(std::shared_ptr<SndSink> sink)
+{
+    QMutexLocker lock(&m_mutex);
+    m_sinks.remove(sink);
+}
+
+
+std::list<std::shared_ptr<SndSink>> SoundSource::getSinks()
+{
+    QMutexLocker lock(&m_mutex);
+    return m_sinks;
+}

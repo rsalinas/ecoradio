@@ -30,6 +30,8 @@ void Mixer::run() {
     qDebug() << __FUNCTION__;
     bool silence = true;
 
+
+
     while (!abort) {
         TimeMeter tm;
         decltype(m_sources) sourcesNow;
@@ -38,21 +40,17 @@ void Mixer::run() {
             sourcesNow = m_sources;
         }
         int actualSourceCount = 0;
-        for (auto source : sourcesNow) {
+        for (auto source : sourcesNow) {            
             int n = source->readFading(actualSourceCount==0 ? buffer: newBuffer, buf_size);
             switch (n) {
             case 0:
-                qDebug() << "raro: zero" << source->name();
+//                qDebug() << "raro: zero" << source->name();
+                //Silence
                 continue;
             case -1:
-            {
-                QMutexLocker lock(&mutex);
                 qDebug() << source->name() << n;
-                m_sources.remove(source);
-                condition.wakeAll();
-                emit sourceFinished(source);
+                removeSource(source);
                 continue;
-            }
             default:
                 if (buf_size != n)
                     memset((actualSourceCount==0 ? buffer: newBuffer)+n, 0, buf_size-n);
@@ -133,6 +131,7 @@ int Mixer::addSource(std::shared_ptr<SoundSource> source) {
     if(!isRunning()) {
         qWarning() << "Mixer is not started";
     }
+    return 0;
 }
 
 int Mixer::addSink(std::shared_ptr<SndSink> sink) {
@@ -141,6 +140,7 @@ int Mixer::addSink(std::shared_ptr<SndSink> sink) {
     }
     QMutexLocker lock(&mutex);
     m_sinks.push_back(sink);
+    return 0;
 }
 
 Mixer::~Mixer() {
@@ -151,4 +151,13 @@ Mixer::~Mixer() {
     wait();
     delete [] buffer;
     delete [] zeros;
+}
+
+
+void Mixer::removeSource(std::shared_ptr<SoundSource> source)
+{
+    QMutexLocker lock(&mutex);
+    m_sources.remove(source);
+    condition.wakeAll();
+    emit sourceFinished(source);
 }
