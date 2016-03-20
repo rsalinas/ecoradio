@@ -16,14 +16,16 @@ include_directories(..)
 
 
 
-QT5_WRAP_CPP(Cmake_hdr_moc radioconsole.h  newprogramdialog.h)
-QT5_WRAP_UI(Cmake_form_hdr radioconsole.ui newprogramdialog.ui)
+QT5_WRAP_CPP(Cmake_hdr_moc radioconsole.h  newprogramdialog.h connectdialog.h)
+QT5_WRAP_UI(Cmake_form_hdr radioconsole.ui newprogramdialog.ui connectdialog.ui)
 
 add_library(${PROJECT_NAME}
     radioconsole.cpp
     newprogramdialog.cpp
+    connectdialog.cpp
     radioconsole.ui
     newprogramdialog.ui
+    connectdialog.ui
     ${Cmake_form_hdr}
     ${Cmake_hdr_moc}
 )
