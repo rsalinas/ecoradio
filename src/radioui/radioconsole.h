@@ -16,7 +16,7 @@ class RadioConsole : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RadioConsole(QWidget *parent = 0);
+    explicit RadioConsole(RadioStub * stub, QWidget *parent = nullptr);
     ~RadioConsole();
 
     QList<ProgramTime> getPrograms();
@@ -34,12 +34,14 @@ private slots:
                     QList<std::shared_ptr<ProgramTime>> nextPrograms);
     void currentSong(QString currentSong);
     void nextSong(QString nextSong);
-    void startProgram(int id);
     void vuMeterUpdate(int channel, int value);
     void currentPos(float pos, float total);
 
 
     /* test */
+
+    void on_actionConfigure_triggered();
+
 signals:
     void test0signal(QList<std::shared_ptr<ProgramTime>> p);
     void test1signal(int);
@@ -53,7 +55,7 @@ public slots:
 private:
     Ui::RadioConsole *ui;
     QTimer * m_wallclockTimer;
-    RadioStub m_stub;
+    RadioStub * m_stub;
     std::shared_ptr<ProgramTime> m_current;
     QList<std::shared_ptr<ProgramTime>> m_nextPrograms;
 };

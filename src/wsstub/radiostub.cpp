@@ -11,12 +11,19 @@ RadioStub::RadioStub(const QUrl &url, QObject *parent) :
     qRegisterMetaType<std::shared_ptr<ProgramTime> >();
     qRegisterMetaType<QList<std::shared_ptr<ProgramTime>> >();
     connect(&m_websocket, &QWebSocket::connected, this, &RadioStub::onConnected);
-    connect(&m_websocket, &QWebSocket::disconnected, this, &RadioStub::disconnected);
+    connect(&m_websocket, SIGNAL(connected()), this, SIGNAL(connected()));
+    connect(&m_websocket, &QWebSocket::disconnected, this, &RadioStub::onDisconnected);
+//    connect(&m_websocket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
     m_websocket.open(url);
-    qDebug() << "connected?";
 }
 
-void RadioStub::disconnected() {
+RadioStub::~RadioStub()
+{
+//    emit disconnected();
+    qDebug() << __FUNCTION__;
+}
+
+void RadioStub::onDisconnected() {
     qDebug() << __FUNCTION__;
     qDebug() << m_websocket.closeReason() << m_websocket.closeCode() << m_websocket.errorString();
     emit connectionClosed();
@@ -68,7 +75,6 @@ void RadioStub::onTextMessageReceived(QString message)
         auto rest = ts.readAll().toLocal8Bit();
         qDebug() << cmd << rest;
         auto doc = QJsonDocument::fromJson(rest);
-
         auto current = programFromJson(doc.object()["current"].toObject());
         auto next = programListFromJson(doc.object()["next"].toArray());
         qDebug() << cmd << *current << next.size();
@@ -90,7 +96,19 @@ void RadioStub::onTextMessageReceived(QString message)
 
 
 bool RadioStub::startProgram(ProgramTime program, QString title, int delay) {
-    m_websocket.sendTextMessage(QStringLiteral("START_PROGRAM ")+QString::number(0)); //FIXME
+    m_websocket.sendTextMessage(QString(__FUNCTION__)+"\n"+title+"\n"+QString::number(delay)); //FIXME
+    QByteArray ba;
+    QTextStream ts(&ba);
+    ts <<__FUNCTION__<< endl;
+    QJsonDocument doc;
+    QJsonObject root;
+    root.insert("programId", QJsonValue(QString::number(program.pt_id)));
+    root.insert("title", QJsonValue(title));
+    root.insert("delay", QJsonValue(delay));
+    doc.setObject(root);
+    ts << doc.toJson();
+    ts.flush();
+    m_websocket.sendTextMessage(ba);
     return true;
 }
 

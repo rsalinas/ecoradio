@@ -29,7 +29,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="programListLabel">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -42,7 +42,7 @@
     <string>Programs:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="titleLabel">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -55,12 +55,12 @@
     <string>Title:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="titleEdit">
    <property name="geometry">
     <rect>
      <x>50</x>
      <y>290</y>
-     <width>341</width>
+     <width>511</width>
      <height>27</height>
     </rect>
    </property>

@@ -47,8 +47,9 @@ void WebsockServer::onNewConnection()
 void WebsockServer::processTextMessage(QString message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    QTextStream ts(&message);
     qDebug() << "Message received:" << message;
-    QStringList split = message.split(" ");
+    QStringList split = ts.readLine().split(" ");
     qDebug() << split;
     if (split[0] == "PTT") {
         int value = split[1].toInt();
@@ -62,6 +63,16 @@ void WebsockServer::processTextMessage(QString message)
         pClient->sendTextMessage(msg);
     } else if (split[0] == "skipSong") {
         m_ecoradio.skipSong();
+    } else if (split[0] == "startProgram") {
+        auto rest = ts.readAll().toLocal8Bit();
+        auto doc = QJsonDocument::fromJson(rest);
+        qDebug() << "startProgram: "<< doc;
+
+        uint64_t programId = doc.object()["programId"].toString().toLongLong();
+        QString title = doc.object()["title"].toString();
+        int delay = doc.object()["delay"].toInt();
+        qDebug() << split[0] << programId << title << delay;
+        emit startProgram(programId, title, delay);
     } else {
         qWarning() << "SERVER IGNORED MESSAGE" << message;
     }
@@ -71,9 +82,8 @@ void WebsockServer::processBinaryMessage(QByteArray message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     qDebug() << "Binary Message received:" << message;
-    if (pClient) {
-        pClient->sendBinaryMessage(message);
-    }
+    auto doc = QJsonDocument::fromJson(message);
+    qDebug() << doc;
 }
 
 void WebsockServer::socketDisconnected()

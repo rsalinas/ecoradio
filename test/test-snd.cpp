@@ -31,6 +31,10 @@ OggFwd::Config getIcecastConfig() {
     return fwdConfig;
 }
 
+TEST(RecordLive, RecordLive) {
+
+}
+
 
 TEST(SimpleMix, SimpleMix0) {
     auto s0 = std::make_shared<SinWave>(440.0);

@@ -25,6 +25,7 @@ public:
 class ProgramTime
 {
 public:
+    rowid_t p_id;
     rowid_t pt_id;
     int dow;
     QDateTime ts;
@@ -86,6 +87,7 @@ QJsonObject toJson(ProgramTime p) ;
 std::shared_ptr<ProgramTime> programFromJson(const QJsonObject obj);
 QJsonObject toJson(std::shared_ptr<ProgramTime> current, std::vector<std::shared_ptr<ProgramTime>> next) ;
 QDebug operator<<(QDebug dbg, const ProgramTime &program);
+QDebug operator<<(QDebug dbg, const Program &program);
 QList<std::shared_ptr<ProgramTime>> programListFromJson(const QJsonArray &array);
 
 

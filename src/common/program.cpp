@@ -80,6 +80,14 @@ QJsonObject toJson(std::shared_ptr<ProgramTime> current, std::vector<std::shared
     return o;
 }
 
+QDebug operator<<(QDebug dbg, const Program &program)
+{
+    dbg.noquote() << program.name;
+
+    return dbg;
+
+}
+
 
 QDebug operator<<(QDebug dbg, const ProgramTime &program)
 {

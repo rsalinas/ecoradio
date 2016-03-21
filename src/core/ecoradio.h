@@ -52,6 +52,7 @@ private slots:
 public slots:
     void clientConnected(QWebSocket *client);
     void clientDisconnected(QWebSocket *client);
+    void startProgram(uint64_t programId, QString title, int delay);
 
 signals:
     void finished();

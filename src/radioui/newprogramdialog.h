@@ -2,12 +2,16 @@
 
 #include <QDialog>
 
-class RadioStub ;
+#include "common/program.h"
+
+class RadioStub;
 class RadioConsole;
 
 namespace Ui {
 class NewProgramDialog;
 }
+
+class MyModel;
 
 class NewProgramDialog : public QDialog
 {
@@ -18,7 +22,7 @@ public:
     ~NewProgramDialog();
 
 signals:
-    void startProgram(int id);
+    void startProgram(ProgramTime program, QString title, int delay);
 
 private slots:
     void on_buttonBox_accepted();
@@ -31,4 +35,5 @@ private:
     Ui::NewProgramDialog *ui;
     RadioStub &m_stub;
     RadioConsole &m_main;
+    MyModel * m;
 };

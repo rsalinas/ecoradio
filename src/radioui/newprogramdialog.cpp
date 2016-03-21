@@ -15,7 +15,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-private:
+//private:
     const QList<ProgramTime> m_programs;
 };
 
@@ -32,7 +32,7 @@ NewProgramDialog::NewProgramDialog(RadioStub &stub, RadioConsole &main, QWidget 
     for (const auto &l : main.getPrograms()) {
         //        ui->programList->addItem(l.name);
     }
-    MyModel * m = new MyModel(main.getPrograms(), this);
+    m = new MyModel(main.getPrograms(), this);
     ui->programTableView->setModel(m);
     //    QObject::connect(&m_stub, SIGNAL(programListReady(QStringList)),
     //                     this, SLOT(programListReady(QStringList)));
@@ -47,7 +47,10 @@ NewProgramDialog::~NewProgramDialog()
 
 void NewProgramDialog::on_buttonBox_accepted()
 {
-    //    emit startProgram(ui->programTableView->currentIndex());
+    qDebug() << __FUNCTION__<< m->m_programs[ui->programTableView->currentIndex().row()];
+    emit startProgram(m->m_programs[ui->programTableView->currentIndex().row()],
+            ui->titleEdit->text(), 3); //FIXME
+
 }
 
 

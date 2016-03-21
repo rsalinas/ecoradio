@@ -9,13 +9,13 @@
 
 #include "newprogramdialog.h"
 
-RadioConsole::RadioConsole(QWidget *parent) :
+RadioConsole::RadioConsole(RadioStub * stub, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RadioConsole),
     m_wallclockTimer(new QTimer(this)),
-    m_stub(QUrl("ws://localhost:1234")) //FIXME
+    m_stub(stub)
 {
-
+    setAttribute(Qt::WA_DeleteOnClose, true);
     qDebug() << qRegisterMetaType<ProgramTime>();
     qDebug() << qRegisterMetaType<std::shared_ptr<ProgramTime> >();
     qDebug() << qRegisterMetaType<QList<std::shared_ptr<ProgramTime>> >();
@@ -24,15 +24,15 @@ RadioConsole::RadioConsole(QWidget *parent) :
     updateClock();
     (connect(m_wallclockTimer, SIGNAL(timeout()), this, SLOT(updateClock())));
     m_wallclockTimer->start(1000);
-    (QObject::connect(&m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int))));
+    (QObject::connect(m_stub, SIGNAL(vuMeterUpdate(int,int)), this, SLOT(vuMeterUpdate(int, int))));
 
-    (QObject::connect(&m_stub, SIGNAL(newProgram(std::shared_ptr<ProgramTime> ,
+    (QObject::connect(m_stub, SIGNAL(newProgram(std::shared_ptr<ProgramTime> ,
                                                  QList<std::shared_ptr<ProgramTime>>)),
                       this, SLOT(newProgram(std::shared_ptr<ProgramTime>,
                                             QList<std::shared_ptr<ProgramTime>>))));
-    (QObject::connect(&m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString))));
-    (QObject::connect(&m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString))));
-    (QObject::connect(&m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float))));
+    (QObject::connect(m_stub, SIGNAL(currentSong(QString)), this, SLOT(currentSong(QString))));
+    (QObject::connect(m_stub, SIGNAL(nextSong(QString)), this, SLOT(nextSong(QString))));
+    (QObject::connect(m_stub, SIGNAL(currentPos(float, float)), this, SLOT(currentPos(float, float))));
     ui->vumMain->setMaximum(255);
     ui->vumMain->setMinimum(0);
     ui->vumMain->setFormat("");
@@ -42,21 +42,18 @@ RadioConsole::RadioConsole(QWidget *parent) :
 
 RadioConsole::~RadioConsole()
 {
+    qDebug() << __FUNCTION__;
     delete ui;
 }
 
-void RadioConsole::startProgram(int id) {
-    qDebug() << __FUNCTION__ << id;
-    abort();
-    //FIXME m_stub.startProgram(id);
-}
+
 
 
 void RadioConsole::on_startProgramButton_clicked()
 {
     qDebug() << __FUNCTION__;
-    NewProgramDialog * d = new NewProgramDialog(m_stub, *this, this);
-    QObject::connect(d, SIGNAL(startProgram(int)), this, SLOT(startProgram(int)));
+    NewProgramDialog * d = new NewProgramDialog(*m_stub, *this, this);    
+    QObject::connect(d, SIGNAL(startProgram(ProgramTime,QString,int)), m_stub, SLOT(startProgram(ProgramTime,QString,int)));
     d->setModal(true);
     d->show();
     d->raise();
@@ -66,7 +63,7 @@ void RadioConsole::on_startProgramButton_clicked()
 void RadioConsole::on_endProgramButton_clicked()
 {
     qDebug() << __FUNCTION__;
-    m_stub.endProgram();
+    m_stub->endProgram();
 }
 
 void RadioConsole::updateClock() {
@@ -75,28 +72,28 @@ void RadioConsole::updateClock() {
 
 void RadioConsole::on_pauseButton_clicked()
 {
-    m_stub.pause();
+    m_stub->pause();
 }
 
 void RadioConsole::on_resumeButton_clicked()
 {
-    m_stub.resume();
+    m_stub->resume();
 }
 
 
 void RadioConsole::on_pttButton_pressed()
 {
-    m_stub.ptt(true);
+    m_stub->ptt(true);
 }
 
 void RadioConsole::on_pttButton_released()
 {
-    m_stub.ptt(false);
+    m_stub->ptt(false);
 }
 
 void RadioConsole::on_skipButton_clicked()
 {
-    m_stub.skipSong();
+    m_stub->skipSong();
 }
 
 
@@ -151,4 +148,12 @@ QList<ProgramTime> RadioConsole::getPrograms() {
 }
 
 
+void RadioConsole::on_actionConfigure_triggered()
+{
+    close();
+}
+
+
 #include "radioconsole.moc"
+
+

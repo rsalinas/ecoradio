@@ -8,6 +8,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
 
     Ecoradio * ecoradio = new Ecoradio(&app);
 
@@ -18,10 +19,9 @@ int main(int argc, char *argv[])
     // This will run the task from the application event loop.
     QTimer::singleShot(0, ecoradio, SLOT(run()));
 
-    RadioConsole w;
-//    ConnectDialog cd;
+//    RadioConsole w;
+    ConnectDialog w;
     w.show();
-//    cd.show();
 
     return app.exec();
 }

@@ -48,6 +48,7 @@ Ecoradio::Ecoradio(QObject *parent)
     QObject::connect(&m_mixer, SIGNAL(vumeter(int,int)), &m_wss, SLOT(vumeter(int,int)));
     QObject::connect(&m_posTimer, SIGNAL(timeout()), this, SLOT(everySecond()));
     QObject::connect(&m_wss, SIGNAL(cmd_ptt(bool)), this, SLOT(cmd_ptt(bool)));
+    QObject::connect(&m_wss, SIGNAL(startProgram(uint64_t,QString,int)), this, SLOT(startProgram(uint64_t,QString,int)));
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
         qDebug() << "current: "<< *m_current;
@@ -190,4 +191,12 @@ bool Ecoradio::startProgram(const LiveProgram &p, const QString &title, const QD
                 programDir.absoluteFilePath(fn));
     m_linein->addSink(m_currentLiveProgram->getWriter());
     return true;
+}
+
+
+void Ecoradio::startProgram(uint64_t programId, QString title, int delay)
+{
+    qDebug() << "ecoradio:" << __FUNCTION__ << programId << title << delay;
+    auto p = m_db.getProgramTimeById(programId);
+    qDebug() << "program is: " << *p;
 }

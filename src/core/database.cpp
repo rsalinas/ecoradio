@@ -3,6 +3,7 @@
 #include <QtSql/QSqlQuery>
 #include <QDebug>
 
+
 /*
  * PRAGMA foreign_keys=ON;
 drop table if exists program ;
@@ -115,9 +116,32 @@ QList<std::shared_ptr<Program>> RadioDb::getPrograms()
     if (query.exec("SELECT rowid id, name FROM program ORDER BY name")) {
         while (query.next())  {
             ret.push_back(std::make_shared<Program>(query.value("id").toLongLong(),
-                              query.value("name").toString()));
+                                                    query.value("name").toString()));
         }
     }
     qDebug() << __FUNCTION__ << ret.size();
     return ret;
+}
+
+
+std::shared_ptr<Program> RadioDb::getProgramTimeById(uint64_t programId)
+{
+    QSqlQuery query(m_db);
+    //FIXME only active programs
+    if (!query.prepare("SELECT rowid id, name FROM program WHERE id = :id ORDER BY name")) {
+        qWarning() << "error in " << __FUNCTION__;
+        return nullptr;
+    }
+    query.bindValue(":id", QVariant::fromValue(programId));
+    if (!query.exec()) {
+        qDebug() << "Error in " << __FUNCTION__;
+        return nullptr;
+    }
+    if (!query.next())  {
+        qDebug() << "Not found id" << __FUNCTION__;
+        return nullptr;
+    }
+    uint64_t id = query.value("id").toLongLong();
+    QString name = query.value("name").toString();
+    return std::make_shared<Program>(id, name);
 }
