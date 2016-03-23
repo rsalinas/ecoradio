@@ -96,7 +96,7 @@ void RadioStub::onTextMessageReceived(QString message)
 
 
 bool RadioStub::startProgram(ProgramTime program, QString title, int delay) {
-    m_websocket.sendTextMessage(QString(__FUNCTION__)+"\n"+title+"\n"+QString::number(delay)); //FIXME
+    qDebug() << "RadioStub::" << __FUNCTION__;
     QByteArray ba;
     QTextStream ts(&ba);
     ts <<__FUNCTION__<< endl;
@@ -113,7 +113,7 @@ bool RadioStub::startProgram(ProgramTime program, QString title, int delay) {
 }
 
 bool RadioStub::endProgram() {
-    m_websocket.sendTextMessage(QStringLiteral("END_PROGRAM"));
+    m_websocket.sendTextMessage(__FUNCTION__);
     return true;
 }
 

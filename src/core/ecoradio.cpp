@@ -13,8 +13,8 @@
 Ecoradio::Ecoradio(QObject *parent)
     : QObject(parent)
     , m_settings("ecoradio.ini", QSettings::Format::NativeFormat)
-    , m_sched("radio.sqlite")
     , m_db("radio.sqlite")
+    , m_sched(m_db)
     , m_wss(*this, quint16(m_settings.value("wss.port", 1234).toInt()), this)
     , m_current(m_sched.getCurrent())
     , m_currentPlayer(getProgramPlayer(*m_current))
@@ -49,6 +49,7 @@ Ecoradio::Ecoradio(QObject *parent)
     QObject::connect(&m_posTimer, SIGNAL(timeout()), this, SLOT(everySecond()));
     QObject::connect(&m_wss, SIGNAL(cmd_ptt(bool)), this, SLOT(cmd_ptt(bool)));
     QObject::connect(&m_wss, SIGNAL(startProgram(uint64_t,QString,int)), this, SLOT(startProgram(uint64_t,QString,int)));
+        QObject::connect(&m_wss, SIGNAL(endProgram()), this, SLOT(endProgram()));
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
         qDebug() << "current: "<< *m_current;
@@ -180,23 +181,40 @@ void Ecoradio::everySecond() {
     }
 }
 
-
-bool Ecoradio::startProgram(const LiveProgram &p, const QString &title, const QDateTime &when) {
-    qDebug() << __FUNCTION__;
-    auto fn = p.name;
-    QDir programDir((m_settings.value("live.dir", ".").toString()));
-
-    m_currentLiveProgram = std::make_shared<LiveProgramRecording>(
-                p,
-                programDir.absoluteFilePath(fn));
-    m_linein->addSink(m_currentLiveProgram->getWriter());
-    return true;
-}
-
-
 void Ecoradio::startProgram(uint64_t programId, QString title, int delay)
 {
     qDebug() << "ecoradio:" << __FUNCTION__ << programId << title << delay;
     auto p = m_db.getProgramTimeById(programId);
     qDebug() << "program is: " << *p;
+    qDebug() << __FUNCTION__;
+    auto fn = p->name;
+    QDir programDir((m_settings.value("live.dir", ".").toString()));
+    QString file(programDir.absoluteFilePath(fn));
+
+    LiveProgram lp;
+    lp.p_id = p->id;
+    lp.name = p->name;
+
+    m_currentLiveProgram = std::make_shared<LiveProgramRecording>(lp, file);
+
+    m_linein->addSink(m_currentLiveProgram->getWriter());
+    m_linein->fadeIn(1000);
+    m_currentStream->fadeOut(1000, SoundSource::FadeAction::WillPause);
+    qDebug() << "Cambiado a línea";
+}
+
+
+void Ecoradio::endProgram()
+{
+    qDebug() << __FUNCTION__;
+    if (!m_currentLiveProgram) {
+        qWarning() << "Error: was not recording";
+        return;
+    }
+    m_currentStream->fadeIn(1000);
+    m_linein->removeSink(m_currentLiveProgram->getWriter());
+    qDebug() << m_currentLiveProgram->compress();
+    m_linein->fadeOut(1000, SoundSource::FadeAction::WillSilence);
+    m_currentLiveProgram.reset();
+    qDebug() << "back to replay";
 }

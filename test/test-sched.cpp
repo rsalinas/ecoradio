@@ -2,9 +2,11 @@
 
 #include "core/scheduler.h"
 #include <QCoreApplication>
+#include "core/database.h"
 #include <QDebug>
 
-Scheduler sched("radio.sqlite");
+RadioDb rdb("radio.sqlite");
+Scheduler sched(rdb);
 
 TEST(TestSched, TestSched)
 {

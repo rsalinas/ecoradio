@@ -52,6 +52,7 @@ public:
 
     int lengthSeconds;
     bool live;
+    LiveProgram() = default;
     LiveProgram(rowid_t id, int dow, const QDateTime &ts, const QString &name);
 };
 

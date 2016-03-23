@@ -4,15 +4,11 @@
 #include <QDebug>
 #include <QDateTime>
 #include <memory>
-
+#include "database.h"
 #include "util/util.h"
 
-Scheduler::Scheduler(const QString &filename) : m_db(QSqlDatabase::addDatabase("QSQLITE"))
+Scheduler::Scheduler(RadioDb &db) : m_db(db)
 {
-    m_db.setDatabaseName(filename);
-    if (!m_db.open()) {
-        qFatal("Cannot open db");
-    }
 }
 
 std::shared_ptr<ProgramTime> Scheduler::getCurrent(const QDateTime &ts) {
@@ -33,7 +29,7 @@ static int minOfTheDay(const QDateTime &now) {
 std::vector<std::shared_ptr<ProgramTime>>
 Scheduler::getPlan(bool current,
                    const QDateTime &now) {
-    QSqlQuery query(m_db);
+    QSqlQuery query(m_db.getDb());
     QString sql;
     if (current) {
         QString what = "select program.rowid as program_rowid, dow*60*24+hour*60+minute as ts2, * from program_time"
@@ -52,7 +48,7 @@ Scheduler::getPlan(bool current,
     }
     qDebug() << sql;
     if (!query.exec(sql)) {
-        qWarning() << QStringLiteral("error querying database: ")+  m_db.lastError().text();
+        qWarning() << QStringLiteral("error querying database: ")+  m_db.getDb().lastError().text();
         throw SqlException();
     }
     std::vector<std::shared_ptr<ProgramTime>> l;

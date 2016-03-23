@@ -17,6 +17,9 @@ public:
     bool deleteProgramTime(uint64_t id);
     QList<std::shared_ptr<Program>> getPrograms();
     std::shared_ptr<Program> getProgramTimeById(uint64_t programId);
+    QSqlDatabase  &getDb() {
+        return m_db;
+    }
 
 protected:
     QSqlDatabase m_db;

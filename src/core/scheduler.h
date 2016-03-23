@@ -10,6 +10,8 @@
 
 #include "common/program.h"
 
+class RadioDb;
+
 class SqlException : public std::exception {
 };
 
@@ -17,14 +19,14 @@ class Scheduler : public QObject
 {
     Q_OBJECT
 public:
-    Scheduler(const QString &filename);
+    Scheduler(RadioDb &db);
 
     std::shared_ptr<ProgramTime> getCurrent(const QDateTime &ts = QDateTime::currentDateTime());
     std::vector<std::shared_ptr<ProgramTime>> getNext(const QDateTime &ts = QDateTime::currentDateTime());
 
 private:
     std::vector<std::shared_ptr<ProgramTime>>  getPlan(bool current, const QDateTime &ts);
-    QSqlDatabase m_db;
+    RadioDb &m_db;
     std::vector<ProgramTime> puntual;
     QTimer m_timer;
 

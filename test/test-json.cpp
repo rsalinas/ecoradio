@@ -15,10 +15,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include "core/database.h"
+
 
 TEST(TestJson, ProgramJson)
 {
-    Scheduler sched("radio.sqlite");
+    RadioDb rdb("radio.sqlite");
+    Scheduler sched(rdb);
     auto current = sched.getCurrent();
     auto next = sched.getNext();
     QByteArray s;

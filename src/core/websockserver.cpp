@@ -63,6 +63,8 @@ void WebsockServer::processTextMessage(QString message)
         pClient->sendTextMessage(msg);
     } else if (split[0] == "skipSong") {
         m_ecoradio.skipSong();
+    } else if (split[0] == "endProgram") {
+        emit endProgram();
     } else if (split[0] == "startProgram") {
         auto rest = ts.readAll().toLocal8Bit();
         auto doc = QJsonDocument::fromJson(rest);

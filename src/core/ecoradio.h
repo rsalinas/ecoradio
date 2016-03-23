@@ -37,8 +37,6 @@ public:
     }
 
     void skipSong();
-    bool startProgram(const LiveProgram &p, const QString &title,
-                      const QDateTime &when);
 
 
 private slots:
@@ -48,11 +46,13 @@ private slots:
     void mixerSongFinished(std::shared_ptr<SoundSource> s);
     void cmd_ptt(bool);
     void everySecond();
+    void endProgram();
+    void startProgram(uint64_t programId, QString title, int delay);
 
 public slots:
     void clientConnected(QWebSocket *client);
     void clientDisconnected(QWebSocket *client);
-    void startProgram(uint64_t programId, QString title, int delay);
+
 
 signals:
     void finished();
@@ -65,8 +65,8 @@ private:
     Mixer m_mixer;
     std::shared_ptr<SndSink> m_ao;
     std::shared_ptr<SndSink> m_ogg;
-    Scheduler m_sched;
     RadioDb m_db;
+    Scheduler m_sched;
     WebsockServer m_wss;
     QTimer m_posTimer;
 

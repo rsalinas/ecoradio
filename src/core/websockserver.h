@@ -29,6 +29,7 @@ public slots:
 signals:
     void closed();
     void cmd_ptt(bool on);
+    void endProgram();
     void startProgram(uint64_t p, QString title, int delay);
 
 private slots:
