@@ -9,7 +9,7 @@ ProcessDecoder::ProcessDecoder(const QString &name, const QString& binary, QStri
     m_process.start(binary, args);
     if (!m_process.waitForStarted(1000)) {
         qDebug() << "error starting " << binary << args;
-        throw Exception();
+        throw SoundSourceException();
     }
 }
 

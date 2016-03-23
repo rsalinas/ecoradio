@@ -5,7 +5,6 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-
 #include "util/streamsrc.h"
 
 
@@ -17,9 +16,8 @@ public:
     }
 
     ssize_t read (char *buf, size_t length) {
-        auto ret = m_dev->read(buf, length);;
+        auto ret = m_dev->read(buf, length);
         return ret;
-
     }
 
     off_t lseek(off_t offset, int whence) {
@@ -32,7 +30,7 @@ public:
             break;
         case SEEK_END:
             offset = m_dev->size() + offset;
-            //FIXME i f sequential!
+            //FIXME if sequential!
             break;
         }
         auto ret = m_dev->seek(offset);
@@ -50,7 +48,6 @@ public:
     size_t bytesAvailable() {
         return m_dev->bytesAvailable();
     }
-
 
     static ssize_t r_read (void *h, void *buf, size_t length) {
         return static_cast<MemHandle*>(h)->read(static_cast<char*>(buf), length);
@@ -102,8 +99,9 @@ mpg123_handle *commonInit() {
     size_t rate_count;
     int enc = MPG123_ENC_SIGNED_16;
     mpg123_rates(&rates, &rate_count);
+    auto rateLogger = qDebug() << "rate: ";
     for(decltype(rate_count) i = 0; i<rate_count; ++i) {
-        qDebug() << "rate: " << rates[i];
+        rateLogger << rates[i];
         mpg123_format(mh, rates[i], MPG123_MONO|MPG123_STEREO, enc);
     }
 
@@ -231,12 +229,15 @@ void Mpg123::postInit() {
 
 int Mpg123::readPcm(char *buf, const size_t length)
 {
+//    if (currentMillis() > 5000 && m_fading == FadingDirection::NoFading)  //FIXME !!!
+//        fadeOut(1000, FadeAction::WillStop);
+
 //    qDebug() << (m_filemh?m_filemh->bytesAvailable():-1) << m_complete;
-    if (m_status != Playing) {
+    if (m_status == Finished) {
         qDebug() << "mp3 closed";
         return -1;
     }
-    if (m_filemh ) {
+    if (m_filemh) {
         if (m_reply->error()) {
             qDebug() << "Network error";
             return -1;
@@ -246,8 +247,10 @@ int Mpg123::readPcm(char *buf, const size_t length)
                 qDebug() << "available: " << m_filemh->bytesAvailable();
                 return 0;
             }
-            if (initMh() < 0)
+            if (initMh() < 0) {
+                // mark as finished?
                 return -1;
+            }
         }
 
         if (!m_complete && m_filemh->bytesAvailable() < 64*1024) {
@@ -278,9 +281,6 @@ Mpg123::~Mpg123() {
     mpg123_delete(mh);
 }
 
-int lengthMillis();
-int currentMillis();
-
 int Mpg123::currentMillis() {
     return mpg123_tell(mh) * 1000 / 44100.0; //FIXME
 }
@@ -288,7 +288,6 @@ int Mpg123::currentMillis() {
 int Mpg123::lengthMillis() {
     return mpg123_length(mh) *1000 / 44100; //FIXME
 }
-
 
 int Mpg123::goTo(int millis) {
     return mpg123_seek(mh, 44100*millis / 1000, 0) >= 0;

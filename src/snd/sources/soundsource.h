@@ -26,6 +26,7 @@ public:
     enum FadeAction {
         WillStop, WillPause, WillSilence
     };
+
     enum Status {
         Initial, Playing, Paused, Silence, Finished
     };
@@ -61,42 +62,32 @@ public:
     void play();
     void pause();
     void close();
-    void setSilence() {
-        m_status = Status::Silence;
-    }
+    void setSilence();
+
+
 
     unsigned char m_mastervolume = 255;
     size_t m_bytes = 0;
     size_t fadingEndBytes;
-
-
-    FadingDirection m_fading = NoFading;
-
-//    int m_fading = 0;
-    FadeAction m_fadeAction = FadeAction::WillStop;
-
     void waitEnd();
-
     void addSink(std::shared_ptr<SndSink> sink);
     void removeSink(std::shared_ptr<SndSink> sink);
     std::list<std::shared_ptr<SndSink>> getSinks();
 
-    class Exception : public std::exception
+    class SoundSourceException : public std::exception
     {
-
     };
 
 protected:
     Status m_status = Status::Playing;
+    FadingDirection m_fading = NoFading;
+    FadeAction m_fadeAction = FadeAction::WillStop;
 
 private:
     QString m_name;
     QMutex m_mutex;
     QWaitCondition m_cv;
-
     std::list<std::shared_ptr<SndSink>> m_sinks;
-
-    //    std::vector<char*> buffers;
     bool m_abort = false;
 
 

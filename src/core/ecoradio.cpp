@@ -26,7 +26,7 @@ Ecoradio::Ecoradio(QObject *parent)
         m_ao = std::make_shared<AoSink>(m_format);
         m_mixer.addSink(m_ao);
     } catch (std::exception &e) {
-        qWarning() << "Cannot open ogg output";
+        qWarning() << "Cannot open Alsa output";
     }
 
     try {
@@ -49,7 +49,7 @@ Ecoradio::Ecoradio(QObject *parent)
     QObject::connect(&m_posTimer, SIGNAL(timeout()), this, SLOT(everySecond()));
     QObject::connect(&m_wss, SIGNAL(cmd_ptt(bool)), this, SLOT(cmd_ptt(bool)));
     QObject::connect(&m_wss, SIGNAL(startProgram(uint64_t,QString,int)), this, SLOT(startProgram(uint64_t,QString,int)));
-        QObject::connect(&m_wss, SIGNAL(endProgram()), this, SLOT(endProgram()));
+    QObject::connect(&m_wss, SIGNAL(endProgram()), this, SLOT(endProgram()));
     qDebug() << __FUNCTION__ << "Running ";
     if (m_current) {
         qDebug() << "current: "<< *m_current;
@@ -72,9 +72,9 @@ Ecoradio::Ecoradio(QObject *parent)
             qWarning() << "could not get song from current stream" << *m_current;
         }
     }
-    qDebug() << "progs";
+    auto progLogger = qDebug().noquote() << "Programs:";
     for (auto p : m_db.getPrograms())
-        qDebug().nospace().noquote() << "  " << p->name;
+        progLogger.quote().nospace() << "  " << p->name;
     //    m_mixer.addSource(std::make_shared<StreamSrc>("http://stream.freefm.de:8100/"));
 }
 
@@ -100,11 +100,20 @@ void Ecoradio::mixerSongFinishing(std::shared_ptr<SoundSource> s) {
     qDebug() << __FUNCTION__ << s->name();
 }
 
+
+
 void Ecoradio::mixerSongFinished(std::shared_ptr<SoundSource> finishedSource) {
+    assert(finishedSource.get());
+    finishedSource->close();
+    if (finishedSource == m_currentStream)
+        playNextSong();
+}
+
+void Ecoradio::playNextSong() {
     qDebug() << __FUNCTION__;
-    if (finishedSource) {
-        finishedSource->close();
-    }
+    if (m_currentStream)
+        m_currentStream->close();
+
     m_currentStream = m_nextStream;
     if (m_currentStream) {
         emit m_wss.currentSong(m_currentStream->name());
@@ -113,6 +122,7 @@ void Ecoradio::mixerSongFinished(std::shared_ptr<SoundSource> finishedSource) {
     }
     //    m_currentStream->stopFadeOut(10);
     m_mixer.addSource(m_currentStream);
+
     if (m_current) {
         qDebug() << "current: "<< *m_current;
         m_nextStream = m_currentPlayer->getNextSong();
@@ -144,7 +154,7 @@ void Ecoradio::cmd_ptt(bool on) {
 
 void Ecoradio::clientConnected(QWebSocket *client) {
     qDebug() << __FUNCTION__;
-    qDebug() << *m_current ;
+    qDebug() << "current:" << *m_current ;
     qDebug() << "next: " << m_nextPrograms.size();
     emit m_wss.programChange(m_current, m_nextPrograms);
     if (m_currentStream) {
@@ -169,7 +179,8 @@ void Ecoradio::clientDisconnected(QWebSocket *client) {
 
 void Ecoradio::skipSong() {
     qDebug() << __FUNCTION__;
-    mixerSongFinished(m_currentStream);
+    m_currentStream->fadeOut(1000, SoundSource::FadeAction::WillStop);
+    playNextSong();
 }
 
 
@@ -186,7 +197,6 @@ void Ecoradio::startProgram(uint64_t programId, QString title, int delay)
     qDebug() << "ecoradio:" << __FUNCTION__ << programId << title << delay;
     auto p = m_db.getProgramTimeById(programId);
     qDebug() << "program is: " << *p;
-    qDebug() << __FUNCTION__;
     auto fn = p->name;
     QDir programDir((m_settings.value("live.dir", ".").toString()));
     QString file(programDir.absoluteFilePath(fn));
@@ -216,5 +226,6 @@ void Ecoradio::endProgram()
     qDebug() << m_currentLiveProgram->compress();
     m_linein->fadeOut(1000, SoundSource::FadeAction::WillSilence);
     m_currentLiveProgram.reset();
+
     qDebug() << "back to replay";
 }

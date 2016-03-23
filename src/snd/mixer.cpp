@@ -17,6 +17,19 @@ Mixer::Mixer(const SndFormat &format)
     qRegisterMetaType<std::shared_ptr<SoundSource> >();
 }
 
+void Mixer::mixOnto(char * newBuffer, char * destBuffer) {
+    auto dest = reinterpret_cast<signed short int *>(destBuffer);
+    auto signal = reinterpret_cast<signed short int *>(newBuffer);
+    for (size_t i = 0; i < buf_size/ (m_format.sampleSizeBits/8 ); ++i) {
+        int sample = dest[i] + signal[i];
+        if (sample > SHRT_MAX)
+            sample = SHRT_MAX;
+        if (sample < SHRT_MIN)
+            sample = SHRT_MIN;
+        dest[i] = (short int) sample;
+    }
+}
+
 void Mixer::run() {
     if (m_sinks.empty()) {
         qWarning() << "Refusing to start mixer without sinks";
@@ -29,8 +42,6 @@ void Mixer::run() {
     memset(newBuffer, 0, buf_size);
     qDebug() << __FUNCTION__;
     bool silence = true;
-
-
 
     while (!abort) {
         TimeMeter tm;
@@ -56,16 +67,8 @@ void Mixer::run() {
                     memset((actualSourceCount==0 ? buffer: newBuffer)+n, 0, buf_size-n);
 
                 if (actualSourceCount >= 1) {
-                    auto b = reinterpret_cast<signed short int *>(buffer);
-                    auto b1 = reinterpret_cast<signed short int *>(newBuffer);
-                    for (int i=0; i < buf_size/ (m_format.sampleSizeBits/8 ); i++) {
-                        int sample = b[i] + b1[i];
-                        if (sample > SHRT_MAX)
-                            sample=SHRT_MAX;
-                        if (sample < SHRT_MIN)
-                            sample = SHRT_MIN;
-                        b[i] = (short int) sample;
-                    }
+                    mixOnto(newBuffer, buffer);
+
                 }
             }
 

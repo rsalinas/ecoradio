@@ -6,9 +6,8 @@
 
 SoundSource::SoundSource(const QString &name) : m_name(name)
 {
-    start();
+//    start();
 }
-
 
 SoundSource::~SoundSource()
 {
@@ -17,19 +16,24 @@ SoundSource::~SoundSource()
     m_cv.wakeAll();
     m_mutex.unlock();
     wait();
-
 }
-
 
 int SoundSource::readFading(char * buf, const size_t length)  {
     if (false)
         qDebug() << name() << m_status;
     AutoTimeMeter atm("readFading");
-    if (m_status == Finished)
-        return -1;
-
-    if (m_status == Silence)
+    switch (m_status) {
+    case Initial:
+        qWarning() << "strange, snd src in Initial" << name();
         return 0;
+    case Finished:
+        return -1;
+    case Paused:
+        return 0;
+    case Silence:
+    case Playing:
+        break;
+    }
 
     int n = readPcm(buf, length);
 
@@ -37,6 +41,10 @@ int SoundSource::readFading(char * buf, const size_t length)  {
         for (auto sink : getSinks()) {
             sink->writePcm(buf, n);
         }
+    }
+
+    if( m_status == Silence) {
+        return 0;
     }
 
     if (n <= 0 || m_fading == NoFading)
@@ -77,7 +85,8 @@ int SoundSource::readFading(char * buf, const size_t length)  {
 
         b[i] = volume*b[i];
     }
-    //    qDebug() << m_bytes << "volume " << volume << fadingEndBytes;
+    if (false)
+        qDebug() << m_bytes << "volume " << volume << fadingEndBytes;
     m_bytes += n;
     return n;
 }
@@ -116,12 +125,22 @@ void SoundSource::close()
         m_status = Finished;
         m_cv.wakeAll();
     }
-    if (previousStatus != Finished)
-        emit finished();
+//    if (previousStatus != Finished)
+//        emit finished();
 }
+
+void SoundSource::setSilence()
+{
+    qDebug() << name() << __FUNCTION__;
+    QMutexLocker lock(&m_mutex);
+    m_status = Status::Silence;
+}
+
 
 void SoundSource::pause()
 {
+
+    qDebug() << name() << __FUNCTION__;
     QMutexLocker lock(&m_mutex);
     m_status = Paused;
     m_cv.wakeAll();
@@ -129,6 +148,7 @@ void SoundSource::pause()
 
 void SoundSource::play()
 {
+    qDebug() << name() << __FUNCTION__;
     QMutexLocker lock(&m_mutex);
     m_status = Playing;
     m_cv.wakeAll();
@@ -152,6 +172,7 @@ int SoundSource::fadeIn(int millis)
     qDebug() << __FUNCTION__ << name() << millis << m_fading;
     assert(m_fading == NoFading);
     if (millis <= 0) {
+        qWarning() << "bad arg in fadeIn";
         m_fading = NoFading;
         return 0;
     }
@@ -176,7 +197,7 @@ int SoundSource::fadeOut(int millis, FadeAction fadeAction) {
 
 
 void SoundSource::run() {
-    qDebug() << __FUNCTION__ << "source::run()";
+    qDebug() << __FUNCTION__ << name();
     //        while (!m_abort) {
 
     //        }
@@ -189,9 +210,6 @@ void SoundSource::waitEnd() {
         m_cv.wait(&m_mutex);
     }
 }
-
-
-
 
 void SoundSource::addSink(std::shared_ptr<SndSink> sink)
 {
@@ -211,3 +229,5 @@ std::list<std::shared_ptr<SndSink>> SoundSource::getSinks()
     QMutexLocker lock(&m_mutex);
     return m_sinks;
 }
+
+

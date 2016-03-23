@@ -155,5 +155,3 @@ void RadioConsole::on_actionConfigure_triggered()
 
 
 #include "radioconsole.moc"
-
-

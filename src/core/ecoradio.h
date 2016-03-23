@@ -60,6 +60,7 @@ signals:
     void songFinished(std::shared_ptr<SoundSource> s);
 
 private:
+    void playNextSong();
     QSettings m_settings;
     SndFormat m_format; //FIXME (m_settings)
     Mixer m_mixer;

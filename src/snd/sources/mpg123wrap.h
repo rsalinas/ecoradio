@@ -30,7 +30,6 @@ signals:
     void ready();
 
 public slots:
-
     void readyRead();
     void streamFinished();
 
